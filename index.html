@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang &amp; Bộ Tính Kích Thước Ống Gió - Miệng Gió HVAC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050914;
+            color: #F1F5F9;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.28;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatOrb 22s infinite ease-in-out alternate;
+        }
+        .orb-1 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, #0284c7 0%, transparent 70%);
+            top: -15%;
+            left: -10%;
+        }
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #059669 0%, transparent 70%);
+            bottom: 5%;
+            right: -12%;
+            animation-duration: 28s;
+            animation-delay: -6s;
+        }
+        .orb-3 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+            top: 45%;
+            left: 30%;
+            animation-duration: 32s;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(70px, 90px) scale(1.15); }
+            100% { transform: translate(-50px, 60px) scale(0.9); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: rgba(13, 21, 38, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 16px 35px -8px rgba(2, 132, 199, 0.25);
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 45%, rgba(2, 132, 199, 0.85) 100%);
+            backdrop-filter: blur(20px);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+
+        .pop-btn {
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .pop-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 24px -6px rgba(2, 132, 199, 0.45);
+        }
+        .pop-btn:active {
+            transform: scale(0.92) !important;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2) !important;
+        }
+
+        .click-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(56, 189, 248, 0.3) 50%, transparent 80%);
+            transform: scale(0);
+            pointer-events: none;
+            animation: rippleAnim 0.55s ease-out forwards;
+        }
+        @keyframes rippleAnim {
+            to {
+                transform: scale(3.5);
+                opacity: 0;
+            }
+        }
+
+        .interactive-card {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .interactive-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 22px 40px -12px rgba(2, 132, 199, 0.3);
+        }
+
+        .kpi-card {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            user-select: none;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: #38BDF8;
+            box-shadow: 0 14px 28px -5px rgba(56, 189, 248, 0.3);
+        }
+        .kpi-card:active {
+            transform: scale(0.95);
+        }
+
+        .jump-word {
+            display: inline-block;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease;
+            cursor: pointer;
+        }
+        .jump-word:hover {
+            transform: translateY(-4px) scale(1.1);
+            color: #38BDF8;
+        }
+
+        .tab-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+        .tab-btn:active {
+            transform: scale(0.93);
+        }
+        .tab-btn.active {
+            background-color: #0284C7;
+            color: #FFFFFF;
+            border-color: #38BDF8;
+            box-shadow: 0 0 20px rgba(2, 132, 199, 0.6);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500 selection:text-white">
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+    <canvas id="bg-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <div class="relative z-10">
+        <header class="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 text-white shadow-2xl transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[4.25rem] py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 group cursor-pointer shrink-0 pop-btn p-1.5 rounded-xl">
+                    <span class="text-2xl transform group-hover:rotate-45 group-hover:scale-125 transition-transform duration-300 filter drop-shadow">🌬️</span>
+                    <div class="flex flex-col justify-center">
+                        <h1 class="text-sm sm:text-base md:text-lg font-extrabold tracking-tight text-white leading-tight flex flex-wrap gap-x-1.5 items-center">
+                            <span class="jump-word">THIẾT KẾ</span>
+                            <span class="jump-word text-sky-400">ĐHKK</span>
+                            <span class="jump-word">VÀ</span>
+                            <span class="jump-word text-sky-400">THÔNG GIÓ</span>
+                        </h1>
+                        <p class="text-[11px] text-sky-400 font-medium group-hover:text-sky-300 transition-colors leading-none mt-0.5">Cẩm Nang &amp; Công Cụ Tính Kích Thước Ống Gió - Miệng Gió Realtime</p>
+                    </div>
+                </div>
+
+                <nav class="hidden lg:flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-300">
+                    <a href="#tong-quan" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Tổng Quan</a>
+                    <a href="#bo-tinh-toan" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Bộ Tính Toán</a>
+                    <a href="#tieu-chuan-van-toc" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Vận Tốc Tiêu Chuẩn</a>
+                    <a href="#ma-sat-ong-gio" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Thủy Lực &amp; Ma Sát</a>
+                    <a href="#mieng-gio-am-hoc" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Âm Học Miệng Gió</a>
+                    <a href="#quy-trinh-sop" class="pop-btn px-3 py-1.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all">Quy Trình SOP</a>
+                </nav>
+
+                <div class="flex items-center shrink-0">
+                    <span class="pop-btn inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 cursor-pointer shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping mr-2"></span>
+                        ASHRAE 2021 &amp; TCVN 5687:2024
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+            <section id="tong-quan" class="scroll-mt-24 relative rounded-3xl gradient-header text-white p-6 sm:p-8 md:p-12 shadow-2xl border border-slate-700/60 overflow-hidden interactive-card">
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="pop-btn inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-bold uppercase tracking-wider cursor-pointer">
+                            <span>📏</span> Kỹ Thuật Thủy Lực HVAC &amp; Tính Toán Tiết Diện
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
+                            <span class="jump-word">Tính</span>
+                            <span class="jump-word">Toán</span>
+                            <span class="jump-word text-sky-400">Kích</span>
+                            <span class="jump-word text-sky-400">Thước</span>
+                            <span class="jump-word text-emerald-400">Ống</span>
+                            <span class="jump-word text-emerald-400">Gió</span>
+                            <span class="jump-word">&amp;</span>
+                            <span class="jump-word text-amber-400">Miệng</span>
+                            <span class="jump-word text-amber-400">Gió</span>
+                            <span class="jump-word">Chuẩn</span>
+                            <span class="jump-word">HVAC</span>
+                        </h2>
+                        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                            Chương trình hỗ trợ thiết kế theo phương pháp Ma Sát Đồng Đều (Equal Friction Method), tính đường kính tương đương (D<sub>eq</sub>), vận tốc thực tế (V<sub>act</sub>), tổn thất ma sát (&Delta;P/L) và kiểm tra độ ồn âm học (NC Rating) theo chuẩn ASHRAE Fundamentals.
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <a href="#bo-tinh-toan" class="pop-btn px-6 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold shadow-lg shadow-sky-500/30 text-xs sm:text-sm flex items-center gap-2">
+                                <span>🧮</span> Sử Dụng Bộ Tính Ống Gió &amp; Miệng Gió Realtime
+                            </a>
+                            <a href="#tieu-chuan-van-toc" class="pop-btn px-6 py-3.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm flex items-center gap-2">
+                                <span>📊</span> Ma Trận Vận Tốc Tiêu Chuẩn
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+                        <div class="kpi-card bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md cursor-pointer">
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Vận Tốc Ống Chính VP</div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-sky-400 mt-2">5.0 - 7.0 m/s</div>
+                            <p class="text-xs text-slate-300 mt-1">Cân bằng độ ồn NC-35 và tiết diện tuyến ống.</p>
+                        </div>
+
+                        <div class="kpi-card bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md cursor-pointer">
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổn Thất Ma Sát Mục Tiêu</div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-2">0.8 - 1.2 Pa/m</div>
+                            <p class="text-xs text-slate-300 mt-1">Tối ưu công suất quạt &amp; chi phí vận hành.</p>
+                        </div>
+
+                        <div class="kpi-card bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md cursor-pointer">
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Vận Tốc Bề Mặt Miệng Hồi</div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-2">1.5 - 2.5 m/s</div>
+                            <p class="text-xs text-slate-300 mt-1">Tránh hiện tượng rít gió và cuộn bụi nan chớp.</p>
+                        </div>
+
+                        <div class="kpi-card bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 backdrop-blur-md cursor-pointer">
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Giới Hạn Aspect Ratio (W/H)</div>
+                            <div class="text-2xl sm:text-3xl font-extrabold text-rose-400 mt-2">&le; 4 : 1</div>
+                            <p class="text-xs text-slate-300 mt-1">Tránh biến dạng ống tôn &amp; ma sát phụ.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="bo-tinh-toan" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-sky-500 pl-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        <span class="text-sky-400">1.</span>
+                        <span class="jump-word">Bộ</span>
+                        <span class="jump-word text-sky-400">Tính</span>
+                        <span class="jump-word text-sky-400">Toán</span>
+                        <span class="jump-word text-emerald-400">Ống</span>
+                        <span class="jump-word text-emerald-400">Gió</span>
+                        <span class="jump-word">&amp;</span>
+                        <span class="jump-word text-amber-400">Miệng</span>
+                        <span class="jump-word text-amber-400">Gió</span>
+                        <span class="jump-word">Realtime</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Chuyển đổi linh hoạt lưu lượng, vận tốc thiết kế, diện tích thoát gió hiệu dụng và cảnh báo vượt ngưỡng kỹ thuật.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 interactive-card">
+                    <div class="flex flex-wrap gap-3 mb-6 border-b border-slate-800/80 pb-4">
+                        <button id="tabDuctBtn" onclick="switchCalcTab('duct')" class="tab-btn active pop-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border border-slate-700 flex items-center gap-2 cursor-pointer">
+                            <span>📏</span> Tính Kích Thước Ống Gió (Duct Sizer)
+                        </button>
+                        <button id="tabGrilleBtn" onclick="switchCalcTab('grille')" class="tab-btn pop-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/90 text-slate-300 border border-slate-800 hover:text-white flex items-center gap-2 cursor-pointer">
+                            <span>🪟</span> Tính Kích Thước Miệng Gió (Grille Sizer)
+                        </button>
+                        <button id="tabMasterBtn" onclick="switchCalcTab('master')" class="tab-btn pop-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/90 text-slate-300 border border-slate-800 hover:text-white flex items-center gap-2 cursor-pointer">
+                            <span>📊</span> Bảng Tra Kích Thước &amp; Vận Tốc Tổng Hợp
+                        </button>
+                    </div>
+
+                    <div id="ductSizerPanel" class="space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <div class="lg:col-span-5 space-y-4 bg-slate-900/90 p-6 rounded-xl border border-slate-800">
+                                <h4 class="text-xs sm:text-sm font-bold text-sky-400 uppercase tracking-wide flex items-center gap-2">
+                                    <span>⚙️</span> Thông Số Đầu Vào Ống Gió
+                                </h4>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Lưu Lượng Gió (Q):</label>
+                                    <div class="grid grid-cols-12 gap-2">
+                                        <input type="number" id="ductFlowVal" value="1800" class="col-span-7 px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none font-bold text-white transition-all hover:border-sky-400">
+                                        <select id="ductFlowUnit" class="col-span-5 px-2 py-2 text-xs bg-slate-950 border border-slate-700 rounded-lg font-semibold text-sky-300 focus:outline-none cursor-pointer">
+                                            <option value="m3h" selected>m³/h</option>
+                                            <option value="ls">lít/giây (l/s)</option>
+                                            <option value="cfm">CFM</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Vận Tốc Thiết Kế Mục Tiêu (V<sub>design</sub>):</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="ductVelocityVal" value="6.0" step="0.1" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none font-bold text-white transition-all hover:border-sky-400">
+                                        <span class="text-xs font-semibold text-slate-400 w-16">m/s</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5 mt-2">
+                                        <button onclick="setDuctVel(4.0)" class="pop-btn text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700">Ống Hồi (4.0 m/s)</button>
+                                        <button onclick="setDuctVel(6.0)" class="pop-btn text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-sky-300 rounded border border-slate-700">Ống Chính VP (6.0 m/s)</button>
+                                        <button onclick="setDuctVel(8.5)" class="pop-btn text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded border border-slate-700">Nhà Xưởng (8.5 m/s)</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Giới Hạn Chiều Cao Khống Chế Trần (H):</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="ductHeightVal" value="300" step="25" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none font-bold text-white transition-all hover:border-sky-400">
+                                        <span class="text-xs font-semibold text-slate-400 w-16">mm</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1">Hệ thống sẽ tự động tính Chiều Rộng chuẩn hóa (W<sub>std</sub>) làm tròn theo bội số 50mm.</p>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-7 flex flex-col justify-between space-y-4 bg-slate-950/90 text-white p-6 rounded-xl border border-slate-800">
+                                <div>
+                                    <h4 class="text-xs sm:text-sm font-bold text-sky-400 uppercase tracking-wide mb-4 flex items-center justify-between">
+                                        <span>Kết Quả Kích Thước Ống Gió Đề Xuất</span>
+                                        <span class="text-xs text-slate-500 font-normal">Phương pháp Ma sát đồng đều (Equal Friction)</span>
+                                    </h4>
+
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-sky-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Lưu Lượng Quy Đổi</div>
+                                            <div id="resDuctFlowM3s" class="text-base sm:text-lg font-bold text-slate-100 mt-1">0.500 m³/s</div>
+                                        </div>
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-sky-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Đường Kính D<sub>eq</sub></div>
+                                            <div id="resDuctDeq" class="text-base sm:text-lg font-bold text-sky-400 mt-1">Ø 325 mm</div>
+                                        </div>
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-sky-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Tiết Diện Yêu Cầu (A)</div>
+                                            <div id="resDuctArea" class="text-base sm:text-lg font-bold text-slate-100 mt-1">0.0833 m²</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pop-btn bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3 hover:border-sky-400/60 transition-all">
+                                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                            <span class="text-xs text-slate-300 font-semibold">Kích Thước Ống Chữ Nhật (W x H):</span>
+                                            <span id="resDuctSize" class="text-xl sm:text-2xl font-extrabold text-emerald-400">300 x 300 mm</span>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4 text-xs">
+                                            <div>
+                                                <span class="text-slate-400 block">Vận Tốc Thực Tế (V<sub>actual</sub>):</span>
+                                                <span id="resDuctActualVel" class="font-bold text-sky-300 text-sm">5.56 m/s</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-slate-400 block">Tổn Thất Ma Sát (Pa/m):</span>
+                                                <span id="resDuctFriction" class="font-bold text-emerald-300 text-sm">0.95 Pa/m</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="ductAlertBox" class="p-4 rounded-xl border bg-emerald-500/20 border-emerald-500/40 text-emerald-300 transition-all duration-300">
+                                    <div class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                                        <span id="ductAlertIcon">✅</span> <span id="ductAlertTitle">KÍCH THƯỚC ĐẠT TIÊU CHUẨN DESIGN</span>
+                                    </div>
+                                    <p id="ductAlertMsg" class="text-xs mt-1 text-slate-300 leading-relaxed">
+                                        Tỷ lệ Aspect Ratio W/H = 1.00 nằm trong ngưỡng hoàn hảo (&le; 3:1). Tổn thất ma sát 0.95 Pa/m tối ưu cho cột áp quạt.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="grilleSizerPanel" class="space-y-6 hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <div class="lg:col-span-5 space-y-4 bg-slate-900/90 p-6 rounded-xl border border-slate-800">
+                                <h4 class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center gap-2">
+                                    <span>🪟</span> Thông Số Đầu Vào Miệng Gió
+                                </h4>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Lưu Lượng Gió Qua Miệng (Q):</label>
+                                    <div class="grid grid-cols-12 gap-2">
+                                        <input type="number" id="grilleFlowVal" value="450" class="col-span-7 px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold text-white transition-all hover:border-amber-400">
+                                        <select id="grilleFlowUnit" class="col-span-5 px-2 py-2 text-xs bg-slate-950 border border-slate-700 rounded-lg font-semibold text-amber-300 focus:outline-none cursor-pointer">
+                                            <option value="ls" selected>lít/giây (l/s)</option>
+                                            <option value="m3h">m³/h</option>
+                                            <option value="cfm">CFM</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-300 mb-1">Chiều Rộng Cổ (W):</label>
+                                        <div class="flex items-center gap-1">
+                                            <input type="number" id="grilleWVal" value="450" step="50" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold text-white transition-all hover:border-amber-400">
+                                            <span class="text-xs text-slate-400">mm</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-300 mb-1">Chiều Cao Cổ (H):</label>
+                                        <div class="flex items-center gap-1">
+                                            <input type="number" id="grilleHVal" value="450" step="50" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold text-white transition-all hover:border-amber-400">
+                                            <span class="text-xs text-slate-400">mm</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">Hệ Số Diện Tích Thoát Gió Hiệu Dụng (Free Area Factor):</label>
+                                    <select id="grilleFreeArea" class="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium text-white transition-all hover:border-amber-400 cursor-pointer">
+                                        <option value="0.70" selected>70% (Tiêu chuẩn nan chớp Linear / SAG)</option>
+                                        <option value="0.60">60% (Nan chớp tiêu âm / Lá xếp dày)</option>
+                                        <option value="0.80">80% (Lưới lọc thưa / Eggcrate Grille)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-7 flex flex-col justify-between space-y-4 bg-slate-950/90 text-white p-6 rounded-xl border border-slate-800">
+                                <div>
+                                    <h4 class="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide mb-4 flex items-center justify-between">
+                                        <span>Kết Quả Đánh Giá Vận Tốc Bề Mặt Miệng Gió</span>
+                                        <span class="text-xs text-slate-500 font-normal">Kiểm tra Tiêu chuẩn Âm học Noise Criteria (NC)</span>
+                                    </h4>
+
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-amber-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Lưu Lượng Quy Đổi</div>
+                                            <div id="resGrilleM3s" class="text-base sm:text-lg font-bold text-slate-100 mt-1">0.450 m³/s</div>
+                                        </div>
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-amber-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Diện Tích Cổ (A<sub>neck</sub>)</div>
+                                            <div id="resGrilleNeckArea" class="text-base sm:text-lg font-bold text-slate-100 mt-1">0.2025 m²</div>
+                                        </div>
+                                        <div class="pop-btn bg-slate-900 p-3.5 rounded-lg border border-slate-800 hover:border-amber-500/50 cursor-pointer">
+                                            <div class="text-[11px] text-slate-400">Diện Tích Hiệu Dụng (A<sub>eff</sub>)</div>
+                                            <div id="resGrilleEffArea" class="text-base sm:text-lg font-bold text-amber-400 mt-1">0.1418 m²</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pop-btn bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2 hover:border-amber-400/60 transition-all">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs text-slate-300 font-semibold">Vận Tốc Gió Bề Mặt (Face Velocity V<sub>face</sub>):</span>
+                                            <span id="resGrilleVel" class="text-xl sm:text-2xl font-extrabold text-amber-400">3.17 m/s</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-xs">
+                                            <span class="text-slate-400">Tỷ lệ Aspect Ratio cổ miệng gió:</span>
+                                            <span id="resGrilleAspect" class="font-bold text-slate-200">1.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="grilleAlertBox" class="p-4 rounded-xl border bg-rose-500/20 border-rose-500/40 text-rose-300 transition-all duration-300">
+                                    <div class="font-bold text-xs sm:text-sm flex items-center gap-2">
+                                        <span id="grilleAlertIcon">⚠️</span> <span id="grilleAlertTitle">CẢNH BÁO: ĐỘ ỒN CAO (HIGH NOISE ALERT)</span>
+                                    </div>
+                                    <p id="grilleAlertMsg" class="text-xs mt-1 text-slate-300 leading-relaxed">
+                                        Vận tốc gió bề mặt 3.17 m/s vượt quá ngưỡng 2.5 m/s tiêu chuẩn cho khu vực văn phòng! Khí thổi qua nan chớp gây ra tiếng rít xói tai. Cần mở rộng tiết diện cổ miệng gió.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="masterPanel" class="space-y-6 hidden">
+                        <h4 class="text-xs sm:text-sm font-bold text-sky-400 uppercase tracking-wide">
+                            Bảng Tra Kích Thước Ống Gió Chuẩn Hóa Theo Lưu Lượng (ASHRAE Equal Friction)
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-slate-300 border-collapse">
+                                <thead class="bg-slate-900 text-sky-400 uppercase font-bold border-b border-slate-800">
+                                    <tr>
+                                        <th class="p-3">Lưu Lượng (m³/h)</th>
+                                        <th class="p-3">Lưu Lượng (l/s)</th>
+                                        <th class="p-3">Vận Tốc TK (m/s)</th>
+                                        <th class="p-3">Đường Kính D<sub>eq</sub> (mm)</th>
+                                        <th class="p-3">Kích Thước W x H (mm)</th>
+                                        <th class="p-3">Vận Tốc Thực (m/s)</th>
+                                        <th class="p-3">Tổn Thất Ma Sát (Pa/m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/80 bg-slate-950/60">
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">500 m³/h</td>
+                                        <td class="p-3">139 l/s</td>
+                                        <td class="p-3">4.0 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 210</td>
+                                        <td class="p-3 font-bold text-emerald-400">200 x 200</td>
+                                        <td class="p-3">3.47 m/s</td>
+                                        <td class="p-3">0.78 Pa/m</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">1,000 m³/h</td>
+                                        <td class="p-3">278 l/s</td>
+                                        <td class="p-3">5.0 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 265</td>
+                                        <td class="p-3 font-bold text-emerald-400">250 x 250</td>
+                                        <td class="p-3">4.44 m/s</td>
+                                        <td class="p-3">0.92 Pa/m</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">2,000 m³/h</td>
+                                        <td class="p-3">556 l/s</td>
+                                        <td class="p-3">6.0 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 345</td>
+                                        <td class="p-3 font-bold text-emerald-400">350 x 300</td>
+                                        <td class="p-3">5.30 m/s</td>
+                                        <td class="p-3">0.98 Pa/m</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">3,500 m³/h</td>
+                                        <td class="p-3">972 l/s</td>
+                                        <td class="p-3">6.5 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 435</td>
+                                        <td class="p-3 font-bold text-emerald-400">500 x 350</td>
+                                        <td class="p-3">5.56 m/s</td>
+                                        <td class="p-3">0.89 Pa/m</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">5,000 m³/h</td>
+                                        <td class="p-3">1,389 l/s</td>
+                                        <td class="p-3">7.0 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 505</td>
+                                        <td class="p-3 font-bold text-emerald-400">600 x 400</td>
+                                        <td class="p-3">5.79 m/s</td>
+                                        <td class="p-3">0.94 Pa/m</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-800/50 transition-colors">
+                                        <td class="p-3 font-semibold text-white">10,000 m³/h</td>
+                                        <td class="p-3">2,778 l/s</td>
+                                        <td class="p-3">8.0 m/s</td>
+                                        <td class="p-3 text-sky-300">Ø 665</td>
+                                        <td class="p-3 font-bold text-emerald-400">900 x 500</td>
+                                        <td class="p-3">6.17 m/s</td>
+                                        <td class="p-3">0.86 Pa/m</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tieu-chuan-van-toc" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-sky-500 pl-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        <span class="text-sky-400">2.</span>
+                        <span class="jump-word">Ma</span>
+                        <span class="jump-word">Trận</span>
+                        <span class="jump-word text-sky-400">Vận</span>
+                        <span class="jump-word text-sky-400">Tốc</span>
+                        <span class="jump-word">Thiết</span>
+                        <span class="jump-word">Kế</span>
+                        <span class="jump-word text-emerald-400">Khuyên</span>
+                        <span class="jump-word text-emerald-400">Dùng</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Giới hạn vận tốc khí tại các vị trí tuyến ống và miệng gió để khống chế độ ồn theo tiêu chuẩn TCVN 5687:2024 &amp; ASHRAE.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 interactive-card">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 bg-slate-900/90 p-5 rounded-xl border border-slate-800 interactive-card">
+                            <h4 class="text-xs sm:text-sm font-bold text-sky-300 text-center mb-4 uppercase tracking-wider">So Sánh Vận Tốc Thiết Kế Tối Đa Cho Các Công Trình (m/s)</h4>
+                            <div class="chart-container">
+                                <canvas id="velocityMatrixChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-5 space-y-3 text-xs">
+                            <div class="pop-btn bg-slate-900/90 p-4 rounded-xl border border-slate-800 hover:border-sky-500/50 cursor-pointer">
+                                <span class="font-bold text-sky-400 block text-sm mb-1">🏢 Khu Văn Phòng &amp; Căn Hộ (NC 30-35)</span>
+                                <p class="text-slate-300 leading-relaxed">
+                                    Ống chính: 5.0 - 6.5 m/s | Ống nhánh: 3.5 - 4.5 m/s | Miệng cấp/hồi: 1.5 - 2.5 m/s. Đảm bảo môi trường làm việc và nghỉ ngơi yên tĩnh.
+                                </p>
+                            </div>
+                            <div class="pop-btn bg-slate-900/90 p-4 rounded-xl border border-slate-800 hover:border-emerald-500/50 cursor-pointer">
+                                <span class="font-bold text-emerald-400 block text-sm mb-1">🎭 Trung Tâm Thương Mại &amp; Rạp Phim (NC 25-30)</span>
+                                <p class="text-slate-300 leading-relaxed">
+                                    Ống chính: 6.0 - 7.5 m/s | Ống nhánh: 4.0 - 5.0 m/s | Miệng cấp: 2.0 - 2.8 m/s. Khống chế tiếng rít không ảnh hưởng đến trải nghiệm âm thanh.
+                                </p>
+                            </div>
+                            <div class="pop-btn bg-slate-900/90 p-4 rounded-xl border border-slate-800 hover:border-amber-500/50 cursor-pointer">
+                                <span class="font-bold text-amber-400 block text-sm mb-1">🏭 Nhà Xưởng Công Nghiệp (NC 45-50)</span>
+                                <p class="text-slate-300 leading-relaxed">
+                                    Ống chính: 8.0 - 12.0 m/s | Ống nhánh: 6.0 - 8.0 m/s | Miệng cấp: 3.5 - 5.0 m/s. Ưu tiên tối ưu tiết diện và chi phí vật tư tôn.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="ma-sat-ong-gio" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-emerald-500 pl-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        <span class="text-emerald-400">3.</span>
+                        <span class="jump-word">Phân</span>
+                        <span class="jump-word">Tích</span>
+                        <span class="jump-word text-emerald-400">Thủy</span>
+                        <span class="jump-word text-emerald-400">Lực</span>
+                        <span class="jump-word">&amp;</span>
+                        <span class="jump-word text-sky-400">Tổn</span>
+                        <span class="jump-word text-sky-400">Thất</span>
+                        <span class="jump-word text-sky-400">Ma</span>
+                        <span class="jump-word text-sky-400">Sát</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Mối quan hệ giữa đường kính ống gió (D<sub>eq</sub>), vận tốc dòng chảy và tổn thất áp suất ma sát đơn vị (&Delta;P/L).</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 interactive-card">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-800 interactive-card">
+                            <h4 class="text-xs sm:text-sm font-bold text-emerald-400 mb-2 uppercase tracking-wider">Đường Cong Ma Sát Theo Vận Tốc (Pa/m)</h4>
+                            <p class="text-xs text-slate-400 mb-4">Khi vận tốc tăng lên gấp đôi, tổn thất ma sát tăng theo cấp số nhân (khoảng 3.5 đến 4 lần).</p>
+                            <div class="chart-container">
+                                <canvas id="frictionCurveChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-800 interactive-card">
+                            <h4 class="text-xs sm:text-sm font-bold text-rose-400 mb-2 uppercase tracking-wider">Phạt Ma Sát Tăng Thêm Theo Aspect Ratio (W/H)</h4>
+                            <p class="text-xs text-slate-400 mb-4">Ống gió quá dẹt (W/H &gt; 4:1) làm tăng diện tích tiếp xúc thành ống, gia tăng tổn thất ma sát phụ lên đến 35%.</p>
+                            <div class="chart-container">
+                                <canvas id="aspectRatioPenaltyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mieng-gio-am-hoc" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-amber-500 pl-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        <span class="text-amber-400">4.</span>
+                        <span class="jump-word">Âm</span>
+                        <span class="jump-word">Học</span>
+                        <span class="jump-word text-amber-400">Miệng</span>
+                        <span class="jump-word text-amber-400">Gió</span>
+                        <span class="jump-word">&amp;</span>
+                        <span class="jump-word text-rose-400">Độ</span>
+                        <span class="jump-word text-rose-400">Ồn</span>
+                        <span class="jump-word text-rose-400">NC</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 interactive-card">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-800 interactive-card">
+                            <h4 class="text-xs sm:text-sm font-bold text-amber-400 mb-2 uppercase tracking-wider">Mối Quan Hệ Vận Tốc Mặt V<sub>face</sub> &amp; Độ Ồn NC</h4>
+                            <div class="chart-container">
+                                <canvas id="noiseVelocityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Quy Tắc Khống Chế Âm Học Cho Miệng Gió</h4>
+                            <ul class="space-y-3 text-xs text-slate-300">
+                                <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
+                                    <span class="text-emerald-400 font-bold text-base">✓</span>
+                                    <div>
+                                        <strong class="text-white block">V<sub>face</sub> &le; 2.0 m/s:</strong>
+                                        Đạt tiêu chuẩn yên tĩnh cao (NC-25 đến NC-30), thích hợp cho phòng ngủ, phòng thu âm, bệnh viện.
+                                    </div>
+                                </li>
+                                <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
+                                    <span class="text-sky-400 font-bold text-base">✓</span>
+                                    <div>
+                                        <strong class="text-white block">V<sub>face</sub> = 2.0 - 2.5 m/s:</strong>
+                                        Đạt tiêu chuẩn văn phòng cao cấp (NC-35), cân bằng tốt giữa kích thước miệng gió và độ ồn background.
+                                    </div>
+                                </li>
+                                <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
+                                    <span class="text-rose-400 font-bold text-base">✕</span>
+                                    <div>
+                                        <strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s:</strong>
+                                        Phát ra tiếng rít xói tai (NC &gt; 42). Bắt buộc phải tăng chiều rộng W hoặc chiều cao H của cổ miệng gió.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quy-trinh-sop" class="scroll-mt-24 space-y-6">
+                <div class="border-l-4 border-rose-500 pl-4">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                        <span class="text-rose-400">5.</span>
+                        <span class="jump-word">Quy</span>
+                        <span class="jump-word">Trình</span>
+                        <span class="jump-word text-rose-400">SOP</span>
+                        <span class="jump-word text-rose-400">5</span>
+                        <span class="jump-word text-rose-400">Bước</span>
+                        <span class="jump-word text-rose-400">Thiết</span>
+                        <span class="jump-word text-rose-400">Kế</span>
+                        <span class="jump-word">Ống</span>
+                        <span class="jump-word">Gió</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Các bước chuẩn hóa từ tính tải nhiệt đến chọn quạt và cân bằng áp suất tĩnh.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
+                        <div class="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-sky-500 group-hover:text-white transition-all">1</div>
+                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-sky-400 transition-colors">Tính Lưu Lượng Q</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).</p>
+                    </div>
+
+                    <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all">2</div>
+                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-emerald-400 transition-colors">Chọn V<sub>design</sub></h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.</p>
+                    </div>
+
+                    <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all">3</div>
+                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-amber-400 transition-colors">Tính W x H &amp; D<sub>eq</sub></h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Áp dụng công thức Equal Friction để tìm D<sub>eq</sub> và quy đổi tiết diện W x H dẹt.</p>
+                    </div>
+
+                    <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-purple-500 group-hover:text-white transition-all">4</div>
+                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-purple-400 transition-colors">Tính V<sub>face</sub> Miệng Gió</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Tính diện tích thoát gió hiệu dụng A<sub>eff</sub> và kiểm tra V<sub>face</sub> &le; 2.5 m/s.</p>
+                    </div>
+
+                    <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
+                        <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-rose-500 group-hover:text-white transition-all">5</div>
+                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-rose-400 transition-colors">Tính Áp Suất Tĩnh ESP</h4>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="bg-slate-950/90 border-t border-slate-800 text-slate-400 py-8 mt-16 text-xs text-center backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-4 space-y-3">
+                <p class="font-semibold text-slate-300">Cẩm Nang &amp; Công Cụ Tính Kích Thước Ống Gió - Miệng Gió HVAC Realtime</p>
+                <p class="text-slate-400">Tuân thủ nghiêm ngặt Quy chuẩn TCVN 5687:2024, ASHRAE Fundamentals &amp; SMACNA Duct Construction Standards</p>
+                <p class="text-slate-600">&copy; 2026 HVAC &amp; MEP Engineering Design System. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        (function initHVACCanvas() {
+            var canvas = document.getElementById('bg-canvas');
+            var ctx = canvas.getContext('2d');
+            var width, height;
+            var particles = [];
+            var particleCount = 45;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function Particle() {
+                this.reset();
+            }
+
+            Particle.prototype.reset = function() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.length = Math.random() * 80 + 30;
+                this.speed = Math.random() * 1.8 + 0.6;
+                this.thickness = Math.random() * 1.6 + 0.6;
+                this.opacity = Math.random() * 0.35 + 0.1;
+                var colors = ['56, 189, 248', '14, 165, 233', '52, 211, 153', '99, 102, 241'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.angle = (Math.random() * 15 - 7.5) * (Math.PI / 180);
+            };
+
+            Particle.prototype.update = function() {
+                this.x += Math.cos(this.angle) * this.speed * 2.2;
+                this.y += Math.sin(this.angle) * this.speed * 0.4;
+                if (this.x - this.length > width) {
+                    this.x = -this.length;
+                    this.y = Math.random() * height;
+                }
+            };
+
+            Particle.prototype.draw = function() {
+                ctx.save();
+                ctx.beginPath();
+                var grad = ctx.createLinearGradient(
+                    this.x, this.y, 
+                    this.x + Math.cos(this.angle) * this.length, 
+                    this.y + Math.sin(this.angle) * this.length
+                );
+                grad.addColorStop(0, 'rgba(' + this.color + ', 0)');
+                grad.addColorStop(0.5, 'rgba(' + this.color + ',' + this.opacity + ')');
+                grad.addColorStop(1, 'rgba(' + this.color + ', 0)');
+
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = this.thickness;
+                ctx.lineCap = 'round';
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(
+                    this.x + Math.cos(this.angle) * this.length, 
+                    this.y + Math.sin(this.angle) * this.length
+                );
+                ctx.stroke();
+                ctx.restore();
+            };
+
+            for (var i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                for (var i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        var audioCtx = null;
+        function playPopSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                var osc = audioCtx.createOscillator();
+                var gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.05);
+
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.055);
+            } catch (e) {}
+        }
+
+        document.addEventListener('click', function(e) {
+            var targetBtn = e.target.closest('.pop-btn, .kpi-card, .tab-btn, button, a[href^="#"]');
+            if (targetBtn) {
+                playPopSound();
+
+                var rect = targetBtn.getBoundingClientRect();
+                var ripple = document.createElement('span');
+                ripple.className = 'click-ripple';
+                var size = Math.max(rect.width, rect.height) * 1.5;
+                ripple.style.width = ripple.style.height = size + 'px';
+                var x = e.clientX - rect.left - size / 2;
+                var y = e.clientY - rect.top - size / 2;
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                targetBtn.appendChild(ripple);
+                setTimeout(function() {
+                    ripple.remove();
+                }, 600);
+            }
+        });
+
+        function wrapLabel(str, maxLen) {
+            if (!maxLen) maxLen = 16;
+            if (typeof str !== 'string' || str.length <= maxLen) return str;
+            var words = str.split(' ');
+            var lines = [];
+            var currentLine = '';
+            words.forEach(function(word) {
+                if ((currentLine + ' ' + word).trim().length > maxLen) {
+                    if (currentLine) lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine) lines.push(currentLine.trim());
+            return lines;
+        }
+
+        var mandatoryTooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    var item = tooltipItems[0];
+                    var label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        function switchCalcTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.getElementById('ductSizerPanel').classList.add('hidden');
+            document.getElementById('grilleSizerPanel').classList.add('hidden');
+            document.getElementById('masterPanel').classList.add('hidden');
+
+            if (tabName === 'duct') {
+                document.getElementById('tabDuctBtn').classList.add('active');
+                document.getElementById('ductSizerPanel').classList.remove('hidden');
+            } else if (tabName === 'grille') {
+                document.getElementById('tabGrilleBtn').classList.add('active');
+                document.getElementById('grilleSizerPanel').classList.remove('hidden');
+            } else if (tabName === 'master') {
+                document.getElementById('tabMasterBtn').classList.add('active');
+                document.getElementById('masterPanel').classList.remove('hidden');
+            }
+        }
+
+        function setDuctVel(vel) {
+            document.getElementById('ductVelocityVal').value = vel;
+            calculateDuctMetrics();
+        }
+
+        function calculateDuctMetrics() {
+            var rawQ = parseFloat(document.getElementById('ductFlowVal').value) || 0;
+            var unitQ = document.getElementById('ductFlowUnit').value;
+            var V_design = parseFloat(document.getElementById('ductVelocityVal').value) || 6.0;
+            var H_mm = parseFloat(document.getElementById('ductHeightVal').value) || 300;
+
+            var Q_m3s = 0;
+            if (unitQ === 'm3h') {
+                Q_m3s = rawQ / 3600.0;
+            } else if (unitQ === 'ls') {
+                Q_m3s = rawQ / 1000.0;
+            } else if (unitQ === 'cfm') {
+                Q_m3s = rawQ * 0.000471947;
+            }
+
+            var Area_req = V_design > 0 ? (Q_m3s / V_design) : 0;
+            var Deq_mm = Math.sqrt((4.0 * Area_req) / Math.PI) * 1000.0;
+
+            var H_m = H_mm / 1000.0;
+            var W_exact_mm = H_m > 0 ? ((Area_req / H_m) * 1000.0) : 0;
+
+            var W_std_mm = Math.max(150, Math.ceil(W_exact_mm / 50.0) * 50);
+
+            var Area_actual = (W_std_mm / 1000.0) * H_m;
+            var V_actual = Area_actual > 0 ? (Q_m3s / Area_actual) : 0;
+
+            var maxDim = Math.max(W_std_mm, H_mm);
+            var minDim = Math.min(W_std_mm, H_mm);
+            var aspect = minDim > 0 ? (maxDim / minDim) : 1.0;
+
+            var frictionPaM = 0;
+            if (Deq_mm > 0) {
+                var Deq_m = Deq_mm / 1000.0;
+                frictionPaM = 0.0033 * (Math.pow(V_actual, 1.82) / Math.pow(Deq_m, 1.22));
+            }
+
+            document.getElementById('resDuctFlowM3s').innerText = Q_m3s.toFixed(3) + ' m³/s';
+            document.getElementById('resDuctDeq').innerText = 'Ø ' + Math.round(Deq_mm) + ' mm';
+            document.getElementById('resDuctArea').innerText = Area_req.toFixed(4) + ' m²';
+            document.getElementById('resDuctSize').innerText = W_std_mm + ' x ' + H_mm + ' mm';
+            document.getElementById('resDuctActualVel').innerText = V_actual.toFixed(2) + ' m/s';
+            document.getElementById('resDuctFriction').innerText = frictionPaM.toFixed(2) + ' Pa/m';
+
+            var alertBox = document.getElementById('ductAlertBox');
+            var alertTitle = document.getElementById('ductAlertTitle');
+            var alertMsg = document.getElementById('ductAlertMsg');
+            var alertIcon = document.getElementById('ductAlertIcon');
+
+            if (aspect > 4.0) {
+                alertBox.className = 'p-4 rounded-xl border bg-rose-500/20 border-rose-500/40 text-rose-300 transition-all';
+                alertIcon.innerText = '⚠️';
+                alertTitle.innerText = 'CẢNH BÁO: ASPECT RATIO QUÁ CAO (' + aspect.toFixed(2) + ' : 1)';
+                alertMsg.innerText = 'Tỷ lệ W/H vượt quá giới hạn 4:1! Ống quá dẹt làm tăng ma sát phụ và nguy cơ võng tôn. Nên tăng chiều cao H khống chế.';
+            } else if (V_actual > 8.0) {
+                alertBox.className = 'p-4 rounded-xl border bg-amber-500/20 border-amber-500/40 text-amber-300 transition-all';
+                alertIcon.innerText = '⚠️';
+                alertTitle.innerText = 'VẬN TỐC THỰC TẾ CAO (' + V_actual.toFixed(2) + ' m/s)';
+                alertMsg.innerText = 'Vận tốc vượt quá 8.0 m/s phù hợp cho đường ống chính công nghiệp. Nếu dùng cho văn phòng sẽ gây tiếng ồn rung lắc ống.';
+            } else {
+                alertBox.className = 'p-4 rounded-xl border bg-emerald-500/20 border-emerald-500/40 text-emerald-300 transition-all';
+                alertIcon.innerText = '✅';
+                alertTitle.innerText = 'KÍCH THƯỚC ĐẠT TIÊU CHUẨN DESIGN';
+                alertMsg.innerText = 'Tỷ lệ Aspect Ratio W/H = ' + aspect.toFixed(2) + ' nằm trong ngưỡng an toàn (≤ 4:1). Tổn thất ma sát ' + frictionPaM.toFixed(2) + ' Pa/m tối ưu cho cột áp quạt.';
+            }
+        }
+
+        function calculateGrilleMetrics() {
+            var rawQ = parseFloat(document.getElementById('grilleFlowVal').value) || 0;
+            var unitQ = document.getElementById('grilleFlowUnit').value;
+            var W_mm = parseFloat(document.getElementById('grilleWVal').value) || 0;
+            var H_mm = parseFloat(document.getElementById('grilleHVal').value) || 0;
+            var freeAreaFactor = parseFloat(document.getElementById('grilleFreeArea').value) || 0.70;
+
+            var Q_m3s = 0;
+            if (unitQ === 'ls') {
+                Q_m3s = rawQ / 1000.0;
+            } else if (unitQ === 'm3h') {
+                Q_m3s = rawQ / 3600.0;
+            } else if (unitQ === 'cfm') {
+                Q_m3s = rawQ * 0.000471947;
+            }
+
+            var W_m = W_mm / 1000.0;
+            var H_m = H_mm / 1000.0;
+            var neckArea = W_m * H_m;
+            var effArea = neckArea * freeAreaFactor;
+
+            var velocity = effArea > 0 ? (Q_m3s / effArea) : 0;
+            var aspect = H_mm > 0 ? (W_mm / H_mm) : 1.0;
+
+            document.getElementById('resGrilleM3s').innerText = Q_m3s.toFixed(3) + ' m³/s';
+            document.getElementById('resGrilleNeckArea').innerText = neckArea.toFixed(4) + ' m²';
+            document.getElementById('resGrilleEffArea').innerText = effArea.toFixed(4) + ' m²';
+            document.getElementById('resGrilleVel').innerText = velocity.toFixed(2) + ' m/s';
+            document.getElementById('resGrilleAspect').innerText = aspect.toFixed(2);
+
+            var alertBox = document.getElementById('grilleAlertBox');
+            var alertTitle = document.getElementById('grilleAlertTitle');
+            var alertMsg = document.getElementById('grilleAlertMsg');
+            var alertIcon = document.getElementById('grilleAlertIcon');
+            var resVelElem = document.getElementById('resGrilleVel');
+
+            if (velocity <= 2.50) {
+                resVelElem.className = 'text-xl sm:text-2xl font-extrabold text-emerald-400';
+                alertBox.className = 'p-4 rounded-xl border bg-emerald-500/20 border-emerald-500/40 text-emerald-300 transition-all';
+                alertIcon.innerText = '✅';
+                alertTitle.innerText = 'VẬN TỐC AN TOÀN (NC-30 ≤ NC-35)';
+                alertMsg.innerText = 'Vận tốc gió bề mặt ' + velocity.toFixed(2) + ' m/s nằm trong ngưỡng tiêu chuẩn âm học. Miệng gió vận hành êm ái, không tạo ra tiếng rít.';
+            } else if (velocity <= 3.00) {
+                resVelElem.className = 'text-xl sm:text-2xl font-extrabold text-amber-400';
+                alertBox.className = 'p-4 rounded-xl border bg-amber-500/20 border-amber-500/40 text-amber-300 transition-all';
+                alertIcon.innerText = '⚠️';
+                alertTitle.innerText = 'NGUY CƠ ỒN NHẸ (NC-38 > NC-35)';
+                alertMsg.innerText = 'Vận tốc gió bề mặt ' + velocity.toFixed(2) + ' m/s hơi cao cho văn phòng yên tĩnh. Nên tăng nhẹ kích thước cổ W x H.';
+            } else {
+                resVelElem.className = 'text-xl sm:text-2xl font-extrabold text-rose-400';
+                alertBox.className = 'p-4 rounded-xl border bg-rose-500/20 border-rose-500/40 text-rose-300 transition-all';
+                alertIcon.innerText = '⚠️';
+                alertTitle.innerText = 'CẢNH BÁO: ĐỘ ỒN CAO (HIGH NOISE ALERT)';
+                alertMsg.innerText = 'Vận tốc gió bề mặt ' + velocity.toFixed(2) + ' m/s vượt quá ngưỡng 2.5 m/s! Khí thổi qua nan chớp gây ra tiếng rít xói tai. Cần mở rộng tiết diện cổ miệng gió.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            ['ductFlowVal', 'ductFlowUnit', 'ductVelocityVal', 'ductHeightVal'].forEach(function(id) {
+                var elem = document.getElementById(id);
+                if (elem) {
+                    elem.addEventListener('input', calculateDuctMetrics);
+                    elem.addEventListener('change', calculateDuctMetrics);
+                }
+            });
+
+            ['grilleFlowVal', 'grilleFlowUnit', 'grilleWVal', 'grilleHVal', 'grilleFreeArea'].forEach(function(id) {
+                var elem = document.getElementById(id);
+                if (elem) {
+                    elem.addEventListener('input', calculateGrilleMetrics);
+                    elem.addEventListener('change', calculateGrilleMetrics);
+                }
+            });
+
+            calculateDuctMetrics();
+            calculateGrilleMetrics();
+
+            var rawVelLabels = ['Ống Chính VP', 'Ống Nhánh VP', 'Ống Hồi Về', 'Miệng Cấp VP', 'Nhà Xưởng Max'];
+            var wrappedVelLabels = rawVelLabels.map(function(l) { return wrapLabel(l, 14); });
+            var ctxVel = document.getElementById('velocityMatrixChart').getContext('2d');
+            new Chart(ctxVel, {
+                type: 'bar',
+                data: {
+                    labels: wrappedVelLabels,
+                    datasets: [{
+                        label: 'Vận tốc max (m/s)',
+                        data: [6.5, 4.5, 4.0, 2.5, 10.0],
+                        backgroundColor: ['#0284C7', '#38BDF8', '#34D399', '#FBBF24', '#F43F5E'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 12, grid: { color: 'rgba(255, 255, 255, 0.08)' }, ticks: { color: '#94A3B8' } },
+                        x: { grid: { display: false }, ticks: { color: '#CBD5E1' } }
+                    },
+                    plugins: {
+                        tooltip: mandatoryTooltipConfig,
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            var rawFricLabels = ['3.0 m/s', '4.5 m/s', '6.0 m/s', '7.5 m/s', '9.0 m/s'];
+            var wrappedFricLabels = rawFricLabels.map(function(l) { return wrapLabel(l, 14); });
+            var ctxFric = document.getElementById('frictionCurveChart').getContext('2d');
+            new Chart(ctxFric, {
+                type: 'line',
+                data: {
+                    labels: wrappedFricLabels,
+                    datasets: [{
+                        label: 'Tổn thất ma sát Ø300 (Pa/m)',
+                        data: [0.32, 0.65, 1.12, 1.68, 2.35],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#10B981'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.08)' }, ticks: { color: '#94A3B8' } },
+                        x: { grid: { display: false }, ticks: { color: '#CBD5E1' } }
+                    },
+                    plugins: {
+                        tooltip: mandatoryTooltipConfig,
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            var rawAspectLabels = ['1:1 (Vuông)', '2:1 (Chuẩn)', '3:1 (Chấp nhận)', '4:1 (Giới hạn)', '5:1 (Cảnh báo)'];
+            var wrappedAspectLabels = rawAspectLabels.map(function(l) { return wrapLabel(l, 14); });
+            var ctxAspect = document.getElementById('aspectRatioPenaltyChart').getContext('2d');
+            new Chart(ctxAspect, {
+                type: 'doughnut',
+                data: {
+                    labels: wrappedAspectLabels,
+                    datasets: [{
+                        data: [100, 108, 118, 130, 150],
+                        backgroundColor: ['#34D399', '#38BDF8', '#FBBF24', '#F97316', '#F43F5E'],
+                        borderWidth: 2,
+                        borderColor: '#0B132B'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: mandatoryTooltipConfig,
+                        legend: { position: 'bottom', labels: { boxWidth: 10, color: '#CBD5E1', font: { size: 10 } } }
+                    }
+                }
+            });
+
+            var rawNoiseLabels = ['1.0 m/s (NC20)', '1.5 m/s (NC25)', '2.0 m/s (NC30)', '2.5 m/s (NC35)', '3.0 m/s (NC42)', '3.5 m/s (NC48)'];
+            var wrappedNoiseLabels = rawNoiseLabels.map(function(l) { return wrapLabel(l, 14); });
+            var ctxNoise = document.getElementById('noiseVelocityChart').getContext('2d');
+            new Chart(ctxNoise, {
+                type: 'line',
+                data: {
+                    labels: wrappedNoiseLabels,
+                    datasets: [{
+                        label: 'Chỉ số ồn NC',
+                        data: [20, 25, 30, 35, 42, 48],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.18)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#F59E0B'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 15, max: 55, grid: { color: 'rgba(255, 255, 255, 0.08)' }, ticks: { color: '#94A3B8' } },
+                        x: { grid: { display: false }, ticks: { color: '#CBD5E1' } }
+                    },
+                    plugins: {
+                        tooltip: mandatoryTooltipConfig,
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

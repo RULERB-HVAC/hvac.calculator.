@@ -1772,6 +1772,48 @@
                     <p class="relative z-10 mt-5 text-[11px] text-slate-500">Ảnh minh họa lấy từ Wikimedia Commons; bấm tên tác giả để xem thông tin và giấy phép của từng ảnh.</p>
                 </div>
             </section>
+
+            <section id="hvacHistorySection" class="scroll-mt-24">
+                <div class="hvac-hist-panel p-5 sm:p-7 shadow-2xl">
+                    <!-- Header -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 border-b border-slate-800/80 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-lg">📂</span>
+                                <h2 class="text-base sm:text-lg font-extrabold text-white tracking-tight">Lịch Sử Tính Toán</h2>
+                                <span id="hvacHistTotalCount" class="inline-flex items-center justify-center min-w-[1.4rem] h-5 px-1.5 rounded-full bg-sky-500/20 border border-sky-500/40 text-sky-300 text-[10px] font-bold">0</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Lưu tự động sau mỗi thay đổi · Tối đa 20 bản ghi / mục · Lưu trong máy, không gửi server</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="hvacHistClearBtn" onclick="hvacHistClear()" class="hvac-hist-del px-3 py-1.5 text-xs" style="display:none">🗑 Xóa tab này</button>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="hvac-hist-tabs">
+                        <button class="hvac-hist-tab active" data-tab="duct"   onclick="hvacHistRender('duct')">📏 Ống Gió</button>
+                        <button class="hvac-hist-tab"        data-tab="grille" onclick="hvacHistRender('grille')">🪟 Miệng Gió</button>
+                        <button class="hvac-hist-tab"        data-tab="hap"    onclick="hvacHistRender('hap')">❄️ Tải Lạnh</button>
+                        <button class="hvac-hist-tab"        data-tab="cwp"    onclick="hvacHistRender('cwp')">💧 Ống Nước Lạnh</button>
+                        <button class="hvac-hist-tab"        data-tab="pccc"   onclick="hvacHistRender('pccc')">🔥 PCCC</button>
+                    </div>
+
+                    <!-- Save buttons row (tiện lợi, nhắc người dùng) -->
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button id="hvacSaveDuctBtn"   onclick="hvacHistSave('duct', this)"   class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Ống Gió</button>
+                        <button id="hvacSaveGrilleBtn" onclick="hvacHistSave('grille', this)" class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Miệng Gió</button>
+                        <button id="hvacSaveHapBtn"    onclick="hvacHistSave('hap', this)"    class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Tải Lạnh</button>
+                        <button id="hvacSaveCwpBtn"    onclick="hvacHistSave('cwp', this)"    class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Ống Nước Lạnh</button>
+                        <button id="hvacSavePcccBtn"   onclick="hvacHistSave('pccc', this)"   class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả PCCC</button>
+                    </div>
+
+                    <!-- List -->
+                    <div id="hvacHistoryList" data-i18n-skip="true" class="rounded-xl border border-slate-800/80 bg-slate-950/50 overflow-hidden min-h-[72px]">
+                        <div class="hvac-hist-empty">📂 Đang tải lịch sử…</div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <section id="communityComments" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-8" aria-labelledby="communityCommentsTitle">
@@ -4949,49 +4991,6 @@
     });
 })();
 </script>
-
-<!-- ── Phần 5 HTML: History Section (chèn vào page) ── -->
-<section id="hvacHistorySection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-4">
-    <div class="hvac-hist-panel p-5 sm:p-7">
-        <!-- Header -->
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 border-b border-slate-800/80 pb-4">
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-lg">📂</span>
-                    <h2 class="text-base sm:text-lg font-extrabold text-white tracking-tight">Lịch Sử Tính Toán</h2>
-                    <span id="hvacHistTotalCount" class="inline-flex items-center justify-center min-w-[1.4rem] h-5 px-1.5 rounded-full bg-sky-500/20 border border-sky-500/40 text-sky-300 text-[10px] font-bold">0</span>
-                </div>
-                <p class="text-xs text-slate-400">Lưu tự động sau mỗi thay đổi · Tối đa 20 bản ghi / mục · Lưu trong máy, không gửi server</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <button id="hvacHistClearBtn" onclick="hvacHistClear()" class="hvac-hist-del px-3 py-1.5 text-xs" style="display:none">🗑 Xóa tab này</button>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="hvac-hist-tabs">
-            <button class="hvac-hist-tab active" data-tab="duct"   onclick="hvacHistRender('duct')">📏 Ống Gió</button>
-            <button class="hvac-hist-tab"        data-tab="grille" onclick="hvacHistRender('grille')">🪟 Miệng Gió</button>
-            <button class="hvac-hist-tab"        data-tab="hap"    onclick="hvacHistRender('hap')">❄️ Tải Lạnh</button>
-            <button class="hvac-hist-tab"        data-tab="cwp"    onclick="hvacHistRender('cwp')">💧 Ống Nước Lạnh</button>
-            <button class="hvac-hist-tab"        data-tab="pccc"   onclick="hvacHistRender('pccc')">🔥 PCCC</button>
-        </div>
-
-        <!-- Save buttons row (tiện lợi, nhắc người dùng) -->
-        <div class="flex flex-wrap gap-2 mb-4">
-            <button id="hvacSaveDuctBtn"   onclick="hvacHistSave('duct', this)"   class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Ống Gió</button>
-            <button id="hvacSaveGrilleBtn" onclick="hvacHistSave('grille', this)" class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Miệng Gió</button>
-            <button id="hvacSaveHapBtn"    onclick="hvacHistSave('hap', this)"    class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Tải Lạnh</button>
-            <button id="hvacSaveCwpBtn"    onclick="hvacHistSave('cwp', this)"    class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả Ống Nước Lạnh</button>
-            <button id="hvacSavePcccBtn"   onclick="hvacHistSave('pccc', this)"   class="hvac-save-btn pop-btn"><span>💾</span> Lưu kết quả PCCC</button>
-        </div>
-
-        <!-- List -->
-        <div id="hvacHistoryList" data-i18n-skip="true" class="rounded-xl border border-slate-800/80 bg-slate-950/50 overflow-hidden min-h-[72px]">
-            <div class="hvac-hist-empty">📂 Đang tải lịch sử…</div>
-        </div>
-    </div>
-</section>
 <style>
 /* ── PCCC tabs (cùng giao diện .tab-btn, nhưng tách class để không bị switchCalcTab reset) ── */
 .pccc-tab-btn { position: relative; overflow: hidden; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); background-color: rgba(15,23,42,.9); color: #cbd5e1; border: 1px solid #1e293b; }

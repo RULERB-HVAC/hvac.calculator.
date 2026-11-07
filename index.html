@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Cẩm Nang &amp; Bộ Tính Kích Thước Ống Gió - Miệng Gió HVAC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -67,6 +68,98 @@
         @keyframes introTextReveal { to { opacity: 1; transform: translateY(0) scale(1); } }
         @media (max-width: 640px) { .intro-kicker { font-size: 9px; letter-spacing: 0.12em; } .intro-welcome-title { font-size: clamp(27px, 8vw, 42px); } }
         @media (prefers-reduced-motion: reduce) { .intro-fabric-wrap { animation-duration: 1.2s; } .intro-fabric { animation-duration: 2.5s; } .intro-copy { animation-duration: 0.25s; animation-delay: 0s; } }
+        #aurora-field { position: fixed; inset: -18vh -12vw; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0.9; }
+        #aurora-field::before, #aurora-field::after { content: ""; position: absolute; inset: -24%; border-radius: 50%; filter: blur(56px); mix-blend-mode: screen; will-change: transform; }
+        #aurora-field::before {
+            background: conic-gradient(from 215deg at 50% 50%, transparent 0deg, rgba(14, 165, 233, 0.04) 28deg, rgba(56, 189, 248, 0.38) 76deg, rgba(99, 102, 241, 0.3) 132deg, transparent 188deg, rgba(16, 185, 129, 0.28) 248deg, transparent 320deg);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 9%, transparent 70%);
+            mask-image: radial-gradient(ellipse at 50% 50%, #000 9%, transparent 70%);
+            animation: auroraSweep 26s ease-in-out infinite alternate;
+        }
+        #aurora-field::after {
+            background: conic-gradient(from 24deg at 48% 52%, transparent 0deg, rgba(16, 185, 129, 0.03) 40deg, rgba(45, 212, 191, 0.28) 100deg, rgba(2, 132, 199, 0.3) 158deg, transparent 220deg, rgba(129, 140, 248, 0.24) 286deg, transparent 340deg);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 5%, transparent 72%);
+            mask-image: radial-gradient(ellipse at 50% 50%, #000 5%, transparent 72%);
+            filter: blur(78px);
+            animation: auroraSweep 34s ease-in-out infinite alternate-reverse;
+        }
+        .ambient-orb { opacity: 0.34; filter: blur(92px); }
+        .grid-overlay { opacity: 0.72; -webkit-mask-image: radial-gradient(ellipse at 50% 36%, #000 8%, transparent 82%); mask-image: radial-gradient(ellipse at 50% 36%, #000 8%, transparent 82%); animation: gridDrift 34s linear infinite; }
+        .gradient-header { background-size: 220% 220%; animation: headerAuroraShift 15s ease-in-out infinite alternate; }
+        .glass-card:hover { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.16), 0 18px 46px -12px rgba(2, 132, 199, 0.4), inset 0 0 25px rgba(56, 189, 248, 0.045); }
+        .intro-fabric { isolation: isolate; }
+        .intro-fabric::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(108deg, transparent 0%, transparent 42%, rgba(224, 242, 254, 0.26) 50%, rgba(56, 189, 248, 0.2) 54%, transparent 64%); mix-blend-mode: screen; animation: introSilkGlint 3.1s ease-in-out 0.2s infinite; }
+        @keyframes auroraSweep { 0% { transform: translate3d(-2%, 1%, 0) rotate(-10deg) scale(1.04); } 48% { transform: translate3d(2%, -2%, 0) rotate(8deg) scale(1.12); } 100% { transform: translate3d(-1%, 2%, 0) rotate(18deg) scale(1.06); } }
+        @keyframes gridDrift { to { background-position: 40px 40px, 40px 40px; } }
+        @keyframes headerAuroraShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        @keyframes introSilkGlint { 0% { transform: translateX(-78%); opacity: 0; } 18% { opacity: 0.7; } 76% { opacity: 0.42; } 100% { transform: translateX(78%); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) {
+            #aurora-field::before, #aurora-field::after, .grid-overlay, .gradient-header, .intro-fabric::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+        }
+        .hvac-gallery-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(71, 85, 105, 0.7);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(8, 19, 33, 0.82));
+            box-shadow: 0 16px 40px rgba(2, 8, 23, 0.28);
+            transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+        }
+        .hvac-gallery-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.58);
+            box-shadow: 0 20px 48px rgba(14, 165, 233, 0.13), 0 0 30px rgba(16, 185, 129, 0.08);
+        }
+        .hvac-gallery-image-button {
+            position: relative;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 42%, rgba(14, 116, 144, 0.26), rgba(2, 6, 23, 0.9) 78%);
+            cursor: pointer;
+        }
+        .hvac-gallery-image {
+            display: block;
+            width: 100%;
+            height: 228px;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.94;
+            transition: transform 450ms ease, opacity 450ms ease;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+        .hvac-gallery-card:hover .hvac-gallery-image { opacity: 1; }
+        .hvac-gallery-image.gallery-spin { animation: hvacGalleryFullSpin 1100ms linear both; }
+        @keyframes hvacGalleryFullSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(0.68); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(0.68); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .hvac-gallery-image-button:focus-visible { outline: 2px solid #38bdf8; outline-offset: -3px; }
+        .hvac-gallery-source { color: #94a3b8; }
+        .hvac-gallery-source a { color: #7dd3fc; text-decoration: underline; text-decoration-color: rgba(125, 211, 252, 0.35); text-underline-offset: 2px; }
+        .hvac-gallery-source a:hover { color: #a7f3d0; }
+        @media (prefers-reduced-motion: reduce) {
+            .hvac-gallery-card, .hvac-gallery-image { transition: none !important; }
+            .hvac-gallery-image.gallery-spin { animation-duration: 1ms !important; }
+        }
+        #mobileMenu {
+            width: min(18rem, calc(100vw - 1rem));
+            max-height: calc(100vh - 6rem);
+            max-height: calc(100dvh - 6rem);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(100, 116, 139, 0.75) rgba(15, 23, 42, 0.45);
+            touch-action: pan-y;
+        }
+        #mobileMenu::-webkit-scrollbar { width: 7px; }
+        #mobileMenu::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.45); border-radius: 999px; }
+        #mobileMenu::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.75); border-radius: 999px; }
+        #mobileMenu::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.8); }
     </style>
 </head>
 <body class="antialiased selection:bg-sky-500 selection:text-white">
@@ -84,6 +177,7 @@
     <div class="ambient-orb orb-2"></div>
     <div class="ambient-orb orb-3"></div>
     <canvas id="bg-canvas"></canvas>
+    <div id="aurora-field" aria-hidden="true"></div>
     <div class="grid-overlay"></div>
 
     <div class="relative z-10">
@@ -102,6 +196,7 @@
                                 <a href="#tieu-chuan-van-toc" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">📊</span> Vận Tốc Tiêu Chuẩn</a>
                                 <a href="#ma-sat-ong-gio" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🌊</span> Thủy Lực &amp; Ma Sát</a>
                                 <a href="#mieng-gio-am-hoc" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🔊</span> Âm Học Miệng Gió</a>
+                                <a href="#thu-vien-ong-gio" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🖼️</span> Thư Viện Ống Gió &amp; Miệng Gió</a>
                                 <a href="#quy-trinh-sop" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">📋</span> Quy Trình SOP</a>
                             </nav>
                             <div class="mt-1 border-t border-slate-700/80 px-3 pt-3 pb-2">
@@ -116,6 +211,8 @@
                                         <option value="hvac">Gió HVAC</option>
                                         <option value="rain">Mưa nhẹ</option>
                                         <option value="chill">Chill ambient</option>
+                                        <option value="youtube">YouTube</option>
+                                        <option value="soundcloud">Ông Trời Làm Tội Anh Chưa · SoundCloud</option>
                                     </select>
                                 </div>
                                 <div class="mt-2">
@@ -124,6 +221,46 @@
                                         <span id="ambientVolumeValue">28%</span>
                                     </div>
                                     <input id="ambientVolume" type="range" min="0" max="100" value="28" aria-label="Âm lượng nền" class="mt-1 w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-slate-700 accent-sky-400">
+                                </div>
+                                <div id="ambientSoundCloudPanel" class="hidden mt-3 overflow-hidden rounded-xl border border-sky-500/20 bg-slate-950/80">
+                                    <iframe id="ambientSoundCloudFrame" title="Phát Ông Trời Làm Tội Anh Chưa trên SoundCloud" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fminh-quang-309170673%2Fong-troi-lam-toi-anh-chua-beat-minh-hanh-x-rastz-x-qnt-ft-tuan-cry-instrumental&amp;color=%2310b981&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false"></iframe>
+                                    <a href="https://soundcloud.com/minh-quang-309170673/ong-troi-lam-toi-anh-chua-beat-minh-hanh-x-rastz-x-qnt-ft-tuan-cry-instrumental" target="_blank" rel="noopener noreferrer" class="block px-3 py-2 text-[10px] text-sky-300 hover:text-emerald-300">♪ Mở bài hát trên SoundCloud ↗</a>
+                                </div>
+                                <div id="ambientYouTubePanel" class="hidden mt-3 overflow-hidden rounded-xl border border-red-500/25 bg-slate-950/90">
+                                    <div class="border-b border-slate-700/80 p-3">
+                                        <a id="ambientYouTubeOpenLink" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" class="flex w-full items-center gap-2.5 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2.5 text-left transition-colors hover:bg-red-500/15">
+                                            <svg class="h-6 w-7 shrink-0" viewBox="0 0 28 20" aria-hidden="true">
+                                                <rect x="1" y="1" width="26" height="18" rx="5" fill="#FF0033"></rect>
+                                                <path d="M12 6.2v7.6l6.2-3.8L12 6.2Z" fill="#fff"></path>
+                                            </svg>
+                                            <span class="min-w-0 flex-1">
+                                                <span id="ambientYouTubeOpenLabel" class="block truncate text-xs font-bold text-white">Mở YouTube để chọn bài</span>
+                                                <span class="block text-[10px] text-slate-400">Chọn nhạc, sao chép link rồi quay lại</span>
+                                            </span>
+                                            <span class="text-sm text-red-300" aria-hidden="true">↗</span>
+                                        </a>
+                                    </div>
+                                    <div class="p-3">
+                                        <label for="ambientYouTubeUrl" class="mb-1.5 block text-[10px] font-medium text-slate-300">Dán link video nhạc YouTube</label>
+                                        <input id="ambientYouTubeUrl" type="text" inputmode="url" autocomplete="url" placeholder="https://youtu.be/..." class="w-full rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-2 text-[11px] text-slate-100 outline-none placeholder:text-slate-500 focus:border-red-400">
+                                        <button id="ambientYouTubeLoadButton" type="button" onclick="loadAmbientYouTubeTrack()" class="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/35 bg-red-500/15 px-3 py-2 text-[11px] font-bold text-red-100 transition-colors hover:bg-red-500/25">
+                                            <svg class="h-4 w-5" viewBox="0 0 28 20" aria-hidden="true">
+                                                <rect x="1" y="1" width="26" height="18" rx="5" fill="#FF0033"></rect>
+                                                <path d="M12 6.2v7.6l6.2-3.8L12 6.2Z" fill="#fff"></path>
+                                            </svg>
+                                            Phát bài này trong trang
+                                        </button>
+                                        <div id="ambientYouTubePlayerShell" class="mt-3 flex justify-center overflow-hidden rounded-lg border border-slate-700/80 bg-black">
+                                            <iframe id="ambientYouTubeFrame" title="Trình phát nhạc YouTube" width="200" height="200" src="about:blank" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" onload="initializeAmbientYouTubePlayer()"></iframe>
+                                        </div>
+                                        <div id="ambientYouTubeLocalNotice" class="hidden mt-3 rounded-lg border border-amber-400/20 bg-amber-400/5 p-3">
+                                            <p class="text-[10px] leading-relaxed text-amber-100/90">YouTube không phát trong file HTML mở trực tiếp. Hãy cập nhật file lên GitHub rồi mở website bằng HTTPS.</p>
+                                            <a href="https://kimngocquy3101-art.github.io/hvac.calculator/" target="_blank" rel="noopener noreferrer" class="mt-2 flex items-center justify-center gap-2 rounded-lg border border-sky-400/25 bg-sky-400/10 px-3 py-2 text-[10px] font-bold text-sky-200 hover:bg-sky-400/20">
+                                                <span aria-hidden="true">🌐</span> Mở website HTTPS
+                                            </a>
+                                        </div>
+                                        <p class="mt-2 text-[10px] leading-relaxed text-slate-500">Trình phát YouTube hiển thị tại đây; nếu trình duyệt chặn tự phát, bấm nút Play trong khung.</p>
+                                    </div>
                                 </div>
                                 <p id="ambientAudioStatus" class="mt-2 text-[10px] leading-relaxed text-slate-500">Đang thử phát nền</p>
                             </div>
@@ -629,6 +766,92 @@
                 </div>
             </section>
 
+            <section id="thu-vien-ong-gio" class="scroll-mt-24 space-y-6">
+                <div class="relative overflow-hidden rounded-3xl border border-sky-500/20 bg-gradient-to-br from-slate-900/85 via-slate-950/85 to-emerald-950/35 p-5 sm:p-7 shadow-2xl">
+                    <div class="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-sky-500/10 blur-3xl"></div>
+                    <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl"></div>
+                    <div class="relative z-10 mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                        <div class="border-l-4 border-emerald-400 pl-4">
+                            <div class="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Tham khảo trực quan</div>
+                            <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Thư Viện Ống Gió &amp; Miệng Gió</h2>
+                            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">Một số kiểu ống gió và cửa phân phối không khí thường gặp trong hệ thống HVAC.</p>
+                        </div>
+                        <div class="inline-flex items-center gap-2 self-start rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-2 text-xs font-medium text-sky-200 sm:self-auto">
+                            <span class="text-base">↻</span> Bấm vào ảnh để xoay một vòng
+                        </div>
+                    </div>
+                    <div class="relative z-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh ống gió tròn xoắn một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/ConductoHelicoidal.png/960px-ConductoHelicoidal.png" alt="Ống gió tròn xoắn bằng tôn mạ kẽm" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">ỐNG GIÓ</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Ống gió tròn xoắn</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Dạng tròn, ghép mí xoắn; thường dùng cho tuyến gió lộ thiên và nhánh phân phối.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:ConductoHelicoidal.png" target="_blank" rel="noopener noreferrer">Gemmaburt</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></p>
+                            </div>
+                        </article>
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh hệ thống ống gió công nghiệp một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Assorted_ducting.jpg/960px-Assorted_ducting.jpg" alt="Cụm ống gió và phụ kiện trong hệ thống HVAC" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">HỆ THỐNG</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Hệ thống ống gió công nghiệp</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Minh họa các tuyến ống và đoạn nối trong một hệ thống thông gió.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Assorted_ducting.jpg" target="_blank" rel="noopener noreferrer">Achim Hering</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></p>
+                            </div>
+                        </article>
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh ống gió bọc cách nhiệt một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Insulated_duct_1.jpg/500px-Insulated_duct_1.jpg" alt="Đường ống gió có lớp cách nhiệt" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">CÁCH NHIỆT</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Ống gió bọc cách nhiệt</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Lớp cách nhiệt giúp hạn chế thất thoát nhiệt và ngưng tụ trên bề mặt ống.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Insulated_duct_1.jpg" target="_blank" rel="noopener noreferrer">Achim Hering</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></p>
+                            </div>
+                        </article>
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh miệng gió âm trần một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Airco_vent.jpg/960px-Airco_vent.jpg" alt="Miệng gió điều hòa lắp trên trần" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">MIỆNG GIÓ</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Miệng gió âm trần</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Kiểu cửa gió lắp phẳng trên trần, phù hợp không gian điều hòa trong nhà.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Airco_vent.jpg" target="_blank" rel="noopener noreferrer">Wezy</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></p>
+                            </div>
+                        </article>
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh miệng gió khe tuyến tính một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Installing_a_ceiling_linear_diffuser_as_part_of_the_HVAC_and_ventilation_system_in_the_future_LIRR_Concourse._07-02-2019_%2848266208786%29.jpg/500px-Installing_a_ceiling_linear_diffuser_as_part_of_the_HVAC_and_ventilation_system_in_the_future_LIRR_Concourse._07-02-2019_%2848266208786%29.jpg" alt="Lắp đặt miệng gió khe tuyến tính trong trần" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">KHE TUYẾN TÍNH</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Miệng gió khe tuyến tính</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Dạng khe dài tạo luồng khí phân bố dọc theo mép trần hoặc khu vực cần cấp gió.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Installing_a_ceiling_linear_diffuser_as_part_of_the_HVAC_and_ventilation_system_in_the_future_LIRR_Concourse._07-02-2019_(48266208786).jpg" target="_blank" rel="noopener noreferrer">MTA Capital Construction Mega Projects</a> · <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener noreferrer">CC BY 2.0</a></p>
+                            </div>
+                        </article>
+                        <article class="hvac-gallery-card rounded-2xl">
+                            <button type="button" class="hvac-gallery-image-button" aria-label="Xoay ảnh miệng gió khuếch tán tròn một vòng">
+                                <img class="hvac-gallery-image" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Anemo04.JPG/330px-Anemo04.JPG" alt="Miệng gió khuếch tán tròn gắn trên trần" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                                <span class="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/20 bg-slate-950/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">KHUẾCH TÁN</span>
+                            </button>
+                            <div class="p-4">
+                                <h3 class="text-base font-bold text-white">Miệng gió khuếch tán tròn</h3>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Cửa khuếch tán dạng tròn, phân phối không khí theo nhiều hướng từ trần.</p>
+                                <p class="hvac-gallery-source mt-3 text-[10px]">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Anemo04.JPG" target="_blank" rel="noopener noreferrer">aska27</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a></p>
+                            </div>
+                        </article>
+                    </div>
+                    <p class="relative z-10 mt-5 text-[11px] text-slate-500">Ảnh minh họa lấy từ Wikimedia Commons; bấm tên tác giả để xem thông tin và giấy phép của từng ảnh.</p>
+                </div>
+            </section>
+
             <section id="quy-trinh-sop" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-rose-500 pl-4">
                     <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
@@ -720,7 +943,7 @@
             var ctx = canvas.getContext('2d');
             var width, height;
             var particles = [];
-            var particleCount = 45;
+            var particleCount = 72;
 
             function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
             window.addEventListener('resize', resize);
@@ -745,6 +968,7 @@
                 grad.addColorStop(0, 'rgba(' + this.color + ', 0)');
                 grad.addColorStop(0.5, 'rgba(' + this.color + ',' + this.opacity + ')');
                 grad.addColorStop(1, 'rgba(' + this.color + ', 0)');
+                ctx.shadowBlur = 14; ctx.shadowColor = 'rgba(' + this.color + ', 0.62)';
                 ctx.strokeStyle = grad; ctx.lineWidth = this.thickness; ctx.lineCap = 'round';
                 ctx.moveTo(this.x, this.y); ctx.lineTo(this.x + Math.cos(this.angle) * this.length, this.y + Math.sin(this.angle) * this.length);
                 ctx.stroke(); ctx.restore();
@@ -768,6 +992,11 @@
         var ambientAudioSources = [];
         var ambientAudioNodes = [];
         var ambientMasterGain = null;
+        var ambientSoundCloudWidget = null;
+        var ambientSoundCloudReady = false;
+        var ambientYouTubePlayer = null;
+        var ambientYouTubePlayerReady = false;
+        var ambientYouTubeVideoId = null;
         var ambientStopTimer = null;
         var ambientPresetTimer = null;
 
@@ -775,7 +1004,49 @@
             if (type === 'positive') return 'positve chill-hop';
             if (type === 'rain') return 'Mưa nhẹ';
             if (type === 'chill') return 'Chill ambient';
+            if (type === 'youtube') return 'YouTube';
+            if (type === 'soundcloud') return 'Ông Trời Làm Tội Anh Chưa';
             return 'Gió HVAC';
+        }
+
+        function initializeAmbientSoundCloud() {
+            var frame = document.getElementById('ambientSoundCloudFrame');
+            if (!frame || !window.SC || !window.SC.Widget || ambientSoundCloudWidget) return;
+            ambientSoundCloudWidget = window.SC.Widget(frame);
+            ambientSoundCloudWidget.bind(window.SC.Widget.Events.READY, function() {
+                ambientSoundCloudReady = true;
+                ambientSoundCloudWidget.setVolume(ambientVolume);
+                if (ambientAudioEnabled && ambientAudioType === 'soundcloud') startAmbientAudio();
+            });
+            ambientSoundCloudWidget.bind(window.SC.Widget.Events.PLAY, function() {
+                if (!ambientAudioEnabled || ambientAudioType !== 'soundcloud') {
+                    ambientSoundCloudWidget.pause();
+                    return;
+                }
+                ambientAudioStarted = true;
+                ambientActiveType = 'soundcloud';
+                updateAmbientAudioControls();
+            });
+            ambientSoundCloudWidget.bind(window.SC.Widget.Events.PAUSE, function() {
+                if (ambientActiveType === 'soundcloud') {
+                    ambientAudioStarted = false;
+                    ambientActiveType = null;
+                    updateAmbientAudioControls();
+                }
+            });
+            ambientSoundCloudWidget.bind(window.SC.Widget.Events.FINISH, function() {
+                if (ambientAudioEnabled && ambientAudioType === 'soundcloud') {
+                    ambientSoundCloudWidget.seekTo(0);
+                    ambientSoundCloudWidget.play();
+                }
+            });
+            ambientSoundCloudWidget.bind(window.SC.Widget.Events.ERROR, function() {
+                ambientAudioStarted = false;
+                ambientActiveType = null;
+                var status = document.getElementById('ambientAudioStatus');
+                if (status) status.textContent = 'SoundCloud không phát được bài này; thử bấm nút phát trong khung bên trên';
+                updateAmbientAudioControls();
+            });
         }
 
         function ambientAudioGain() {
@@ -800,19 +1071,26 @@
             var volumeInput = document.getElementById('ambientVolume');
             var typeSelect = document.getElementById('ambientAudioType');
             var musicTrack = document.getElementById('ambientMusicTrack');
+            var soundCloudPanel = document.getElementById('ambientSoundCloudPanel');
+            var youtubePanel = document.getElementById('ambientYouTubePanel');
             try {
                 var savedEnabled = localStorage.getItem('hvacAmbientAudioEnabledV2');
                 var savedVolume = localStorage.getItem('hvacAmbientAudioVolumeV2');
                 var savedType = localStorage.getItem('hvacAmbientAudioTypeV2');
                 if (savedEnabled !== null) ambientAudioEnabled = savedEnabled === 'true';
                 if (savedVolume !== null && !isNaN(Number(savedVolume))) ambientVolume = Math.max(0, Math.min(100, Number(savedVolume)));
-                if (savedType === 'positive' || savedType === 'hvac' || savedType === 'rain' || savedType === 'chill') ambientAudioType = savedType;
+                if (savedType === 'positive' || savedType === 'hvac' || savedType === 'rain' || savedType === 'chill' || savedType === 'soundcloud' || savedType === 'youtube') ambientAudioType = savedType;
             } catch (e) {}
+            if (soundCloudPanel) soundCloudPanel.classList.toggle('hidden', ambientAudioType !== 'soundcloud');
+            if (youtubePanel) youtubePanel.classList.toggle('hidden', ambientAudioType !== 'youtube');
+            initializeAmbientSoundCloud();
             if (musicTrack) musicTrack.volume = ambientVolume / 100;
             if (typeSelect) {
                 typeSelect.value = ambientAudioType;
                 typeSelect.addEventListener('change', function() {
                     ambientAudioType = typeSelect.value;
+                    if (soundCloudPanel) soundCloudPanel.classList.toggle('hidden', ambientAudioType !== 'soundcloud');
+                    if (youtubePanel) youtubePanel.classList.toggle('hidden', ambientAudioType !== 'youtube');
                     try { localStorage.setItem('hvacAmbientAudioTypeV2', ambientAudioType); } catch (e) {}
                     if (ambientAudioEnabled) startAmbientAudio();
                     updateAmbientAudioControls();
@@ -823,6 +1101,8 @@
                 volumeInput.addEventListener('input', function() {
                     ambientVolume = Number(volumeInput.value);
                     if (musicTrack) musicTrack.volume = ambientVolume / 100;
+                    if (ambientSoundCloudWidget && ambientSoundCloudReady) ambientSoundCloudWidget.setVolume(ambientVolume);
+                    if (ambientYouTubePlayer && ambientYouTubePlayerReady) ambientYouTubePlayer.setVolume(ambientVolume);
                     updateAmbientAudioControls();
                     try { localStorage.setItem('hvacAmbientAudioVolumeV2', String(ambientVolume)); } catch (e) {}
                     if (ambientAudioEnabled && ambientAudioStarted && ambientActiveType !== 'positive' && ambientMasterGain) {
@@ -875,6 +1155,13 @@
                 if (ambientActiveType === 'positive') {
                     var playingTrack = document.getElementById('ambientMusicTrack');
                     if (playingTrack) playingTrack.volume = ambientVolume / 100;
+                } else if (ambientActiveType === 'soundcloud') {
+                    if (ambientSoundCloudWidget && ambientSoundCloudReady) ambientSoundCloudWidget.setVolume(ambientVolume);
+                } else if (ambientActiveType === 'youtube') {
+                    if (ambientYouTubePlayer && ambientYouTubePlayerReady) {
+                        ambientYouTubePlayer.setVolume(ambientVolume);
+                        ambientYouTubePlayer.playVideo();
+                    }
                 } else if (ambientMasterGain) {
                     ambientMasterGain.gain.cancelScheduledValues(audioCtx.currentTime);
                     ambientMasterGain.gain.setTargetAtTime(ambientAudioGain(), audioCtx.currentTime, 0.12);
@@ -932,6 +1219,42 @@
                     var status = document.getElementById('ambientAudioStatus');
                     if (status) status.textContent = 'Chạm hoặc bấm bất kỳ đâu để bắt đầu phát';
                 }
+                return;
+            }
+
+            if (ambientAudioType === 'soundcloud') {
+                var soundCloudStatus = document.getElementById('ambientAudioStatus');
+                var soundCloudPanel = document.getElementById('ambientSoundCloudPanel');
+                if (soundCloudPanel) soundCloudPanel.classList.remove('hidden');
+                initializeAmbientSoundCloud();
+                if (!ambientSoundCloudWidget || !ambientSoundCloudReady) {
+                    if (soundCloudStatus) soundCloudStatus.textContent = 'SoundCloud đang tải; nếu chưa phát, bấm nút phát trong khung bên trên';
+                    return;
+                }
+                ambientSoundCloudWidget.setVolume(ambientVolume);
+                ambientActiveType = 'soundcloud';
+                ambientSoundCloudWidget.play();
+                updateAmbientAudioControls();
+                return;
+            }
+
+            if (ambientAudioType === 'youtube') {
+                var youtubeStatus = document.getElementById('ambientAudioStatus');
+                var youtubePanel = document.getElementById('ambientYouTubePanel');
+                if (youtubePanel) youtubePanel.classList.remove('hidden');
+                if (!ambientYouTubeVideoId) {
+                    if (youtubeStatus) youtubeStatus.textContent = 'Mở YouTube, sao chép link bài hát rồi dán vào ô bên trên';
+                    return;
+                }
+                if (!ambientYouTubePlayer || !ambientYouTubePlayerReady) {
+                    if (youtubeStatus) youtubeStatus.textContent = 'Đang tải trình phát YouTube…';
+                    initializeAmbientYouTubePlayer();
+                    return;
+                }
+                ambientYouTubePlayer.setVolume(ambientVolume);
+                ambientActiveType = 'youtube';
+                ambientYouTubePlayer.playVideo();
+                updateAmbientAudioControls();
                 return;
             }
 
@@ -1010,6 +1333,20 @@
 
         function stopAmbientAudio(forceStop) {
             var musicTrack = document.getElementById('ambientMusicTrack');
+            if (ambientActiveType === 'soundcloud') {
+                if (ambientSoundCloudWidget && ambientSoundCloudReady) ambientSoundCloudWidget.pause();
+                ambientAudioStarted = false;
+                ambientActiveType = null;
+                updateAmbientAudioControls();
+                return;
+            }
+            if (ambientActiveType === 'youtube') {
+                if (ambientYouTubePlayer && ambientYouTubePlayerReady) ambientYouTubePlayer.pauseVideo();
+                ambientAudioStarted = false;
+                ambientActiveType = null;
+                updateAmbientAudioControls();
+                return;
+            }
             if (ambientActiveType === 'positive' || ambientMusicPlayPending) {
                 if (musicTrack) musicTrack.pause();
                 ambientMusicPlayPending = false;
@@ -1018,7 +1355,11 @@
                 updateAmbientAudioControls();
                 return;
             }
-            if (!ambientAudioStarted || !ambientMasterGain) { updateAmbientAudioControls(); return; }
+            if (!ambientAudioStarted || !ambientMasterGain) {
+                if (ambientAudioType === 'youtube' && ambientYouTubePlayer && ambientYouTubePlayerReady) ambientYouTubePlayer.pauseVideo();
+                updateAmbientAudioControls();
+                return;
+            }
             if (ambientStopTimer) clearTimeout(ambientStopTimer);
             ambientMasterGain.gain.cancelScheduledValues(audioCtx.currentTime);
             ambientMasterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
@@ -1249,5 +1590,181 @@
             });
         });
     </script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script>
+        function spinGalleryImage(button) {
+            var image = button.querySelector(".hvac-gallery-image");
+            if (!image) return;
+            if (image._gallerySpinAnimation) image._gallerySpinAnimation.cancel();
+            if (typeof image.animate === "function") {
+                var spin = image.animate([
+                    { transform: "rotate(0deg) scale(1)" },
+                    { transform: "rotate(90deg) scale(0.68)", offset: 0.25 },
+                    { transform: "rotate(180deg) scale(1)", offset: 0.5 },
+                    { transform: "rotate(270deg) scale(0.68)", offset: 0.75 },
+                    { transform: "rotate(360deg) scale(1)" }
+                ], { duration: 1100, easing: "linear", iterations: 1 });
+                image._gallerySpinAnimation = spin;
+                spin.onfinish = function () {
+                    if (image._gallerySpinAnimation === spin) image._gallerySpinAnimation = null;
+                };
+                return;
+            }
+            image.classList.remove("gallery-spin");
+            void image.offsetWidth;
+            image.classList.add("gallery-spin");
+        }
+        document.querySelectorAll(".hvac-gallery-image-button").forEach(function (button) {
+            button.addEventListener("click", function () { spinGalleryImage(button); });
+        });
+        document.querySelectorAll(".hvac-gallery-image").forEach(function (image) {
+            image.addEventListener("animationend", function () { image.classList.remove("gallery-spin"); });
+        });
+    </script>
+    <script>
+        function extractAmbientYouTubeVideoId(value) {
+            var text = String(value || "").trim();
+            if (/^[A-Za-z0-9_-]{11}$/.test(text)) return text;
+            try {
+                var parsed = new URL(/^[a-z]+:\/\//i.test(text) ? text : "https://" + text);
+                var host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+                var videoId = "";
+                if (host === "youtu.be") {
+                    videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+                } else if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com" || host === "youtube-nocookie.com") {
+                    videoId = parsed.searchParams.get("v") || "";
+                    if (!videoId) {
+                        var match = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{11})/);
+                        if (match) videoId = match[1];
+                    }
+                }
+                return /^[A-Za-z0-9_-]{11}$/.test(videoId) ? videoId : "";
+            } catch (e) {
+                return "";
+            }
+        }
+
+        function initializeAmbientYouTubePlayer() {
+            var frame = document.getElementById("ambientYouTubeFrame");
+            if (!frame || !ambientYouTubeVideoId || !window.YT || !window.YT.Player || ambientYouTubePlayer) return;
+            if (!frame.src || frame.src === "about:blank" || frame.src.indexOf("/embed/" + ambientYouTubeVideoId) === -1) return;
+            ambientYouTubePlayer = new window.YT.Player(frame, {
+                events: {
+                    onReady: function (event) {
+                        ambientYouTubePlayerReady = true;
+                        event.target.setVolume(ambientVolume);
+                        if (ambientAudioEnabled && ambientAudioType === "youtube" && ambientYouTubeVideoId) event.target.playVideo();
+                    },
+                    onStateChange: function (event) {
+                        if (event.data === window.YT.PlayerState.PLAYING) {
+                            if (!ambientAudioEnabled || ambientAudioType !== "youtube") {
+                                event.target.pauseVideo();
+                                return;
+                            }
+                            ambientAudioStarted = true;
+                            ambientActiveType = "youtube";
+                            updateAmbientAudioControls();
+                        } else if (event.data === window.YT.PlayerState.PAUSED) {
+                            if (ambientActiveType === "youtube") {
+                                ambientAudioStarted = false;
+                                ambientActiveType = null;
+                                updateAmbientAudioControls();
+                            }
+                        } else if (event.data === window.YT.PlayerState.ENDED && ambientAudioEnabled && ambientAudioType === "youtube") {
+                            event.target.seekTo(0);
+                            event.target.playVideo();
+                        }
+                    },
+                    onError: function (event) {
+                        ambientAudioStarted = false;
+                        ambientActiveType = null;
+                        var status = document.getElementById("ambientAudioStatus");
+                        updateAmbientAudioControls();
+                        if (status) {
+                            if (event.data === 153) status.textContent = "YouTube không nhận được địa chỉ nguồn; mở trang qua GitHub Pages để phát";
+                            else if (event.data === 100) status.textContent = "Video đã bị xóa hoặc đặt ở chế độ riêng tư";
+                            else if (event.data === 101 || event.data === 150) status.textContent = "Video này không cho phép phát nhúng; thử một link YouTube khác";
+                            else status.textContent = "YouTube không phát được video này; thử một link khác";
+                        }
+                    }
+                }
+            });
+        }
+
+        function onYouTubeIframeAPIReady() {
+            initializeAmbientYouTubePlayer();
+        }
+
+        function loadAmbientYouTubeTrack() {
+            var input = document.getElementById("ambientYouTubeUrl");
+            var status = document.getElementById("ambientAudioStatus");
+            var panel = document.getElementById("ambientYouTubePanel");
+            var typeSelect = document.getElementById("ambientAudioType");
+            var videoId = extractAmbientYouTubeVideoId(input ? input.value : "");
+            if (!videoId) {
+                if (status) status.textContent = "Link chưa đúng; hãy dán link video hoặc Shorts từ YouTube";
+                if (input) input.focus();
+                return;
+            }
+
+            if (location.protocol === "file:") {
+                var localFileMessage = "YouTube chặn phát khi mở file HTML trực tiếp. Tải bản này lên GitHub Pages rồi mở trang bằng địa chỉ https.";
+                var websiteLink = document.getElementById("ambientYouTubeOpenLink");
+                var websiteLabel = document.getElementById("ambientYouTubeOpenLabel");
+                var playerShell = document.getElementById("ambientYouTubePlayerShell");
+                var localNotice = document.getElementById("ambientYouTubeLocalNotice");
+                if (websiteLink) websiteLink.href = "https://kimngocquy3101-art.github.io/hvac.calculator/";
+                if (websiteLabel) websiteLabel.textContent = "Mở website HTTPS để phát";
+                if (playerShell) playerShell.classList.add("hidden");
+                if (localNotice) localNotice.classList.remove("hidden");
+                if (status) status.textContent = localFileMessage;
+                return;
+            }
+
+            var playerShell = document.getElementById("ambientYouTubePlayerShell");
+            var localNotice = document.getElementById("ambientYouTubeLocalNotice");
+            if (playerShell) playerShell.classList.remove("hidden");
+            if (localNotice) localNotice.classList.add("hidden");
+            ambientYouTubeVideoId = videoId;
+            ambientAudioType = "youtube";
+            if (typeSelect) typeSelect.value = "youtube";
+            if (panel) panel.classList.remove("hidden");
+            if (!ambientAudioEnabled) {
+                ambientAudioEnabled = true;
+                try { localStorage.setItem("hvacAmbientAudioEnabledV2", "true"); } catch (e) {}
+            }
+            try { localStorage.setItem("hvacAmbientAudioTypeV2", "youtube"); } catch (e) {}
+
+            var openLink = document.getElementById("ambientYouTubeOpenLink");
+            var openLabel = document.getElementById("ambientYouTubeOpenLabel");
+            if (openLink) openLink.href = "https://www.youtube.com/watch?v=" + encodeURIComponent(videoId);
+            if (openLabel) openLabel.textContent = "Mở bài này trên YouTube";
+
+            if (ambientActiveType && ambientActiveType !== "youtube") stopAmbientAudio(true);
+            if (ambientPresetTimer) {
+                clearTimeout(ambientPresetTimer);
+                ambientPresetTimer = null;
+            }
+
+            if (ambientYouTubePlayer && ambientYouTubePlayerReady) {
+                ambientYouTubePlayer.setVolume(ambientVolume);
+                ambientActiveType = "youtube";
+                ambientYouTubePlayer.loadVideoById(videoId);
+                updateAmbientAudioControls();
+                return;
+            }
+
+            var frame = document.getElementById("ambientYouTubeFrame");
+            if (!frame) return;
+            var embedUrl = "https://www.youtube.com/embed/" + encodeURIComponent(videoId) + "?enablejsapi=1&autoplay=1&controls=1&playsinline=1&rel=0";
+            if (location.protocol === "http:" || location.protocol === "https:") embedUrl += "&origin=" + encodeURIComponent(location.origin);
+            frame.src = embedUrl;
+            ambientActiveType = "youtube";
+            if (status) status.textContent = "Đang tải bài hát từ YouTube…";
+            initializeAmbientYouTubePlayer();
+            updateAmbientAudioControls();
+        }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>

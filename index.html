@@ -7,7 +7,7 @@
     <title>Cẩm Nang &amp; Bộ Tính Kích Thước Ống Gió - Miệng Gió HVAC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050914; color: #F1F5F9; overflow-x: hidden; position: relative; }
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
@@ -160,6 +160,46 @@
         #mobileMenu::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.45); border-radius: 999px; }
         #mobileMenu::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.75); border-radius: 999px; }
         #mobileMenu::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.8); }
+        .hvac-converter-glow { animation: hvacConverterDrift 14s ease-in-out infinite alternate; }
+        @keyframes hvacConverterDrift { from { transform: translate3d(-8px, 4px, 0) scale(0.96); opacity: 0.45; } to { transform: translate3d(12px, -8px, 0) scale(1.08); opacity: 0.8; } }
+        .hvac-converter-row { animation: hvacConverterEnter 360ms ease both; }
+        @keyframes hvacConverterEnter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { .hvac-converter-glow, .hvac-converter-row { animation: none !important; } }
+        /* Make small helper text and captions easier to read on the dark background. */
+        body [class*="text-[9px]"].text-slate-500,
+        body [class*="text-[10px]"].text-slate-500,
+        body [class*="text-[11px]"].text-slate-500,
+        body [class~="text-xs"].text-slate-500 { color: #b4c2d4 !important; font-weight: 600 !important; }
+        body [class*="text-[9px]"].text-slate-400,
+        body [class*="text-[10px]"].text-slate-400,
+        body [class*="text-[11px]"].text-slate-400,
+        body [class~="text-xs"].text-slate-400 { color: #d0d9e5 !important; font-weight: 600 !important; }
+        #hvacBrandTitle { position: relative; isolation: isolate; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        #hvacBrandTitle:focus-visible { outline: 2px solid rgba(125, 211, 252, 0.9); outline-offset: 7px; border-radius: 8px; }
+        #hvacBrandTitle::before { content: ""; position: absolute; z-index: 0; inset: -8px -10px; border: 1px solid transparent; border-radius: 17px; opacity: 0; pointer-events: none; filter: blur(0); }
+        #hvacBrandTitle .hvac-title-word { position: relative; z-index: 1; }
+        #hvacBrandTitle.hvac-title-fire::before { opacity: 0.92; border-color: rgba(251, 146, 60, 0.5); background: radial-gradient(ellipse at 50% 100%, rgba(249, 115, 22, 0.46), rgba(220, 38, 38, 0.2) 45%, transparent 76%); box-shadow: 0 0 24px rgba(239, 68, 68, 0.32); }
+        #hvacBrandTitle.hvac-title-fire .hvac-title-word { animation: hvacFireTint 650ms ease-out both, hvacFireFlicker 760ms ease-in-out 650ms 2 alternate forwards; }
+        #hvacBrandTitle.hvac-title-water::before { opacity: 0.58; border-color: rgba(125, 211, 252, 0.38); background: radial-gradient(ellipse at 50% 100%, rgba(56, 189, 248, 0.38), transparent 72%); }
+        #hvacBrandTitle.hvac-title-water .hvac-title-word { animation: hvacWaterWash 780ms ease-out both; }
+        @keyframes hvacFreezeTint { 0% { filter: none; } 55% { color: #e0fbff; text-shadow: 0 0 10px rgba(165, 243, 252, 0.9), 0 0 28px rgba(34, 211, 238, 0.8); -webkit-text-stroke: 0.7px rgba(224, 251, 255, 0.55); } 100% { color: #e0fbff; text-shadow: 0 0 8px rgba(165, 243, 252, 0.9), 0 0 22px rgba(34, 211, 238, 0.72); -webkit-text-stroke: 0.45px rgba(224, 251, 255, 0.4); } }
+        @keyframes hvacFireTint { 0% { color: inherit; } 60% { color: #fdba74; text-shadow: 0 0 12px rgba(251, 146, 60, 0.95), 0 0 28px rgba(239, 68, 68, 0.82); } 100% { color: #fed7aa; text-shadow: 0 0 10px rgba(251, 146, 60, 0.9), 0 0 24px rgba(239, 68, 68, 0.7); } }
+        @keyframes hvacFireFlicker { from { text-shadow: 0 0 8px rgba(251, 146, 60, 0.72), 0 0 20px rgba(239, 68, 68, 0.52); } to { text-shadow: 0 0 15px rgba(253, 186, 116, 1), 0 0 31px rgba(239, 68, 68, 0.9); } }
+        @keyframes hvacWaterWash { 0% { color: #bae6fd; text-shadow: 0 0 16px rgba(56, 189, 248, 0.95); } 100% { color: #f8fafc; text-shadow: 0 0 3px rgba(56, 189, 248, 0.2); } }
+        @media (prefers-reduced-motion: reduce) {
+            #hvacBrandTitle.hvac-title-fire .hvac-title-word, #hvacBrandTitle.hvac-title-water .hvac-title-word { animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
+        }
+        #hvacFireCanvas, #hvacWaterCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        #hvacFireCanvas { z-index: 20; mix-blend-mode: screen; }
+        #hvacWaterCanvas { z-index: 21; }
+        #hvacBrandTitle.hvac-title-doused .hvac-title-word { text-shadow: 0 0 8px rgba(125, 211, 252, 0.72), 0 0 20px rgba(14, 165, 233, 0.42); transition: text-shadow 500ms ease; }
+        #hvacBrandTitle.hvac-title-fire .hvac-title-word { text-shadow: 0 0 8px rgba(251, 146, 60, 0.72), 0 0 20px rgba(239, 68, 68, 0.52); }
+        #hvacBrandTitle.hvac-title-water .hvac-title-word { text-shadow: 0 0 14px rgba(125, 211, 252, 0.92), 0 0 26px rgba(14, 165, 233, 0.65); }
+        html[lang="zh-CN"] body, html[lang="zh-CN"] button, html[lang="zh-CN"] input, html[lang="zh-CN"] select, html[lang="zh-CN"] textarea { font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif; font-synthesis: none; }
+        #languageSwitcherMenu { transform-origin: top right; animation: languageMenuIn 150ms ease-out; }
+        @keyframes languageMenuIn { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @media (max-width: 420px) { #languageSwitcherButton { padding-left: .55rem; padding-right: .55rem; } #languageSwitcherButton svg { width: .9rem; height: .9rem; } header > div { gap: .5rem; } header .flex.items-center.shrink-0 > span[onclick="openStandardsModal()"] { font-size: 9px; padding-left: .45rem; padding-right: .45rem; white-space: nowrap; } }
+        @media (max-width: 380px) { #languageSwitcherButton .language-label { display: none; } }
     </style>
 </head>
 <body class="antialiased selection:bg-sky-500 selection:text-white">
@@ -193,6 +233,8 @@
                             <nav class="flex flex-col p-2 space-y-1 text-sm font-semibold text-slate-300">
                                 <a href="#tong-quan" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">❖</span> Tổng Quan</a>
                                 <a href="#bo-tinh-toan" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🧮</span> Bộ Tính Toán</a>
+                                <a href="#tinh-tai-lanh" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">❄️</span> HAP Mini · Tải Lạnh</a>
+                                <a href="#bang-quy-doi" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-emerald-300">🔁</span> Bảng Quy Đổi HVAC</a>
                                 <a href="#tieu-chuan-van-toc" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">📊</span> Vận Tốc Tiêu Chuẩn</a>
                                 <a href="#ma-sat-ong-gio" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🌊</span> Thủy Lực &amp; Ma Sát</a>
                                 <a href="#mieng-gio-am-hoc" onclick="toggleMobileMenu()" class="pop-btn px-4 py-2.5 rounded-lg hover:text-sky-400 hover:bg-slate-800/60 transition-all flex items-center gap-3"><span class="text-sky-400">🔊</span> Âm Học Miệng Gió</a>
@@ -281,6 +323,18 @@
                 </div>
 
                 <div class="flex items-center shrink-0">
+                    <div id="languageSwitcher" class="relative mr-2">
+                        <button id="languageSwitcherButton" type="button" aria-label="Chọn ngôn ngữ" title="Chọn ngôn ngữ" aria-expanded="false" onclick="toggleLanguageMenu(event)" class="pop-btn inline-flex items-center gap-2 rounded-full border border-sky-400/40 bg-gradient-to-r from-slate-900 via-sky-950/90 to-slate-900 px-3 py-2 text-xs font-bold text-sky-200 shadow-[0_0_18px_rgba(56,189,248,0.16)] transition-all hover:border-sky-300 hover:text-white hover:shadow-[0_0_24px_rgba(56,189,248,0.28)]">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9.2"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M2.8 12h18.4M12 2.8c2.5 2.45 3.7 5.5 3.7 9.2s-1.2 6.75-3.7 9.2c-2.5-2.45-3.7-5.5-3.7-9.2s1.2-6.75 3.7-9.2Z"></path></svg>
+                            <span class="language-label">Language</span>
+                            <svg class="h-3.5 w-3.5 shrink-0 opacity-80 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m5 7 5 5 5-5"></path></svg>
+                        </button>
+                        <div id="languageSwitcherMenu" class="absolute right-0 top-full z-[80] mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-700 bg-slate-900/95 p-1.5 shadow-2xl backdrop-blur-xl">
+                            <button type="button" onclick="setHVACLanguage('vi')" class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-slate-200 transition-colors hover:bg-sky-500/15 hover:text-sky-300">🇻🇳 &nbsp; Tiếng Việt</button>
+                            <button type="button" onclick="setHVACLanguage('en')" class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-slate-200 transition-colors hover:bg-sky-500/15 hover:text-sky-300">🇬🇧 &nbsp; English</button>
+                            <button type="button" onclick="setHVACLanguage('zh')" class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-slate-200 transition-colors hover:bg-sky-500/15 hover:text-sky-300">🇨🇳 &nbsp; 中文</button>
+                        </div>
+                    </div>
                     <span onclick="openStandardsModal()" class="pop-btn inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 cursor-pointer shadow-sm hover:bg-sky-500/30 hover:border-sky-400 transition-all">
                         <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping mr-2"></span>
                         ASHRAE 2021 &amp; TCVN 5687:2024
@@ -329,15 +383,12 @@
                         <div class="pop-btn inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-bold uppercase tracking-wider cursor-pointer">
                             <span>📏</span> Kỹ Thuật Thủy Lực HVAC &amp; Tính Toán Tiết Diện
                         </div>
-                        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
-                            <span class="jump-word">Tính</span> <span class="jump-word">Toán</span>
-                            <span class="jump-word text-sky-400">Kích</span> <span class="jump-word text-sky-400">Thước</span>
-                            <span class="jump-word text-emerald-400">Ống</span> <span class="jump-word text-emerald-400">Gió</span>
-                            <span class="jump-word">&amp;</span> <span class="jump-word text-amber-400">Miệng</span>
-                            <span class="jump-word text-amber-400">Gió</span> <span class="jump-word">Chuẩn</span>
-                            <span class="jump-word">HVAC</span>
+                        <h2 id="hvacBrandTitle" role="button" tabindex="0" aria-label="Cẩm Nang và Bộ Tính HVAC. Bấm khi lửa cháy để tưới nước dập lửa; bấm lại để nhóm lửa." class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
+                            <span class="jump-word hvac-title-word">Cẩm</span> <span class="jump-word hvac-title-word">Nang</span>
+                            <span class="jump-word text-sky-400 hvac-title-word">&amp;</span> <span class="jump-word text-emerald-400 hvac-title-word">Bộ</span>
+                            <span class="jump-word text-amber-400 hvac-title-word">Tính</span> <span class="jump-word hvac-title-word">HVAC</span>
                         </h2>
-                        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        <p id="designIntro" class="text-slate-300 text-sm md:text-base leading-relaxed">
                             Chương trình hỗ trợ thiết kế theo phương pháp Ma Sát Đồng Đều (Equal Friction Method), tính đường kính tương đương (D<sub>eq</sub>), vận tốc thực tế (V<sub>act</sub>), tổn thất ma sát (&Delta;P/L) và kiểm tra độ ồn âm học (NC Rating) theo chuẩn ASHRAE Fundamentals.
                         </p>
                         <div class="flex flex-wrap gap-4 pt-2">
@@ -373,11 +424,16 @@
                         </div>
                     </div>
                 </div>
+                <canvas id="hvacFireCanvas" aria-hidden="true"></canvas>
+                <canvas id="hvacWaterCanvas" aria-hidden="true"></canvas>
+                <button id="hintBtn" type="button" hidden tabindex="-1" aria-hidden="true"><span id="hintText"></span></button>
+                <span id="iconFlame" hidden aria-hidden="true"></span>
+                <span id="iconDrop" hidden aria-hidden="true"></span>
             </section>
 
             <section id="bo-tinh-toan" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-sky-500 pl-4">
-                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                    <h3 id="ductSizerSectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
                         <span class="text-sky-400">1.</span>
                         <span class="jump-word">Bộ</span> <span class="jump-word text-sky-400">Tính</span>
                         <span class="jump-word text-sky-400">Toán</span> <span class="jump-word text-emerald-400">Ống</span>
@@ -647,9 +703,202 @@
                 </div>
             </section>
 
+            <section id="tinh-tai-lanh" class="scroll-mt-24 space-y-6">
+                <div class="relative overflow-hidden rounded-3xl border border-sky-500/20 bg-gradient-to-br from-slate-900/95 via-slate-950/90 to-cyan-950/35 p-5 shadow-2xl sm:p-7">
+                    <div class="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl"></div>
+                    <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl"></div>
+                    <div class="relative z-10 mb-6 border-l-4 border-cyan-400 pl-4">
+                        <div class="mb-2 flex flex-wrap items-center gap-2">
+                            <span class="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-bold tracking-[0.16em] text-cyan-200">HAP MINI</span>
+                            <span class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Ước tính nhanh</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Tính Tải Lạnh Sơ Bộ</h2>
+                        <p class="mt-2 max-w-3xl text-sm leading-relaxed text-slate-300">Ước tính tải sensible, latent và công suất lạnh gợi ý từ diện tích, người, chiếu sáng, thiết bị và gió tươi.</p>
+                    </div>
+
+                    <div class="relative z-10 grid grid-cols-1 gap-5 lg:grid-cols-12">
+                        <div class="rounded-2xl border border-slate-700/80 bg-slate-950/55 p-4 sm:p-5 lg:col-span-5">
+                            <div id="hapMiniForm" class="space-y-4">
+                                <div>
+                                    <label for="hapRoomType" class="mb-1.5 block text-xs font-semibold text-slate-300">Loại không gian</label>
+                                    <select id="hapRoomType" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-400">
+                                        <option value="office">Văn phòng</option>
+                                        <option value="residential">Nhà ở</option>
+                                        <option value="classroom">Phòng học</option>
+                                        <option value="retail">Cửa hàng</option>
+                                        <option value="restaurant">Nhà hàng</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="hapArea" class="mb-1.5 block text-xs font-semibold text-slate-300">Diện tích (m²)</label>
+                                        <input id="hapArea" type="number" min="0" step="0.1" value="40" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400">
+                                    </div>
+                                    <div>
+                                        <label for="hapPeople" class="mb-1.5 block text-xs font-semibold text-slate-300">Số người</label>
+                                        <input id="hapPeople" type="number" min="0" step="1" value="8" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400">
+                                    </div>
+                                </div>
+                                <details class="group rounded-xl border border-slate-700/80 bg-slate-900/70">
+                                    <summary class="cursor-pointer list-none px-3 py-2.5 text-xs font-semibold text-sky-200">
+                                        <span class="mr-1 text-cyan-300">＋</span> Điều kiện và hệ số tham khảo
+                                    </summary>
+                                    <div class="grid grid-cols-2 gap-3 border-t border-slate-700/70 p-3">
+                                        <div>
+                                            <label for="hapEnvelopeDensity" class="mb-1 block text-[10px] leading-snug text-slate-400">Vỏ + nắng (W/m²)</label>
+                                            <input id="hapEnvelopeDensity" type="number" min="0" step="1" value="50" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapLightingDensity" class="mb-1 block text-[10px] leading-snug text-slate-400">Đèn (W/m²)</label>
+                                            <input id="hapLightingDensity" type="number" min="0" step="1" value="10" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapEquipmentDensity" class="mb-1 block text-[10px] leading-snug text-slate-400">Thiết bị (W/m²)</label>
+                                            <input id="hapEquipmentDensity" type="number" min="0" step="1" value="15" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapVentRate" class="mb-1 block text-[10px] leading-snug text-slate-400">Gió tươi (L/s/người)</label>
+                                            <input id="hapVentRate" type="number" min="0" step="0.5" value="10" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapIndoorTemp" class="mb-1 block text-[10px] leading-snug text-slate-400">Trong phòng (°C)</label>
+                                            <input id="hapIndoorTemp" type="number" min="10" max="35" step="0.5" value="24" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapIndoorRh" class="mb-1 block text-[10px] leading-snug text-slate-400">RH trong phòng (%)</label>
+                                            <input id="hapIndoorRh" type="number" min="0" max="100" step="1" value="50" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapOutdoorTemp" class="mb-1 block text-[10px] leading-snug text-slate-400">Ngoài trời (°C)</label>
+                                            <input id="hapOutdoorTemp" type="number" min="10" max="50" step="0.5" value="35" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                        <div>
+                                            <label for="hapOutdoorRh" class="mb-1 block text-[10px] leading-snug text-slate-400">RH ngoài trời (%)</label>
+                                            <input id="hapOutdoorRh" type="number" min="0" max="100" step="1" value="60" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-cyan-400">
+                                        </div>
+                                    </div>
+                                </details>
+                                <button type="button" onclick="calculateHapMiniLoad()" class="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-gradient-to-r from-sky-500/20 to-emerald-500/15 px-4 py-3 text-sm font-bold text-cyan-100 transition hover:border-cyan-300/60 hover:from-sky-500/30 hover:to-emerald-500/25">
+                                    <span aria-hidden="true">❄</span> Tính tải lạnh
+                                </button>
+                            </div>
+                            <p class="mt-4 text-[10px] leading-relaxed text-slate-500">Các hệ số theo loại phòng là giá trị khởi tạo để ước tính; hãy thay bằng số liệu thực tế nếu có.</p>
+                        </div>
+
+                        <div class="lg:col-span-7">
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div class="rounded-2xl border border-sky-400/20 bg-sky-400/[0.07] p-4">
+                                    <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-sky-200">Tải sensible</div>
+                                    <div id="hapSensibleValue" class="mt-2 text-2xl font-extrabold text-white">0.00 kW</div>
+                                    <div id="hapSensibleDetail" class="mt-1 text-xs text-slate-400">0 BTU/h</div>
+                                </div>
+                                <div class="rounded-2xl border border-violet-400/20 bg-violet-400/[0.07] p-4">
+                                    <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-violet-200">Tải latent</div>
+                                    <div id="hapLatentValue" class="mt-2 text-2xl font-extrabold text-white">0.00 kW</div>
+                                    <div id="hapLatentDetail" class="mt-1 text-xs text-slate-400">0 BTU/h</div>
+                                </div>
+                                <div class="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.08] p-4">
+                                    <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-200">Tổng tải lạnh</div>
+                                    <div id="hapTotalValue" class="mt-2 text-2xl font-extrabold text-white">0.00 kW</div>
+                                    <div id="hapTotalDetail" class="mt-1 text-xs text-slate-400">0 BTU/h · 0.00 TR</div>
+                                </div>
+                                <div class="rounded-2xl border border-amber-400/25 bg-amber-400/[0.07] p-4">
+                                    <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-amber-200">Công suất gợi ý (+10%)</div>
+                                    <div id="hapCapacityValue" class="mt-2 text-2xl font-extrabold text-white">0.00 kW</div>
+                                    <div id="hapCapacityDetail" class="mt-1 text-xs text-slate-400">0 BTU/h · 0.00 TR</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 rounded-xl border border-slate-700/80 bg-slate-950/50 p-4">
+                                <div class="mb-2 text-xs font-bold text-slate-200">Các thành phần tải</div>
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] text-slate-400 sm:grid-cols-3">
+                                    <div>Vỏ + bức xạ: <span id="hapEnvelopeResult" class="font-semibold text-slate-200">0 W</span></div>
+                                    <div>Đèn: <span id="hapLightingResult" class="font-semibold text-slate-200">0 W</span></div>
+                                    <div>Thiết bị: <span id="hapEquipmentResult" class="font-semibold text-slate-200">0 W</span></div>
+                                    <div>Người: <span id="hapPeopleResult" class="font-semibold text-slate-200">0 W</span></div>
+                                    <div>Gió tươi sensible: <span id="hapVentSensibleResult" class="font-semibold text-slate-200">0 W</span></div>
+                                    <div>Gió tươi latent: <span id="hapVentLatentResult" class="font-semibold text-slate-200">0 W</span></div>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-[10px] leading-relaxed text-slate-500">Đây là ước tính sơ bộ theo tải nền W/m², tải người và chênh lệch nhiệt ẩm của gió tươi; không thay cho HAP/ASHRAE chi tiết theo từng phòng, hướng nắng, kết cấu và thời điểm cực đại.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="bang-quy-doi" class="scroll-mt-24 space-y-6">
+                <div class="relative overflow-hidden rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-slate-900/95 via-slate-950/90 to-emerald-950/30 p-5 shadow-2xl sm:p-7">
+                    <div class="hvac-converter-glow pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl"></div>
+                    <div class="hvac-converter-glow pointer-events-none absolute -bottom-24 left-1/4 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl" style="animation-delay:-6s"></div>
+                    <div class="relative z-10 mb-6 border-l-4 border-emerald-400 pl-4">
+                        <div class="mb-2 flex flex-wrap items-center gap-2">
+                            <span class="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold tracking-[0.16em] text-emerald-200">TIỆN ÍCH HVAC</span>
+                            <span class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Quy đổi nhanh</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Bảng Quy Đổi Đơn Vị HVAC</h2>
+                        <p class="mt-2 max-w-3xl text-sm leading-relaxed text-slate-300">Chọn đại lượng, nhập giá trị và xem các đơn vị tương đương. Có hỗ trợ quy đổi W sang W/m² theo diện tích phòng.</p>
+                    </div>
+
+                    <div class="relative z-10 grid grid-cols-1 gap-5 lg:grid-cols-12">
+                        <div class="space-y-4 rounded-2xl border border-slate-700/80 bg-slate-950/55 p-4 sm:p-5 lg:col-span-4">
+                            <div>
+                                <label for="hvacConvertCategory" class="mb-1.5 block text-xs font-semibold text-slate-300">Đại lượng cần quy đổi</label>
+                                <select id="hvacConvertCategory" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-400">
+                                    <option value="power">Công suất / tải lạnh</option>
+                                    <option value="density">Mật độ tải theo diện tích</option>
+                                    <option value="flow">Lưu lượng gió</option>
+                                    <option value="velocity">Vận tốc gió</option>
+                                    <option value="pressure">Áp suất</option>
+                                    <option value="length">Chiều dài / kích thước</option>
+                                    <option value="area">Diện tích</option>
+                                    <option value="temperature">Nhiệt độ</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="hvacConvertValue" class="mb-1.5 block text-xs font-semibold text-slate-300">Giá trị</label>
+                                    <input id="hvacConvertValue" type="number" step="any" value="1" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label for="hvacConvertUnit" class="mb-1.5 block text-xs font-semibold text-slate-300">Đơn vị đầu vào</label>
+                                    <select id="hvacConvertUnit" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-cyan-400"></select>
+                                </div>
+                            </div>
+                            <div id="hvacConvertAreaWrap">
+                                <label for="hvacConvertArea" class="mb-1.5 block text-xs font-semibold text-slate-300">Diện tích dùng để tính W/m²</label>
+                                <div class="relative">
+                                    <input id="hvacConvertArea" type="number" min="0.01" step="any" value="40" class="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 pr-12 text-sm text-white outline-none focus:border-cyan-400">
+                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">m²</span>
+                                </div>
+                            </div>
+                            <div class="rounded-xl border border-cyan-400/15 bg-cyan-400/[0.06] p-3 text-[11px] leading-relaxed text-slate-400">
+                                <span class="font-bold text-cyan-200">Cách dùng:</span> nhập số, chọn đơn vị đầu vào; kết quả sẽ tự cập nhật khi bạn đổi thông tin.
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-8">
+                            <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                                <h3 id="hvacConvertResultsTitle" class="text-sm font-bold text-slate-100">Kết quả quy đổi</h3>
+                                <span id="hvacConvertInputSummary" class="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-[10px] text-slate-400">1 W</span>
+                            </div>
+                            <div class="overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-950/55">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full min-w-[390px] text-left text-xs">
+                                        <thead class="border-b border-slate-700/80 bg-slate-900/80 text-[10px] uppercase tracking-wider text-slate-400">
+                                            <tr><th class="px-4 py-3 font-bold">Đơn vị</th><th class="px-4 py-3 text-right font-bold">Giá trị tương đương</th></tr>
+                                        </thead>
+                                        <tbody id="hvacConvertResults" class="divide-y divide-slate-800/80"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <p id="hvacConvertNote" class="mt-3 text-[10px] leading-relaxed text-slate-500"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tieu-chuan-van-toc" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-sky-500 pl-4">
-                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                    <h3 id="velocityMatrixSectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
                         <span class="text-sky-400">2.</span> <span class="jump-word">Ma</span> <span class="jump-word">Trận</span>
                         <span class="jump-word text-sky-400">Vận</span> <span class="jump-word text-sky-400">Tốc</span>
                         <span class="jump-word">Thiết</span> <span class="jump-word">Kế</span>
@@ -693,14 +942,14 @@
 
             <section id="ma-sat-ong-gio" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-emerald-500 pl-4">
-                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                    <h3 id="frictionSectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
                         <span class="text-emerald-400">3.</span> <span class="jump-word">Phân</span>
                         <span class="jump-word">Tích</span> <span class="jump-word text-emerald-400">Thủy</span>
                         <span class="jump-word text-emerald-400">Lực</span> <span class="jump-word">&amp;</span>
                         <span class="jump-word text-sky-400">Tổn</span> <span class="jump-word text-sky-400">Thất</span>
                         <span class="jump-word text-sky-400">Ma</span> <span class="jump-word text-sky-400">Sát</span>
                     </h3>
-                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Mối quan hệ giữa đường kính ống gió (D<sub>eq</sub>), vận tốc dòng chảy và tổn thất áp suất ma sát đơn vị (&Delta;P/L).</p>
+                    <p id="frictionSectionDescription" class="text-slate-400 text-xs sm:text-sm mt-1">Mối quan hệ giữa đường kính ống gió (D<sub>eq</sub>), vận tốc dòng chảy và tổn thất áp suất ma sát đơn vị (&Delta;P/L).</p>
                 </div>
 
                 <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 interactive-card">
@@ -726,20 +975,20 @@
 
             <section id="mieng-gio-am-hoc" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-amber-500 pl-4">
-                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                    <h3 id="acousticsSectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
                         <span class="text-amber-400">4.</span> <span class="jump-word">Âm</span>
                         <span class="jump-word">Học</span> <span class="jump-word text-amber-400">Miệng</span>
                         <span class="jump-word text-amber-400">Gió</span> <span class="jump-word">&amp;</span>
                         <span class="jump-word text-rose-400">Độ</span> <span class="jump-word text-rose-400">Ồn</span>
                         <span class="jump-word text-rose-400">NC</span>
                     </h3>
-                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.</p>
+                    <p id="acousticsSectionDescription" class="text-slate-400 text-xs sm:text-sm mt-1">Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.</p>
                 </div>
 
                 <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 interactive-card">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-800 interactive-card">
-                            <h4 class="text-xs sm:text-sm font-bold text-amber-400 mb-2 uppercase tracking-wider">Mối Quan Hệ Vận Tốc Mặt V<sub>face</sub> &amp; Độ Ồn NC</h4>
+                            <h4 id="acousticsChartTitle" class="text-xs sm:text-sm font-bold text-amber-400 mb-2 uppercase tracking-wider">Mối Quan Hệ Vận Tốc Mặt V<sub>face</sub> &amp; Độ Ồn NC</h4>
                             <div class="chart-container">
                                 <canvas id="noiseVelocityChart"></canvas>
                             </div>
@@ -750,15 +999,15 @@
                             <ul class="space-y-3 text-xs text-slate-300">
                                 <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
                                     <span class="text-emerald-400 font-bold text-base">✓</span>
-                                    <div><strong class="text-white block">V<sub>face</sub> &le; 2.0 m/s:</strong> Đạt tiêu chuẩn yên tĩnh cao (NC-25 đến NC-30), thích hợp cho phòng ngủ, phòng thu âm, bệnh viện.</div>
+                                    <div id="acousticsRuleQuiet"><strong class="text-white block">V<sub>face</sub> &le; 2.0 m/s:</strong> Đạt tiêu chuẩn yên tĩnh cao (NC-25 đến NC-30), thích hợp cho phòng ngủ, phòng thu âm, bệnh viện.</div>
                                 </li>
                                 <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
                                     <span class="text-sky-400 font-bold text-base">✓</span>
-                                    <div><strong class="text-white block">V<sub>face</sub> = 2.0 - 2.5 m/s:</strong> Đạt tiêu chuẩn văn phòng cao cấp (NC-35), cân bằng tốt giữa kích thước miệng gió và độ ồn background.</div>
+                                    <div id="acousticsRuleOffice"><strong class="text-white block">V<sub>face</sub> = 2.0 - 2.5 m/s:</strong> Đạt tiêu chuẩn văn phòng cao cấp (NC-35), cân bằng tốt giữa kích thước miệng gió và độ ồn background.</div>
                                 </li>
                                 <li class="pop-btn flex items-start gap-2 bg-slate-900/90 p-3 rounded-lg border border-slate-800 cursor-pointer">
                                     <span class="text-rose-400 font-bold text-base">✕</span>
-                                    <div><strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s:</strong> Phát ra tiếng rít xói tai (NC &gt; 42). Bắt buộc phải tăng chiều rộng W hoặc chiều cao H của cổ miệng gió.</div>
+                                    <div id="acousticsRuleHigh"><strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s:</strong> Phát ra tiếng rít xói tai (NC &gt; 42). Bắt buộc phải tăng chiều rộng W hoặc chiều cao H của cổ miệng gió.</div>
                                 </li>
                             </ul>
                         </div>
@@ -854,7 +1103,7 @@
 
             <section id="quy-trinh-sop" class="scroll-mt-24 space-y-6">
                 <div class="border-l-4 border-rose-500 pl-4">
-                    <h3 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
+                    <h3 id="sopSectionTitle" class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 flex-wrap">
                         <span class="text-rose-400">5.</span> <span class="jump-word">Quy</span>
                         <span class="jump-word">Trình</span> <span class="jump-word text-rose-400">SOP</span>
                         <span class="jump-word text-rose-400">5</span> <span class="jump-word text-rose-400">Bước</span>
@@ -867,28 +1116,28 @@
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
                         <div class="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-sky-500 group-hover:text-white transition-all">1</div>
-                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-sky-400 transition-colors">Tính Lưu Lượng Q</h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).</p>
+                        <h4 id="sopStep1Title" class="font-bold text-white text-xs mb-1.5 group-hover:text-sky-400 transition-colors">Tính Lưu Lượng Q</h4>
+                        <p id="sopStep1Description" class="text-[11px] text-slate-400 leading-relaxed">Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).</p>
                     </div>
                     <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
                         <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all">2</div>
-                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-emerald-400 transition-colors">Chọn V<sub>design</sub></h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.</p>
+                        <h4 id="sopStep2Title" class="font-bold text-white text-xs mb-1.5 group-hover:text-emerald-400 transition-colors">Chọn V<sub>design</sub></h4>
+                        <p id="sopStep2Description" class="text-[11px] text-slate-400 leading-relaxed">Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.</p>
                     </div>
                     <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
                         <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all">3</div>
-                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-amber-400 transition-colors">Tính W x H &amp; D<sub>eq</sub></h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">Áp dụng công thức Equal Friction để tìm D<sub>eq</sub> và quy đổi tiết diện W x H dẹt.</p>
+                        <h4 id="sopStep3Title" class="font-bold text-white text-xs mb-1.5 group-hover:text-amber-400 transition-colors">Tính W x H &amp; D<sub>eq</sub></h4>
+                        <p id="sopStep3Description" class="text-[11px] text-slate-400 leading-relaxed">Áp dụng công thức Equal Friction để tìm D<sub>eq</sub> và quy đổi tiết diện W x H dẹt.</p>
                     </div>
                     <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
                         <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-purple-500 group-hover:text-white transition-all">4</div>
-                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-purple-400 transition-colors">Tính V<sub>face</sub> Miệng Gió</h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">Tính diện tích thoát gió hiệu dụng A<sub>eff</sub> và kiểm tra V<sub>face</sub> &le; 2.5 m/s.</p>
+                        <h4 id="sopStep4Title" class="font-bold text-white text-xs mb-1.5 group-hover:text-purple-400 transition-colors">Tính V<sub>face</sub> Miệng Gió</h4>
+                        <p id="sopStep4Description" class="text-[11px] text-slate-400 leading-relaxed">Tính diện tích thoát gió hiệu dụng A<sub>eff</sub> và kiểm tra V<sub>face</sub> &le; 2.5 m/s.</p>
                     </div>
                     <div class="pop-btn glass-card p-5 rounded-2xl cursor-pointer group">
                         <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/40 font-extrabold flex items-center justify-center text-sm mb-3 group-hover:bg-rose-500 group-hover:text-white transition-all">5</div>
-                        <h4 class="font-bold text-white text-xs mb-1.5 group-hover:text-rose-400 transition-colors">Tính Áp Suất Tĩnh ESP</h4>
-                        <p class="text-[11px] text-slate-400 leading-relaxed">Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.</p>
+                        <h4 id="sopStep5Title" class="font-bold text-white text-xs mb-1.5 group-hover:text-rose-400 transition-colors">Tính Áp Suất Tĩnh ESP</h4>
+                        <p id="sopStep5Description" class="text-[11px] text-slate-400 leading-relaxed">Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.</p>
                     </div>
                 </div>
             </section>
@@ -1765,6 +2014,1039 @@
             updateAmbientAudioControls();
         }
     </script>
+    <script>
+        var hapMiniPresets = {
+            office: { envelope: 50, lighting: 10, equipment: 15, personSensible: 75, personLatent: 55, ventilation: 10 },
+            residential: { envelope: 45, lighting: 8, equipment: 12, personSensible: 70, personLatent: 45, ventilation: 8 },
+            classroom: { envelope: 55, lighting: 12, equipment: 8, personSensible: 70, personLatent: 50, ventilation: 10 },
+            retail: { envelope: 70, lighting: 15, equipment: 25, personSensible: 75, personLatent: 55, ventilation: 10 },
+            restaurant: { envelope: 80, lighting: 18, equipment: 40, personSensible: 95, personLatent: 120, ventilation: 15 }
+        };
+
+        function hapMiniNumber(id, fallback) {
+            var element = document.getElementById(id);
+            var value = element ? parseFloat(element.value) : NaN;
+            return isFinite(value) ? Math.max(0, value) : fallback;
+        }
+
+        function hapMiniSaturationPressure(tempC) {
+            return 0.61094 * Math.exp((17.625 * tempC) / (tempC + 243.04));
+        }
+
+        function hapMiniHumidityRatio(tempC, relativeHumidity) {
+            var rh = Math.max(0, Math.min(100, relativeHumidity)) / 100;
+            var vaporPressure = rh * hapMiniSaturationPressure(tempC);
+            return 0.62198 * vaporPressure / Math.max(0.001, 101.325 - vaporPressure);
+        }
+
+        function hapMiniSetText(id, value) {
+            var element = document.getElementById(id);
+            if (element) element.textContent = value;
+        }
+
+        function hapMiniFormatWatts(value) {
+            return Math.round(value).toLocaleString(window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN") + " W";
+        }
+
+        function applyHapMiniPreset() {
+            var typeSelect = document.getElementById("hapRoomType");
+            var preset = hapMiniPresets[typeSelect ? typeSelect.value : "office"] || hapMiniPresets.office;
+            document.getElementById("hapEnvelopeDensity").value = preset.envelope;
+            document.getElementById("hapLightingDensity").value = preset.lighting;
+            document.getElementById("hapEquipmentDensity").value = preset.equipment;
+            document.getElementById("hapVentRate").value = preset.ventilation;
+            calculateHapMiniLoad();
+        }
+
+        function calculateHapMiniLoad() {
+            var typeSelect = document.getElementById("hapRoomType");
+            var preset = hapMiniPresets[typeSelect ? typeSelect.value : "office"] || hapMiniPresets.office;
+            var area = hapMiniNumber("hapArea", 40);
+            var people = hapMiniNumber("hapPeople", 8);
+            var envelopeDensity = hapMiniNumber("hapEnvelopeDensity", preset.envelope);
+            var lightingDensity = hapMiniNumber("hapLightingDensity", preset.lighting);
+            var equipmentDensity = hapMiniNumber("hapEquipmentDensity", preset.equipment);
+            var ventilationRate = hapMiniNumber("hapVentRate", preset.ventilation);
+            var indoorTemp = parseFloat(document.getElementById("hapIndoorTemp").value);
+            var indoorRh = parseFloat(document.getElementById("hapIndoorRh").value);
+            var outdoorTemp = parseFloat(document.getElementById("hapOutdoorTemp").value);
+            var outdoorRh = parseFloat(document.getElementById("hapOutdoorRh").value);
+            if (!isFinite(indoorTemp)) indoorTemp = 24;
+            if (!isFinite(indoorRh)) indoorRh = 50;
+            if (!isFinite(outdoorTemp)) outdoorTemp = 35;
+            if (!isFinite(outdoorRh)) outdoorRh = 60;
+            indoorRh = Math.max(0, Math.min(100, indoorRh));
+            outdoorRh = Math.max(0, Math.min(100, outdoorRh));
+
+            var envelopeLoad = area * envelopeDensity;
+            var lightingLoad = area * lightingDensity;
+            var equipmentLoad = area * equipmentDensity;
+            var peopleSensible = people * preset.personSensible;
+            var peopleLatent = people * preset.personLatent;
+            var outdoorFlow = people * ventilationRate / 1000;
+            var massFlow = outdoorFlow * 1.2;
+            var indoorW = hapMiniHumidityRatio(indoorTemp, indoorRh);
+            var outdoorW = hapMiniHumidityRatio(outdoorTemp, outdoorRh);
+            var ventilationSensible = Math.max(0, massFlow * (1.006 + 1.86 * indoorW) * (outdoorTemp - indoorTemp) * 1000);
+            var ventilationLatent = Math.max(0, massFlow * (2501 + 1.86 * outdoorTemp) * (outdoorW - indoorW) * 1000);
+
+            var sensible = envelopeLoad + lightingLoad + equipmentLoad + peopleSensible + ventilationSensible;
+            var latent = peopleLatent + ventilationLatent;
+            var total = sensible + latent;
+            var suggestedCapacity = total * 1.10;
+            var btuPerHour = total * 3.412142;
+            var suggestedBtuPerHour = suggestedCapacity * 3.412142;
+            var tons = total / 3516.8528;
+            var suggestedTons = suggestedCapacity / 3516.8528;
+
+            hapMiniSetText("hapSensibleValue", (sensible / 1000).toFixed(2) + " kW");
+            hapMiniSetText("hapSensibleDetail", Math.round(sensible * 3.412142).toLocaleString(window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN") + " BTU/h");
+            hapMiniSetText("hapLatentValue", (latent / 1000).toFixed(2) + " kW");
+            hapMiniSetText("hapLatentDetail", Math.round(latent * 3.412142).toLocaleString(window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN") + " BTU/h");
+            hapMiniSetText("hapTotalValue", (total / 1000).toFixed(2) + " kW");
+            hapMiniSetText("hapTotalDetail", Math.round(btuPerHour).toLocaleString(window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN") + " BTU/h · " + tons.toFixed(2) + " TR");
+            hapMiniSetText("hapCapacityValue", (suggestedCapacity / 1000).toFixed(2) + " kW");
+            hapMiniSetText("hapCapacityDetail", Math.round(suggestedBtuPerHour).toLocaleString(window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN") + " BTU/h · " + suggestedTons.toFixed(2) + " TR");
+            hapMiniSetText("hapEnvelopeResult", hapMiniFormatWatts(envelopeLoad));
+            hapMiniSetText("hapLightingResult", hapMiniFormatWatts(lightingLoad));
+            hapMiniSetText("hapEquipmentResult", hapMiniFormatWatts(equipmentLoad));
+            hapMiniSetText("hapPeopleResult", hapMiniFormatWatts(peopleSensible + peopleLatent));
+            hapMiniSetText("hapVentSensibleResult", hapMiniFormatWatts(ventilationSensible));
+            hapMiniSetText("hapVentLatentResult", hapMiniFormatWatts(ventilationLatent));
+        }
+
+        (function initializeHapMiniCalculator() {
+            var roomType = document.getElementById("hapRoomType");
+            if (!roomType) return;
+            roomType.addEventListener("change", applyHapMiniPreset);
+            document.querySelectorAll("#hapMiniForm input").forEach(function (input) {
+                input.addEventListener("input", calculateHapMiniLoad);
+            });
+            calculateHapMiniLoad();
+        })();
+    </script>
+    <script>
+        var hvacConversionGroups = {
+            power: {
+                title: "Công suất / tải lạnh",
+                units: [
+                    { id: "W", label: "W (watt)", factor: 1 },
+                    { id: "kW", label: "kW (kilowatt)", factor: 1000 },
+                    { id: "BTU/h", label: "BTU/h", factor: 0.29307107 },
+                    { id: "TR", label: "TR (tấn lạnh)", factor: 3516.85284 },
+                    { id: "HP", label: "HP cơ", factor: 745.699872 }
+                ],
+                note: "HP cơ là mã lực cơ học (1 HP = 745,7 W). HP lạnh tham khảo bên dưới dùng quy ước gần đúng 9.000 BTU/h cho mỗi HP; cấp HP thực tế tùy hãng nên hãy đối chiếu BTU/h hoặc thông số nhà sản xuất."
+            },
+            density: {
+                title: "Mật độ tải theo diện tích",
+                units: [
+                    { id: "W/m²", label: "W/m²", factor: 1 },
+                    { id: "kW/m²", label: "kW/m²", factor: 1000 },
+                    { id: "BTU/h·ft²", label: "BTU/h·ft²", factor: 3.15459075 }
+                ],
+                note: "Các đơn vị mật độ tải được quy đổi theo diện tích; phần tải tổng W/kW bên dưới kết quả được tính bằng mật độ tải × diện tích đã nhập."
+            },
+            flow: {
+                title: "Lưu lượng gió",
+                units: [
+                    { id: "m³/h", label: "m³/h", factor: 1 / 3600 },
+                    { id: "L/s", label: "L/s", factor: 0.001 },
+                    { id: "CFM", label: "CFM (ft³/min)", factor: 0.00047194745 }
+                ],
+                note: "CFM là cubic feet per minute (ft³/phút); kết quả dựa trên quy đổi thể tích chuẩn."
+            },
+            velocity: {
+                title: "Vận tốc gió",
+                units: [
+                    { id: "m/s", label: "m/s", factor: 1 },
+                    { id: "km/h", label: "km/h", factor: 1 / 3.6 },
+                    { id: "fpm", label: "ft/min (fpm)", factor: 0.00508 }
+                ],
+                note: "1 ft/min = 0,00508 m/s."
+            },
+            pressure: {
+                title: "Áp suất",
+                units: [
+                    { id: "Pa", label: "Pa", factor: 1 },
+                    { id: "kPa", label: "kPa", factor: 1000 },
+                    { id: "mmH₂O", label: "mmH₂O", factor: 9.80665 },
+                    { id: "in.w.g.", label: "in.w.g. (inch cột nước)", factor: 249.08891 }
+                ],
+                note: "Quy đổi áp suất theo cột nước chuẩn; 1 mmH₂O = 9,80665 Pa."
+            },
+            length: {
+                title: "Chiều dài / kích thước",
+                units: [
+                    { id: "m", label: "m", factor: 1 },
+                    { id: "mm", label: "mm", factor: 0.001 },
+                    { id: "cm", label: "cm", factor: 0.01 },
+                    { id: "in", label: "inch (in)", factor: 0.0254 },
+                    { id: "ft", label: "feet (ft)", factor: 0.3048 }
+                ],
+                note: "Hữu ích khi đổi kích thước ống gió, miệng gió và khoảng cách thi công."
+            },
+            area: {
+                title: "Diện tích",
+                units: [
+                    { id: "m²", label: "m²", factor: 1 },
+                    { id: "ft²", label: "ft²", factor: 0.09290304 },
+                    { id: "cm²", label: "cm²", factor: 0.0001 }
+                ],
+                note: "1 ft² = 0,09290304 m²."
+            },
+            temperature: {
+                title: "Nhiệt độ",
+                units: [
+                    { id: "°C", label: "°C (Celsius)" },
+                    { id: "°F", label: "°F (Fahrenheit)" }
+                ],
+                note: "Nhiệt độ dùng công thức chuyển đổi có độ lệch: °F = °C × 9/5 + 32."
+            }
+        };
+
+        function hvacConvertFormat(value) {
+            if (!isFinite(value)) return "—";
+            if (value !== 0 && Math.abs(value) < 0.000001) return value.toExponential(4);
+            var locale = window.hvacNumberLocale ? window.hvacNumberLocale() : "vi-VN";
+            return Number(value.toPrecision(7)).toLocaleString(locale, { maximumFractionDigits: 7 });
+        }
+
+        function hvacConvertToBase(value, unit, category) {
+            if (category === "temperature") return unit.id === "°F" ? (value - 32) * 5 / 9 : value;
+            return value * unit.factor;
+        }
+
+        function hvacConvertFromBase(value, unit, category) {
+            if (category === "temperature") return unit.id === "°F" ? value * 9 / 5 + 32 : value;
+            return value / unit.factor;
+        }
+
+        function updateHvacUnitOptions() {
+            var categorySelect = document.getElementById("hvacConvertCategory");
+            var unitSelect = document.getElementById("hvacConvertUnit");
+            if (!categorySelect || !unitSelect) return;
+            var category = categorySelect.value;
+            var group = hvacConversionGroups[category];
+            var previousUnit = unitSelect.value;
+            unitSelect.innerHTML = group.units.map(function (unit) {
+                return '<option value="' + unit.id + '">' + unit.label + "</option>";
+            }).join("");
+            if (group.units.some(function (unit) { return unit.id === previousUnit; })) unitSelect.value = previousUnit;
+            else unitSelect.value = group.units[0].id;
+            var showArea = category === "power" || category === "density";
+            document.getElementById("hvacConvertAreaWrap").classList.toggle("hidden", !showArea);
+            document.getElementById("hvacConvertAreaWrap").querySelector("label").textContent = category === "density" ? "Diện tích để tính tổng tải" : "Diện tích dùng để tính W/m²";
+            calculateHvacConversions();
+        }
+
+        function calculateHvacConversions() {
+            var categorySelect = document.getElementById("hvacConvertCategory");
+            var valueInput = document.getElementById("hvacConvertValue");
+            var unitSelect = document.getElementById("hvacConvertUnit");
+            var results = document.getElementById("hvacConvertResults");
+            if (!categorySelect || !valueInput || !unitSelect || !results) return;
+            var category = categorySelect.value;
+            var group = hvacConversionGroups[category];
+            var inputValue = parseFloat(valueInput.value);
+            var inputUnit = group.units.find(function (unit) { return unit.id === unitSelect.value; }) || group.units[0];
+            var areaValue = parseFloat(document.getElementById("hvacConvertArea").value);
+            var area = isFinite(areaValue) && areaValue > 0 ? areaValue : 0;
+            document.getElementById("hvacConvertResultsTitle").textContent = group.title + " · Kết quả tương đương";
+            document.getElementById("hvacConvertNote").textContent = group.note;
+
+            if (!isFinite(inputValue)) {
+                results.innerHTML = '<tr><td colspan="2" class="px-4 py-5 text-center text-slate-500">Nhập một giá trị hợp lệ để xem kết quả.</td></tr>';
+                document.getElementById("hvacConvertInputSummary").textContent = "Chưa có giá trị";
+                return;
+            }
+
+            var baseValue = hvacConvertToBase(inputValue, inputUnit, category);
+            document.getElementById("hvacConvertInputSummary").textContent = hvacConvertFormat(inputValue) + " " + inputUnit.id;
+            var rows = group.units.map(function (unit) {
+                return { label: unit.label, value: hvacConvertFormat(hvacConvertFromBase(baseValue, unit, category)), highlight: unit.id !== inputUnit.id };
+            });
+
+            if (category === "power" && area > 0) {
+                rows.push({ label: "HP lạnh tham khảo (~9.000 BTU/h/HP)", value: hvacConvertFormat(baseValue * 3.412142 / 9000), highlight: true });
+                rows.push({ label: "Mật độ tải theo diện tích (W/m²)", value: hvacConvertFormat(baseValue / area), highlight: true });
+                rows.push({ label: "Mật độ tải theo diện tích (kW/m²)", value: hvacConvertFormat(baseValue / area / 1000), highlight: true });
+            } else if (category === "power") {
+                rows.push({ label: "HP lạnh tham khảo (~9.000 BTU/h/HP)", value: hvacConvertFormat(baseValue * 3.412142 / 9000), highlight: true });
+            } else if (category === "density" && area > 0) {
+                rows.push({ label: "Tổng tải theo diện tích đã nhập (W)", value: hvacConvertFormat(baseValue * area), highlight: true });
+                rows.push({ label: "Tổng tải theo diện tích đã nhập (kW)", value: hvacConvertFormat(baseValue * area / 1000), highlight: true });
+            } else if ((category === "power" || category === "density") && area === 0) {
+                rows.push({ label: "Quy đổi theo diện tích", value: "Nhập diện tích lớn hơn 0 m²", highlight: true });
+            }
+
+            results.innerHTML = rows.map(function (row, index) {
+                return '<tr class="hvac-converter-row ' + (row.highlight ? "bg-cyan-400/[0.025]" : "") + '" style="animation-delay:' + Math.min(index * 35, 280) + 'ms"><td class="px-4 py-3 text-slate-300">' + row.label + '</td><td class="px-4 py-3 text-right font-bold text-cyan-100 tabular-nums">' + row.value + '</td></tr>';
+            }).join("");
+        }
+
+        (function initializeHvacConverter() {
+            var category = document.getElementById("hvacConvertCategory");
+            if (!category) return;
+            category.addEventListener("change", updateHvacUnitOptions);
+            document.getElementById("hvacConvertUnit").addEventListener("change", calculateHvacConversions);
+            document.getElementById("hvacConvertValue").addEventListener("input", calculateHvacConversions);
+            document.getElementById("hvacConvertArea").addEventListener("input", calculateHvacConversions);
+            updateHvacUnitOptions();
+        })();
+    </script>
+    <script>
+        (function(){
+          // ---- Phần tử DOM ----
+          var stage=document.getElementById('tong-quan');
+          var titleWrap=document.getElementById('hvacBrandTitle');
+          var h1=document.getElementById('hvacBrandTitle');
+          var cv=document.getElementById('hvacFireCanvas');
+          var ctx=cv.getContext('2d');          // canvas lửa
+          var wv=document.getElementById('hvacWaterCanvas');
+          var wc=wv.getContext('2d');           // canvas nước
+          var hintBtn=document.getElementById('hintBtn');
+          var hintText=document.getElementById('hintText');
+          var iconFlame=document.getElementById('iconFlame');
+          var iconDrop=document.getElementById('iconDrop');
+        
+          var reduced=false;
+          try{reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+        
+          // ---- Thông số ----
+          var POUR_MS = reduced ? 300 : 1700;  // thời gian vòi nước quét hết chữ
+          var IGN_MS  = reduced ? 300 : 1100;  // thời gian lửa bén lại
+          var TAIL_MS = 450;                   // nước còn chảy thêm một chút sau khi quét xong
+          var FIRE_RATE = 8;                  // hạt lửa/giây của mỗi nguồn ở cường độ 1
+          var FLARE_RATE = 16;                 // hạt của đợt bùng/giây khi vừa bị nước chạm
+          var SWELL_DIST = 70;                 // khoảng cách phía trước mặt nước mà lửa bắt đầu phồng
+          var STREAM_GAP = 30;                 // khoảng cách giữa các tia nước
+          var RING_LIFE = 0.9;                 // thời gian một vòng sóng lan ra rồi tan
+          var MAX_PARTS = 650, MAX_DROPS = 60;
+          var STREAM_FADE = 0.7, STREAM_CLEAN = 0.8;
+        
+          var rnd=function(a,b){return a+Math.random()*(b-a);};
+        
+          // ---- Trạng thái ----
+          var state='burning', phaseT=0, pipeA=0, last=0, curT=0;
+          var frameOn=true, rafId=0;
+          var W=0, H=0, dpr=1;
+          var lines=[], emitters=[], nozzles=[], parts=[], streams=[], rings=[], wdrops=[];
+          var geo={left:0,right:0,barY:0,bottom:0};
+        
+          // Sprite tạo sẵn một lần, vẽ bằng drawImage cho nhẹ máy
+          function sprite(stops){
+            var c=document.createElement('canvas');
+            c.width=c.height=64;
+            var g=c.getContext('2d');
+            var grd=g.createRadialGradient(32,32,0,32,32,32);
+            stops.forEach(function(s){grd.addColorStop(s[0],s[1]);});
+            g.fillStyle=grd;
+            g.fillRect(0,0,64,64);
+            return c;
+          }
+          var SP={
+            hot:  sprite([[0,'rgba(255,250,225,1)'],[0.35,'rgba(255,200,90,0.9)'],[0.7,'rgba(255,90,25,0.35)'],[1,'rgba(255,60,10,0)']]),
+            mid:  sprite([[0,'rgba(255,190,80,0.95)'],[0.5,'rgba(255,90,25,0.5)'],[1,'rgba(180,30,5,0)']]),
+            deep: sprite([[0,'rgba(230,70,20,0.8)'],[0.6,'rgba(140,25,5,0.35)'],[1,'rgba(60,10,2,0)']]),
+            smoke:sprite([[0,'rgba(170,176,184,0.9)'],[0.5,'rgba(120,126,134,0.45)'],[1,'rgba(100,106,114,0)']]),
+            steam:sprite([[0,'rgba(240,248,255,0.95)'],[0.6,'rgba(200,225,240,0.4)'],[1,'rgba(200,225,240,0)']]),
+            wdrop:sprite([[0,'rgba(235,250,255,1)'],[0.45,'rgba(90,180,240,0.9)'],[1,'rgba(20,90,170,0)']])
+          };
+        
+          function mkLine(l,t,r,b){
+            // imp: điểm tia nước chạm tới, gần đường chân chữ (baseline) thay vì phần trên chữ
+            return {l:l,t:t,r:r,b:b,w:r-l,h:b-t,imp:t+(b-t)*0.8};
+          }
+          function mkEm(x,y,sp,h){
+            return {
+              x:x, y:y, sp:sp,
+              h:h,                          // độ sáng nền của nguồn (0..1)
+              on:true, gt:rnd(0.5,2), gl:1, // trạng thái phập phùng
+              seed:rnd(0,100),
+              acc:0, fAcc:0,                // bộ đếm hạt thường và hạt của đợt bùng
+              flareT:0,                     // thời gian còn lại của đợt bùng
+              wet:false,                    // đã bị nước quét qua hay chưa
+              prev:h
+            };
+          }
+        
+          // Đo đúng vị trí từng dòng chữ trên DOM để đặt nguồn lửa khớp với chữ
+          function measure(){
+            var sr=stage.getBoundingClientRect();
+            W=sr.width; H=sr.height;
+            dpr=window.devicePixelRatio||1;
+            [cv,wv].forEach(function(c){
+              c.width=Math.round(W*dpr);
+              c.height=Math.round(H*dpr);
+            });
+        
+            var range=document.createRange();
+            range.selectNodeContents(h1);
+            var rects=range.getClientRects();
+            lines=[];
+            for(var i=0;i<rects.length;i++){
+              var r=rects[i];
+              if(r.width<2) continue;
+              lines.push(mkLine(r.left-sr.left,r.top-sr.top,r.right-sr.left,r.bottom-sr.top));
+            }
+            if(!lines.length){
+              var hr=h1.getBoundingClientRect();
+              lines.push(mkLine(hr.left-sr.left,hr.top-sr.top,hr.right-sr.left,hr.bottom-sr.top));
+            }
+        
+            geo.left=Math.min.apply(null,lines.map(function(q){return q.l;}));
+            geo.right=Math.max.apply(null,lines.map(function(q){return q.r;}));
+            geo.barY=Math.min.apply(null,lines.map(function(q){return q.t;}))-36;
+            geo.bottom=Math.max.apply(null,lines.map(function(q){return q.b;}));
+        
+            // Nguồn lửa: rải dọc phần thân chữ, cộng thêm hai đầu dòng để lửa bao quanh
+            var lit=(state==='burning')?1:0;
+            emitters=[];
+            lines.forEach(function(q){
+              var n=Math.max(6,Math.round(q.w/12));
+              for(var k=0;k<n;k++){
+                emitters.push(mkEm(rnd(q.l,q.r),rnd(q.t+q.h*0.68,q.t+q.h*0.95),3,lit));
+              }
+              emitters.push(mkEm(q.l,q.t+q.h*0.6,2,lit));
+              emitters.push(mkEm(q.r,q.t+q.h*0.6,2,lit));
+            });
+        
+            // Các đầu phun trên ống nước, cách nhau 16px
+            nozzles=[];
+            for(var x=geo.left;x<=geo.right+8;x+=16) nozzles.push({x:x,acc:0});
+          }
+        
+          // boost = true: hạt của đợt bùng, to hơn, nóng hơn và bay vọt lên nhanh hơn
+          function spawnPart(k,x,y,boost){
+            if(parts.length>=MAX_PARTS) return;
+            var q={k:k,x:x,y:y,vx:0,vy:0,life:1,age:0,s:10,seed:rnd(0,6.28)};
+            if(k==='fire'){
+              q.vx=rnd(-14,14); q.vy=-rnd(70,140); q.life=rnd(0.45,0.95); q.s=rnd(14,22);
+              if(boost){ q.vx=rnd(-30,30); q.vy=-rnd(160,240); q.life=rnd(0.5,0.85); q.s=rnd(22,34); }
+            }
+            else if(k==='ember'){q.vx=rnd(-20,20); q.vy=-rnd(120,200); q.life=rnd(0.9,1.5); q.s=3; }
+            else if(k==='smoke'){q.vx=rnd(-10,10); q.vy=-rnd(18,36);  q.life=rnd(2.2,3.2); q.s=rnd(16,24); }
+            else if(k==='steam'){q.vx=rnd(-8,8);   q.vy=-rnd(30,60);  q.life=rnd(1,1.6);   q.s=rnd(8,14); }
+            parts.push(q);
+          }
+        
+          // Giọt bắn ra quanh chỗ tia nước chạm chữ
+          function spawnDrop(x,y){
+            if(wdrops.length>=MAX_DROPS) return;
+            wdrops.push({x:x,y:y,vx:rnd(-50,50),vy:rnd(-90,-30),age:0,life:rnd(0.4,0.7),r:rnd(1.5,3)});
+          }
+        
+          // Điểm chạm của tia nước: dòng chữ đầu tiên mà tia rơi trúng theo phương ngang
+          function impactFor(x){
+            for(var i=0;i<lines.length;i++){
+              var ln=lines[i];
+              if(x>=ln.l-6 && x<=ln.r+6) return {x:x,y:ln.imp};
+            }
+            return {x:x,y:lines[0].imp};
+          }
+        
+          // Một tia nước: từ ống phía trên xuống chạm chữ, lắc nhẹ như dòng nước thật
+          function mkStream(x0){
+            var im=impactFor(x0);
+            return {
+              x0:x0,
+              phase:rnd(0,6.28),
+              speed:rnd(2.2,3.2),
+              amp:rnd(1.5,3.5),   // độ lắc ngang rất nhỏ
+              top:geo.barY+9,
+              impX:im.x,
+              impY:im.y,
+              started:false, born:-1, dieAt:-1, nextRing:0
+            };
+          }
+        
+          // Nối các điểm bằng đường cong bậc hai qua trung điểm cho mượt
+          function traceSmooth(c,pts,move){
+            if(move) c.moveTo(pts[0].x,pts[0].y);
+            else c.lineTo(pts[0].x,pts[0].y);
+            for(var i=1;i<pts.length-1;i++){
+              var mx=(pts[i].x+pts[i+1].x)/2, my=(pts[i].y+pts[i+1].y)/2;
+              c.quadraticCurveTo(pts[i].x,pts[i].y,mx,my);
+            }
+            var last=pts[pts.length-1];
+            c.lineTo(last.x,last.y);
+          }
+        
+          // Hình dạng tia nước tại thời điểm tt: lắc nhẹ tăng dần về phía dưới
+          function streamPts(st,tt){
+            var N=24, pts=[];
+            for(var i=0;i<N;i++){
+              var s=i/(N-1);
+              var x=st.x0+st.amp*Math.sin(2*Math.PI*1.5*s+st.phase+tt*st.speed)*s;
+              var y=st.top+(st.impY-st.top)*s;
+              pts.push({x:x,y:y});
+            }
+            return pts;
+          }
+        
+          // Vẽ tia nước: quầng xanh bên ngoài, thân xanh sáng, lõi trắng
+          function drawStream(st,a){
+            var pts=streamPts(st,curT);
+            wc.globalAlpha=a;
+            wc.lineCap='round';
+            wc.beginPath(); traceSmooth(wc,pts,true);
+            wc.strokeStyle='rgba(80,220,255,0.28)';
+            wc.lineWidth=9;
+            wc.stroke();
+            wc.beginPath(); traceSmooth(wc,pts,true);
+            wc.strokeStyle='rgba(150,235,255,0.9)';
+            wc.lineWidth=3.2;
+            wc.stroke();
+            wc.beginPath(); traceSmooth(wc,pts,true);
+            wc.strokeStyle='rgba(255,255,255,0.95)';
+            wc.lineWidth=1.1;
+            wc.stroke();
+            wc.globalAlpha=1;
+          }
+        
+          // Vòng sóng lan ra từ điểm chạm: dẹt theo phối cảnh, mờ dần khi lan rộng
+          function drawRing(rg){
+            var k=rg.age/RING_LIFE;
+            var rx=4+24*k, ry=rx*0.28;
+            wc.globalAlpha=(1-k)*0.9;
+            wc.beginPath();
+            wc.ellipse(rg.x,rg.y,rx,ry,0,0,Math.PI*2);
+            wc.strokeStyle='rgba(235,252,255,1)';
+            wc.lineWidth=1.6;
+            wc.stroke();
+            wc.beginPath();
+            wc.ellipse(rg.x,rg.y,rx*0.6,ry*0.6,0,0,Math.PI*2);
+            wc.strokeStyle='rgba(160,235,255,1)';
+            wc.lineWidth=1;
+            wc.stroke();
+            wc.globalAlpha=1;
+          }
+        
+          var TXT={burning:'Nhấn để dập lửa',pouring:'Đang tưới nước…',doused:'Nhấn để nhóm lại lửa',igniting:'Đang nhóm lửa…'};
+          function setState(s){
+            state=s;
+            phaseT=0;
+            stage.dataset.state=s;
+            titleWrap.classList.toggle('hvac-title-fire',s==='burning'||s==='igniting');
+            titleWrap.classList.toggle('hvac-title-water',s==='pouring');
+            titleWrap.classList.toggle('hvac-title-doused',s==='doused');
+            hintText.textContent=TXT[s];
+            var wet=(s==='pouring'||s==='doused');
+            iconFlame.hidden=wet;
+            iconDrop.hidden=!wet;
+            titleWrap.setAttribute('aria-pressed',wet?'true':'false');
+        
+            // Bắt đầu tưới: tạo các tia nước dọc chữ, tia nào được mặt nước quét tới sẽ chảy
+            if(s==='pouring' && geo.right>geo.left){
+              var N=Math.max(4,Math.round((geo.right-geo.left)/STREAM_GAP));
+              for(var i=0;i<N;i++){
+                var x0=geo.left+(i+0.5)*(geo.right-geo.left)/N+rnd(-6,6);
+                streams.push(mkStream(x0));
+              }
+            }
+            // Dừng tưới: các tia đang chảy bắt đầu mờ dần
+            if(s==='doused'){
+              streams.forEach(function(st){ if(st.started && st.dieAt<0) st.dieAt=curT; });
+            }
+          }
+        
+          // Mỗi frame: cập nhật trạng thái, lửa, nước và khói
+          function step(dt,t){
+            curT=t;
+            phaseT+=dt*1000;
+        
+            // Mặt nước quét từ trái sang phải (pouring) hoặc lửa bén lại (igniting)
+            var front=geo.left, p=0;
+            if(state==='pouring'){
+              p=Math.min(1,phaseT/POUR_MS);
+              front=geo.left+(geo.right-geo.left)*p;
+              if(phaseT>POUR_MS+TAIL_MS) setState('doused');
+            } else if(state==='igniting'){
+              p=Math.min(1,phaseT/IGN_MS);
+              front=geo.left+(geo.right-geo.left)*p;
+              if(p>=1) setState('burning');
+            }
+        
+            // ---- Nguồn lửa ----
+            for(var i=0;i<emitters.length;i++){
+              var e=emitters[i];
+        
+              // Mục tiêu độ sáng: đang cháy = 1, phía sau mặt nước = 0
+              var target;
+              if(state==='burning') target=1;
+              else if(state==='pouring') target=(e.x>front)?1:0;
+              else if(state==='igniting') target=(e.x<=front)?1:0;
+              else target=0;
+        
+              // Nguồn vừa bị nước quét qua: bùng lên một đợt ngắn rồi mới tắt hẳn
+              if(state==='pouring' && target===0 && !e.wet){
+                e.wet=true;
+                e.flareT=0.4;
+              }
+              // Nguồn vừa bén lại: cũng bùng nhẹ một nhịp
+              if(state==='igniting' && target===1 && e.wet){
+                e.wet=false;
+                e.flareT=0.3;
+              }
+        
+              // Tắt nhanh khi bị nước dội, bật lại chậm hơn như lửa bén dần
+              var rate=(target<e.h)?9:3.2;
+              e.h+=Math.max(-rate*dt,Math.min(rate*dt,target-e.h));
+        
+              // Phập phùng: nguồn lúc bùng lúc tắt ngắn rồi bùng lại
+              e.gt-=dt;
+              if(e.gt<=0){
+                e.on=!e.on;
+                e.gt=e.on?rnd(0.6,2.2):rnd(0.12,0.4);
+              }
+              e.gl+=((e.on?1:0.25)-e.gl)*Math.min(1,dt*10);
+        
+              // Nhấp nháy ngẫu nhiên theo hai sóng lệch pha, mỗi nguồn một nhịp riêng
+              var n=0.8+0.2*Math.sin(t*11+e.seed)*Math.sin(t*6.7+e.seed*1.7);
+        
+              // Lửa ngay phía trước mặt nước phồng lên trước khi nước tới (hơi nóng đẩy lửa)
+              var swell=0;
+              if(state==='pouring' && target===1){
+                var ahead=e.x-front;
+                if(ahead<SWELL_DIST) swell=0.9*(1-Math.max(0,ahead)/SWELL_DIST);
+              }
+        
+              // Hạt lửa thường
+              var inten=e.h*e.gl*n*(1+swell);
+              e.acc+=inten*FIRE_RATE*dt;
+              while(e.acc>=1 && parts.length<MAX_PARTS){
+                e.acc-=1;
+                spawnPart(Math.random()<0.08?'ember':'fire', e.x+rnd(-e.sp,e.sp), e.y+rnd(-2,2), false);
+              }
+              if(e.acc>2) e.acc=2;
+        
+              // Đợt bùng: hạt lớn, nóng, vọt lên; mạnh lúc đầu rồi tắt dần theo flareT
+              if(e.flareT>0){
+                var fr=Math.min(1,e.flareT/0.4);
+                e.fAcc+=FLARE_RATE*fr*dt;
+                while(e.fAcc>=1 && parts.length<MAX_PARTS){
+                  e.fAcc-=1;
+                  spawnPart('fire', e.x+rnd(-e.sp,e.sp), e.y, true);
+                }
+                if(e.fAcc>2) e.fAcc=2;
+                e.flareT-=dt;
+              }
+        
+              // Nguồn vừa tắt thì bốc khói và hơi nước
+              if(e.prev>0.5 && e.h<=0.5 && state!=='burning'){
+                spawnPart('smoke',e.x,e.y,false);
+                spawnPart('steam',e.x,e.y-4,false);
+              }
+              e.prev=e.h;
+            }
+        
+            // Khói âm ỉ bốc lên từ chỗ đã tắt
+            if((state==='doused'||state==='pouring') && Math.random()<0.05 && emitters.length){
+              var ee=emitters[(Math.random()*emitters.length)|0];
+              if(ee.h<0.2) spawnPart('smoke',ee.x+rnd(-4,4),ee.y-6,false);
+            }
+        
+            // Ống nước: hiện khi đang tưới, mờ dần khi xong
+            var pipeTarget=(state==='pouring')?1:0;
+            pipeA+=(pipeTarget-pipeA)*Math.min(1,dt*6);
+        
+            // Hơi nước bốc lên ngay tại mặt nước đang quét
+            if(state==='pouring' && Math.random()<0.25){
+              var ly=lines[(Math.random()*lines.length)|0];
+              spawnPart('steam',front+rnd(-8,8),rnd(ly.t,ly.b),false);
+            }
+        
+            // ---- Nước: tia nước bắt đầu chảy khi mặt nước quét tới; chạm chữ thì tạo vòng sóng ----
+            for(var ri=0;ri<streams.length;ri++){
+              var st=streams[ri];
+              if(!st.started && state==='pouring' && front>=st.x0-2){
+                st.started=true;
+                st.born=t;
+                st.nextRing=t;
+              }
+              if(st.started && st.dieAt<0 && state==='pouring' && t>=st.nextRing){
+                var rx=st.x0+st.amp*Math.sin(2*Math.PI*1.5+st.phase+t*st.speed);
+                rings.push({x:rx,y:st.impY,age:0});
+                spawnDrop(rx,st.impY);
+                st.nextRing=t+rnd(0.35,0.55);
+              }
+            }
+            // Tia nước đã mờ hẳn thì bỏ đi
+            streams=streams.filter(function(st){ return !(st.dieAt>=0 && t-st.dieAt>STREAM_CLEAN); });
+        
+            // Vòng sóng: lan rồi tan
+            for(var gi=rings.length-1;gi>=0;gi--){
+              rings[gi].age+=dt;
+              if(rings[gi].age>RING_LIFE) rings.splice(gi,1);
+            }
+        
+            // Giọt bắn: rơi có trọng lực
+            for(var di=wdrops.length-1;di>=0;di--){
+              var w=wdrops[di];
+              w.age+=dt;
+              w.vy+=800*dt;
+              w.x+=w.vx*dt;
+              w.y+=w.vy*dt;
+              if(w.age>w.life || w.y>H+10) wdrops.splice(di,1);
+            }
+        
+            // ---- Cập nhật hạt lửa, khói, hơi ----
+            for(var pi=parts.length-1;pi>=0;pi--){
+              var q=parts[pi];
+              q.age+=dt;
+              if(q.age>q.life){parts.splice(pi,1);continue;}
+              if(q.k==='fire'||q.k==='ember'){
+                q.vx+=Math.sin(t*9+q.seed)*40*dt;        // gió xoáy làm ngọn lửa uốn lượn
+                q.vx*=(1-1.4*dt);
+                q.vy-=(q.k==='ember'?30:18)*dt;           // lực nổi đẩy lửa lên
+                q.vy*=(1-0.6*dt);
+              } else {
+                q.vx*=(1-0.5*dt);
+                q.vy*=(1-0.3*dt);
+                q.s+=(q.k==='smoke'?9:6)*dt;              // khói nở ra khi bay lên
+              }
+              var wob=(q.k==='smoke'||q.k==='steam')?Math.sin(t*1.7+q.seed)*6:0;
+              q.x+=(q.vx+wob)*dt;
+              q.y+=q.vy*dt;
+            }
+          }
+        
+          function draw(){
+            // ---- Canvas lửa ----
+            ctx.setTransform(dpr,0,0,dpr,0,0);
+            ctx.clearRect(0,0,W,H);
+        
+            // 1. Khói và hơi nước: pha màu thường
+            ctx.globalCompositeOperation='source-over';
+            for(var i=0;i<parts.length;i++){
+              var q=parts[i];
+              if(q.k!=='smoke'&&q.k!=='steam') continue;
+              var tt=q.age/q.life;
+              ctx.globalAlpha=Math.min(1,tt*6)*(1-tt)*(q.k==='smoke'?0.42:0.5);
+              ctx.drawImage(SP[q.k],q.x-q.s/2,q.y-q.s/2,q.s,q.s);
+            }
+        
+            // 2. Ống nước phía trên chữ, chỉ hiện khi đang tưới
+            if(pipeA>0.01){
+              ctx.globalAlpha=pipeA;
+              var px=geo.left-8, pw=geo.right-geo.left+16;
+              ctx.fillStyle='#4a525c';
+              ctx.fillRect(px,geo.barY,pw,9);
+              ctx.fillStyle='#9aa4b0';
+              ctx.fillRect(px,geo.barY,pw,2);
+              ctx.fillStyle='#2b3037';
+              for(var j=0;j<nozzles.length;j++) ctx.fillRect(nozzles[j].x-2,geo.barY+9,4,5);
+              ctx.globalAlpha=1;
+            }
+        
+            // 3. Lửa: pha cộng sáng để chỗ chồng lên nhau rực hơn
+            ctx.globalCompositeOperation='lighter';
+            for(var f=0;f<parts.length;f++){
+              var F=parts[f];
+              if(F.k!=='fire'&&F.k!=='ember') continue;
+              var u=F.age/F.life;
+              // Lõi trắng vàng ở gốc, cam ở thân, đỏ sẫm ở ngọn
+              var spr=(F.k==='ember')?SP.hot:(u<0.25?SP.hot:(u<0.6?SP.mid:SP.deep));
+              ctx.globalAlpha=Math.min(1,(1-u)*1.2)*(F.k==='ember'?0.9:0.45);
+              var dd=F.s*(0.75+0.6*u);
+              ctx.drawImage(spr,F.x-dd/2,F.y-dd/2,dd,dd);
+            }
+            ctx.globalAlpha=1;
+            ctx.globalCompositeOperation='source-over';
+        
+            // ---- Canvas nước ----
+            wc.setTransform(dpr,0,0,dpr,0,0);
+            wc.clearRect(0,0,W,H);
+        
+            // Các tia nước sáng, mỗi tia mờ dần khi tưới xong
+            for(var r=0;r<streams.length;r++){
+              var st=streams[r];
+              if(!st.started) continue;
+              var a=Math.min(1,(curT-st.born)*4);
+              if(st.dieAt>=0) a*=Math.max(0,1-(curT-st.dieAt)/STREAM_FADE);
+              if(a<=0.01) continue;
+              drawStream(st,a);
+            }
+        
+            // Vòng sóng lan ra từ chỗ chạm chữ
+            for(var g=0;g<rings.length;g++) drawRing(rings[g]);
+        
+            // Giọt bắn quanh chỗ chạm
+            for(var d=0;d<wdrops.length;d++){
+              var D=wdrops[d];
+              wc.globalAlpha=Math.min(1,(1-D.age/D.life)*2.5)*0.9;
+              wc.drawImage(SP.wdrop,D.x-D.r,D.y-D.r,D.r*2,D.r*2);
+            }
+            wc.globalAlpha=1;
+          }
+        
+          // Bấm chữ: đang cháy thì tưới nước, đã dập thì nhóm lửa lại
+          function toggle(){
+            if(state==='burning') setState('pouring');
+            else if(state==='doused'){
+              setState('igniting');
+              wakeFrame();
+            }
+          }
+        
+          titleWrap.addEventListener('click',toggle);
+          titleWrap.addEventListener('keydown',function(e){
+            if(e.key==='Enter'||e.key===' '){
+              e.preventDefault();
+              toggle();
+            }
+          });
+          hintBtn.addEventListener('click',toggle);
+        
+          // Khởi tạo: đo lại khi khung đổi kích thước hoặc font tải xong
+          setState('burning');
+          measure();
+          if(window.ResizeObserver) new ResizeObserver(function(){measure();}).observe(stage);
+          if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){measure();});
+        
+          function wakeFrame(){
+            if(frameOn) return;
+            frameOn=true;
+            last=0;
+            rafId=requestAnimationFrame(frame);
+          }
+        
+          function frame(ts){
+            if(!frameOn) return;
+            var t=ts/1000;
+            var dt=last?Math.min(0.05,t-last):0.016;
+            last=t;
+            step(dt,t);
+            draw();
+            if(state==='doused'&&!parts.length&&!streams.length&&!rings.length&&!wdrops.length&&pipeA<0.01){
+              frameOn=false;
+              return;
+            }
+            rafId=requestAnimationFrame(frame);
+          }
+          rafId=requestAnimationFrame(frame);
+        })();
+    </script>
     <script src="https://www.youtube.com/iframe_api"></script>
+<script id="hvacLanguageSwitcher">
+(function () {
+    "use strict";
+    var activeLang = "vi";
+    window.hvacNumberLocale=function(){return document.documentElement.lang==="en"?"en-US":document.documentElement.lang==="zh-CN"?"zh-CN":"vi-VN";};
+    var words = {
+        "Cẩm Nang & Bộ Tính Kích Thước Ống Gió - Miệng Gió HVAC":["HVAC Duct & Grille Design Guide","暖通空调风管与风口设计指南"],
+        "Chào Mừng Bạn Đã Đến Với":["Welcome to","欢迎来到"],"Cẩm Nang Bộ Tính Kích Thước":["The Duct & Grille Sizing Guide","风管与风口尺寸计算指南"],"Miệng Gió, Ống Gió":["Ducts & Air Grilles","风管与风口"],
+        "Bỏ qua":["Skip","跳过"],"Bỏ qua hoạt ảnh chào mừng":["Skip welcome animation","跳过欢迎动画"],
+        "Tổng Quan":["Overview","总览"],"Bộ Tính Toán":["Calculators","计算工具"],"HAP Mini · Tải Lạnh":["HAP Mini · Cooling Load","HAP Mini · 冷负荷"],"Bảng Quy Đổi HVAC":["HVAC Unit Converter","暖通单位换算"],"Vận Tốc Tiêu Chuẩn":["Standard Air Velocities","标准风速"],"Thủy Lực & Ma Sát":["Duct Hydraulics & Friction","风管水力与摩擦"],"Âm Học Miệng Gió":["Grille Acoustics","风口声学"],"Thư Viện Ống Gió & Miệng Gió":["Duct & Grille Library","风管与风口图库"],"Quy Trình SOP":["Design Workflow","设计流程"],
+        "Âm thanh nền":["Background audio","背景音频"],"Tắt âm thanh":["Turn audio off","关闭音频"],"Bật âm thanh":["Turn audio on","开启音频"],"Chọn âm thanh":["Choose audio","选择音频"],"Gió HVAC":["HVAC airflow","暖通气流"],"Mưa nhẹ":["Light rain","轻柔雨声"],"Chill ambient":["Chill ambience","舒缓氛围音乐"],"Ông Trời Làm Tội Anh Chưa · SoundCloud":["Ong Troi Lam Toi Anh Chua · SoundCloud","Ong Troi Lam Toi Anh Chua · SoundCloud"],"Âm lượng":["Volume","音量"],"Âm lượng nền":["Background volume","背景音量"],
+        "♪ Mở bài hát trên SoundCloud ↗":["♪ Open track on SoundCloud ↗","♪ 在 SoundCloud 打开歌曲 ↗"],"Mở YouTube để chọn bài":["Open YouTube to choose a track","打开 YouTube 选择歌曲"],"Chọn nhạc, sao chép link rồi quay lại":["Choose music, copy its link, then return","选择音乐，复制链接后返回"],"Dán link video nhạc YouTube":["Paste a YouTube music video link","粘贴 YouTube 音乐视频链接"],"Phát bài này trong trang":["Play this track on the page","在本页播放这首歌曲"],"YouTube không phát trong file HTML mở trực tiếp. Hãy cập nhật file lên GitHub rồi mở website bằng HTTPS.":["YouTube playback is unavailable when this HTML file is opened directly. Upload it to GitHub and open the site over HTTPS.","直接打开此 HTML 文件时无法播放 YouTube。请将文件上传到 GitHub，并通过 HTTPS 访问网站。"],"Mở website HTTPS":["Open the HTTPS website","打开 HTTPS 网站"],"Trình phát YouTube hiển thị tại đây; nếu trình duyệt chặn tự phát, bấm nút Play trong khung.":["The YouTube player appears here. If autoplay is blocked, press Play in the player.","YouTube 播放器会显示在这里。如果浏览器阻止自动播放，请点击播放器中的播放按钮。"],"Đang thử phát nền":["Trying to start background playback","正在尝试播放背景音频"],
+        "THIẾT KẾ":["DESIGN","设计"],"ĐHKK":["HVAC","暖通空调"],"VÀ":["&","与"],"THÔNG GIÓ":["VENTILATION","通风"],"Trình Duyệt Tiêu Chuẩn":["Standards Library","标准资料库"],"Các Tiêu Chuẩn ĐHKK - Thông Gió":["HVAC & Ventilation Standards","暖通空调与通风标准"],"Tiêu chuẩn ASHRAE":["ASHRAE Standards","ASHRAE 标准"],"Thư mục chứa ASHRAE Standards (62.1, 90.1, Handbook, Fundamentals...)":["Library of ASHRAE Standards (62.1, 90.1, Handbook, Fundamentals, etc.)","ASHRAE 标准资料库（62.1、90.1、手册、基础篇等）"],"Thông gió - Điều hòa không khí (Tiêu chuẩn thiết kế - Xuất bản lần 3)":["Ventilation and air conditioning (Design standard, 3rd edition)","通风与空调（设计标准，第 3 版）"],
+        "Kỹ Thuật Thủy Lực HVAC & Tính Toán Tiết Diện":["HVAC Hydraulics & Duct Sizing","暖通水力与风管尺寸计算"],"Chương trình hỗ trợ thiết kế theo phương pháp Ma Sát Đồng Đều (Equal Friction Method), tính đường kính tương đương (D":["A design aid using the Equal Friction Method to calculate equivalent diameter (D","本工具采用等摩擦法计算当量直径（D"],"), vận tốc thực tế (V":[", actual air velocity (V","）、实际风速（V"],"), tổn thất ma sát (":[", friction loss (","）、摩擦损失（"],") và kiểm tra độ ồn âm học (NC Rating) theo chuẩn ASHRAE Fundamentals.":[") and check noise levels (NC Rating) using ASHRAE Fundamentals.","），并依据 ASHRAE Fundamentals 检查噪声等级（NC Rating）。"],
+        "Vận Tốc Ống Chính VP":["Office Main Duct Velocity","办公主风管风速"],"Cân bằng độ ồn NC-35 và tiết diện tuyến ống.":["Balances NC-35 noise levels with duct size.","兼顾 NC-35 噪声水平与风管尺寸。"],"Tổn Thất Ma Sát Mục Tiêu":["Target Friction Loss","目标摩擦损失"],"Tối ưu công suất quạt & chi phí vận hành.":["Balances fan power and operating cost.","兼顾风机功率与运行成本。"],"Vận Tốc Bề Mặt Miệng Hồi":["Return Grille Face Velocity","回风口面风速"],"Tránh hiện tượng rít gió và cuộn bụi nan chớp.":["Helps prevent air hiss and dust pickup at the grille.","减少风口啸叫及格栅积尘。"],"Giới Hạn Aspect Ratio (W/H)":["Aspect Ratio Limit (W/H)","长宽比限制（W/H）"],"Tránh biến dạng ống tôn & ma sát phụ.":["Helps prevent duct deformation and added friction.","避免风管变形和额外摩擦损失。"],
+        "Chuyển đổi linh hoạt lưu lượng, vận tốc thiết kế, diện tích thoát gió hiệu dụng và cảnh báo vượt ngưỡng kỹ thuật.":["Calculate airflow, design velocity and effective free area, with alerts when technical limits are exceeded.","灵活计算风量、设计风速和有效通风面积，并在超过技术限值时提示。"],"Lưu Lượng Gió (Q):":["Airflow (Q):","风量（Q）："],"lít/giây (l/s)":["litres per second (L/s)","升/秒（L/s）"],"Vận Tốc Thiết Kế Mục Tiêu (V":["Target Design Velocity (V","目标设计风速（V"],"Ống Hồi (4.0 m/s)":["Return duct (4.0 m/s)","回风管（4.0 m/s）"],"Ống Chính VP (6.0 m/s)":["Office main duct (6.0 m/s)","办公主风管（6.0 m/s）"],"Nhà Xưởng (8.5 m/s)":["Industrial duct (8.5 m/s)","工业厂房风管（8.5 m/s）"],"Giới Hạn Chiều Cao Khống Chế Trần (H):":["Maximum Height Available Above Ceiling (H):","吊顶内可用最大高度（H）："],") làm tròn theo bội số 50mm.":[ "), rounded to the nearest 50 mm.","），按 50 毫米的倍数取整。"],"Hệ thống sẽ tự động tính Chiều Rộng chuẩn hóa (W":["The system automatically calculates the standardized width (W","系统会自动计算标准化宽度（W"],"Kết Quả Kích Thước Ống Gió Đề Xuất":["Recommended Duct Size","建议风管尺寸"],"Phương pháp Ma sát đồng đều":["Equal Friction Method","等摩擦法"],"Tiết Diện Yêu Cầu (A":["Required Cross-sectional Area (A","所需截面积（A"],"Kích Thước Ống Chữ Nhật (W x H):":["Rectangular Duct Size (W × H):","矩形风管尺寸（W × H）："],"Vận Tốc Thực Tế (V":["Actual Velocity (V","实际风速（V"],"Tổn Thất Ma Sát (Pa/m):":["Friction Loss (Pa/m):","摩擦损失（Pa/m）："],"KÍCH THƯỚC ĐẠT TIÊU CHUẨN DESIGN":["DUCT SIZE MEETS DESIGN CRITERIA","风管尺寸符合设计要求"],
+        "Lưu Lượng Gió Qua Miệng (Q):":["Airflow Through Grille (Q):","风口风量（Q）："],"Chiều Rộng Cổ (W):":["Neck Width (W):","风口颈部宽度（W）："],"Chiều Cao Cổ (H):":["Neck Height (H):","风口颈部高度（H）："],"Hệ Số Diện Tích Thoát Gió (Free Area Factor):":["Free Area Factor:","有效通风面积系数："],"70% (Tiêu chuẩn nan chớp Linear / SAG)":["70% (standard linear / SAG grille)","70%（标准线性格栅 / SAG）"],"60% (Nan chớp tiêu âm / Lá xếp dày)":["60% (acoustic grille / dense louvers)","60%（消声格栅 / 密集叶片）"],"80% (Lưới lọc thưa / Eggcrate Grille)":["80% (coarse filter / eggcrate grille)","80%（粗滤网 / 蛋格式风口）"],"Kết Quả Đánh Giá Vận Tốc":["Velocity Assessment","风速评估"],"Kiểm tra Tiêu chuẩn Âm học NC":["NC Acoustic Check","NC 声学检查"],"Diện Tích Cổ (A":["Neck Area (A","颈部面积（A"],"Diện Tích Hiệu Dụng (A":["Effective Area (A","有效面积（A"],"Vận Tốc Gió Bề Mặt (V":["Grille Face Velocity (V","风口面风速（V"],"Tỷ lệ Aspect Ratio cổ miệng gió:":["Grille Neck Aspect Ratio:","风口颈部长宽比："],"CẢNH BÁO: ĐỘ ỒN CAO (HIGH NOISE ALERT)":["WARNING: HIGH NOISE","警告：噪声过高"],"Lưu Lượng (m³/h)":["Airflow (m³/h)","风量（m³/h）"],"Lưu Lượng (l/s)":["Airflow (L/s)","风量（L/s）"],"Vận Tốc TK (m/s)":["Design Velocity (m/s)","设计风速（m/s）"],"Kích Thước W x H (mm)":["Size W × H (mm)","尺寸 W × H（毫米）"],"Vận Tốc Thực (m/s)":["Actual Velocity (m/s)","实际风速（m/s）"],"Tổn Thất Ma Sát (Pa/m)":["Friction Loss (Pa/m)","摩擦损失（Pa/m）"],
+        "Ước tính nhanh":["Quick estimate","快速估算"],"Tính Tải Lạnh Sơ Bộ":["Preliminary Cooling Load Estimate","初步冷负荷估算"],"Ước tính tải sensible, latent và công suất lạnh gợi ý từ diện tích, người, chiếu sáng, thiết bị và gió tươi.":["Estimate sensible and latent loads and suggested cooling capacity from area, occupants, lighting, equipment and outdoor air.","根据面积、人员、照明、设备和新风量，估算显热、潜热及建议制冷量。"],"Loại không gian":["Space type","空间类型"],"Văn phòng":["Office","办公室"],"Nhà ở":["Residential","住宅"],"Phòng học":["Classroom","教室"],"Cửa hàng":["Retail shop","商店"],"Nhà hàng":["Restaurant","餐厅"],"Diện tích (m²)":["Floor area (m²)","面积（m²）"],"Số người":["Occupants","人数"],"Vỏ + nắng (W/m²)":["Envelope + solar (W/m²)","围护结构 + 太阳辐射（W/m²）"],"Đèn (W/m²)":["Lighting (W/m²)","照明（W/m²）"],"Thiết bị (W/m²)":["Equipment (W/m²)","设备（W/m²）"],"Gió tươi (L/s/người)":["Outdoor air (L/s/person)","新风量（L/s·人）"],"Trong phòng (°C)":["Indoor temperature (°C)","室内温度（°C）"],"RH trong phòng (%)":["Indoor relative humidity (%)","室内相对湿度（%）"],"Ngoài trời (°C)":["Outdoor temperature (°C)","室外温度（°C）"],"RH ngoài trời (%)":["Outdoor relative humidity (%)","室外相对湿度（%）"],"Tải sensible":["Sensible load","显热负荷"],"Tải latent":["Latent load","潜热负荷"],"TỔNG TẢI LẠNH":["TOTAL COOLING LOAD","总冷负荷"],"Tổng tải lạnh":["Total cooling load","总冷负荷"],"CÔNG SUẤT GỢI Ý (+10%)":["SUGGESTED CAPACITY (+10%)","建议制冷量（+10%）"],"Công suất gợi ý (+10%)":["Suggested capacity (+10%)","建议制冷量（+10%）"],"Các thành phần tải":["Load components","负荷组成"],"Vỏ + bức xạ:":["Envelope + solar radiation:","围护结构 + 太阳辐射："],"Đèn:":["Lighting:","照明："],"Thiết bị:":["Equipment:","设备："],"Người:":["Occupants:","人员："],"Gió tươi sensible:":["Outdoor air sensible:","新风显热："],"Gió tươi latent:":["Outdoor air latent:","新风潜热："],
+        "Đây là ước tính sơ bộ theo tải nền W/m², tải người và chênh lệch nhiệt ẩm của gió tươi; không thay cho HAP/ASHRAE chi tiết theo từng phòng, hướng nắng, kết cấu và thời điểm cực đại.":["This preliminary estimate uses W/m² load density, occupants and outdoor-air conditions. It does not replace a room-by-room HAP/ASHRAE analysis of orientation, construction and peak conditions.","这是基于单位面积负荷、人员及新风条件的初步估算，不能替代按房间、朝向、围护结构和峰值工况进行的 HAP/ASHRAE 详细计算。"],
+        "TIỆN ÍCH HVAC":["HVAC TOOLS","暖通工具"],"Quy đổi nhanh":["Quick conversion","快速换算"],"Bảng Quy Đổi Đơn Vị HVAC":["HVAC Unit Conversion Table","暖通空调单位换算表"],"Chọn đại lượng, nhập giá trị và xem các đơn vị tương đương. Có hỗ trợ quy đổi W sang W/m² theo diện tích phòng.":["Choose a quantity and enter a value to see equivalent units. W to W/m² conversion uses the room area.","选择物理量并输入数值，即可查看等效单位。支持根据房间面积将 W 换算为 W/m²。"],"Đại lượng cần quy đổi":["Quantity to convert","换算类别"],"Công suất / tải lạnh":["Power / cooling capacity","功率 / 制冷量"],"Mật độ tải theo diện tích":["Load density per area","单位面积负荷"],"Lưu lượng gió":["Airflow","风量"],"Vận tốc gió":["Air velocity","风速"],"Áp suất":["Pressure","压力"],"Chiều dài / kích thước":["Length / dimensions","长度 / 尺寸"],"Diện tích":["Area","面积"],"Nhiệt độ":["Temperature","温度"],"Giá trị":["Value","数值"],"Đơn vị đầu vào":["Input unit","输入单位"],"Diện tích dùng để tính W/m²":["Area used to calculate W/m²","用于计算 W/m² 的面积"],"Diện tích để tính tổng tải":["Area used to calculate total load","用于计算总负荷的面积"],"Cách dùng:":["How to use:","使用方法："],"nhập số, chọn đơn vị đầu vào; kết quả sẽ tự cập nhật khi bạn đổi thông tin.":["enter a value and choose an input unit; results update as you change the inputs.","输入数值并选择输入单位；更改信息后结果会自动更新。"],"Kết quả quy đổi":["Conversion results","换算结果"],"Đơn vị":["Unit","单位"],"Giá trị tương đương":["Equivalent value","等效值"],"Nhập một giá trị hợp lệ để xem kết quả.":["Enter a valid value to see the results.","请输入有效数值以查看结果。"],"HP cơ là mã lực cơ học (1 HP = 745,7 W). HP lạnh tham khảo bên dưới dùng quy ước gần đúng 9.000 BTU/h cho mỗi HP; cấp HP thực tế tùy hãng nên hãy đối chiếu BTU/h hoặc thông số nhà sản xuất.":["Mechanical HP is horsepower (1 HP = 745.7 W). The cooling HP reference uses about 9,000 BTU/h per HP; actual ratings vary by manufacturer, so check the BTU/h rating or product data.","机械 HP 指机械马力（1 HP = 745.7 W）。冷量 HP 参考值按每 HP 约 9,000 BTU/h 估算；实际匹数因品牌而异，请以 BTU/h 或产品参数为准。"],"CFM là cubic feet per minute (ft³/phút); kết quả dựa trên quy đổi thể tích chuẩn.":["CFM means cubic feet per minute; results use the standard volumetric conversion.","CFM 表示立方英尺每分钟；结果按标准体积换算。"],"Quy đổi áp suất theo cột nước chuẩn; 1 mmH₂O = 9,80665 Pa.":["Pressure conversion uses the standard water column; 1 mmH₂O = 9.80665 Pa.","压力按标准水柱换算；1 mmH₂O = 9.80665 Pa。"],"Hữu ích khi đổi kích thước ống gió, miệng gió và khoảng cách thi công.":["Useful for converting duct and grille dimensions and installation clearances.","适用于换算风管、风口尺寸及安装间距。"],"Nhiệt độ dùng công thức chuyển đổi có độ lệch: °F = °C × 9/5 + 32.":["Temperature conversion includes an offset: °F = °C × 9/5 + 32.","温度换算包含偏移量：°F = °C × 9/5 + 32。"],
+        "Giới hạn vận tốc khí tại các vị trí tuyến ống và miệng gió để khống chế độ ồn theo tiêu chuẩn TCVN 5687:2024 & ASHRAE.":["Air velocity limits for ducts and grilles help control noise in accordance with TCVN 5687:2024 and ASHRAE.","依据 TCVN 5687:2024 和 ASHRAE，限制风管及风口处的风速以控制噪声。"],"So Sánh Vận Tốc Thiết Kế Tối Đa Cho Các Công Trình (m/s)":["Maximum Design Air Velocities by Building Type (m/s)","各类建筑的最大设计风速对比（m/s）"],"🏢 Khu Văn Phòng & Căn Hộ (NC 30-35)":["🏢 Offices & Apartments (NC 30–35)","🏢 办公室与公寓（NC 30–35）"],"🎭 Trung Tâm Thương Mại & Rạp Phim (NC 25-30)":["🎭 Shopping Centres & Cinemas (NC 25–30)","🎭 商场与影院（NC 25–30）"],"🏭 Nhà Xưởng Công Nghiệp (NC 45-50)":["🏭 Industrial Buildings (NC 45–50)","🏭 工业厂房（NC 45–50）"],"Đường Cong Ma Sát Theo Vận Tốc (Pa/m)":["Friction Loss vs. Air Velocity (Pa/m)","摩擦损失与风速关系（Pa/m）"],"Khi vận tốc tăng lên gấp đôi, tổn thất ma sát tăng theo cấp số nhân (khoảng 3.5 đến 4 lần).":["When velocity doubles, friction loss rises by roughly 3.5 to 4 times.","风速加倍时，摩擦损失约增加至原来的 3.5 至 4 倍。"],"Phạt Ma Sát Tăng Thêm Theo Aspect Ratio (W/H)":["Additional Friction by Aspect Ratio (W/H)","长宽比（W/H）带来的额外摩擦损失"],"Ống gió quá dẹt (W/H > 4:1) làm tăng diện tích tiếp xúc thành ống, gia tăng tổn thất ma sát phụ lên đến 35%.":["Very flat ducts (W/H > 4:1) have more wall contact area and can add up to 35% in friction losses.","过扁的风管（W/H > 4:1）会增加内壁接触面积，额外摩擦损失最高可达 35%。"],"Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.":["Assess airflow noise through supply and return grilles using NC curves.","依据 NC 曲线评估送风口和回风口的气流噪声。"],"Quy Tắc Khống Chế Âm Học Cho Miệng Gió":["Acoustic Guidelines for Air Grilles","风口声学控制指南"],"Đạt tiêu chuẩn yên tĩnh cao (NC-25 đến NC-30), thích hợp cho phòng ngủ, phòng thu âm, bệnh viện.":["Meets quiet-space targets (NC-25 to NC-30); suitable for bedrooms, recording studios and hospitals.","符合安静空间要求（NC-25 至 NC-30），适用于卧室、录音室和医院。"],"Đạt tiêu chuẩn văn phòng cao cấp (NC-35), cân bằng tốt giữa kích thước miệng gió và độ ồn background.":["Meets premium-office targets (NC-35), balancing grille size and background noise.","符合高档办公室目标（NC-35），兼顾风口尺寸与背景噪声。"],"Phát ra tiếng rít xói tai (NC > 42). Bắt buộc phải tăng chiều rộng W hoặc chiều cao H của cổ miệng gió.":["Can produce a piercing hiss (NC > 42). Increase the grille neck width W or height H.","可能产生刺耳啸叫（NC > 42）。应增大风口颈部宽度 W 或高度 H。"],
+        "Tham khảo trực quan":["Visual Reference","图片参考"],"Một số kiểu ống gió và cửa phân phối không khí thường gặp trong hệ thống HVAC.":["Common duct and air outlet types used in HVAC systems.","暖通空调系统中常见的风管和空气分配风口类型。"],"ỐNG GIÓ":["DUCTWORK","风管"],"Ống gió tròn xoắn":["Spiral Round Duct","螺旋圆风管"],"Dạng tròn, ghép mí xoắn; thường dùng cho tuyến gió lộ thiên và nhánh phân phối.":["Round duct with a spiral seam, commonly used for exposed runs and distribution branches.","圆形螺旋咬口风管，常用于明装管路和分支风管。"],"HỆ THỐNG":["SYSTEM","系统"],"Hệ thống ống gió công nghiệp":["Industrial Duct System","工业风管系统"],"Minh họa các tuyến ống và đoạn nối trong một hệ thống thông gió.":["An example of duct runs and fittings in a ventilation system.","通风系统中的风管线路与管件示意。"],"CÁCH NHIỆT":["INSULATION","保温"],"Ống gió bọc cách nhiệt":["Insulated Duct","保温风管"],"Lớp cách nhiệt giúp hạn chế thất thoát nhiệt và ngưng tụ trên bề mặt ống.":["Insulation helps reduce heat loss and surface condensation.","保温层有助于减少热损失和管道表面结露。"],"MIỆNG GIÓ":["AIR GRILLE","风口"],"Miệng gió âm trần":["Ceiling Diffuser","吊顶散流器"],"Kiểu cửa gió lắp phẳng trên trần, phù hợp không gian điều hòa trong nhà.":["A flush-mounted ceiling outlet for conditioned indoor spaces.","平装于天花板的送风口，适用于室内空调空间。"],"KHE TUYẾN TÍNH":["LINEAR SLOT","线性风口"],"Miệng gió khe tuyến tính":["Linear Slot Diffuser","线性狭缝风口"],"Dạng khe dài tạo luồng khí phân bố dọc theo mép trần hoặc khu vực cần cấp gió.":["An elongated slot that distributes air along a ceiling edge or target area.","长条形风口，可沿天花板边缘或指定区域送风。"],"KHUẾCH TÁN":["DIFFUSER","散流器"],"Miệng gió khuếch tán tròn":["Round Ceiling Diffuser","圆形吊顶散流器"],"Cửa khuếch tán dạng tròn, phân phối không khí theo nhiều hướng từ trần.":["A circular diffuser that distributes air in multiple directions from the ceiling.","圆形散流器，可从天花板向多个方向送风。"],"Ảnh minh họa lấy từ Wikimedia Commons; bấm tên tác giả để xem thông tin và giấy phép của từng ảnh.":["Images are from Wikimedia Commons. Select an author’s name to view image details and licence information.","图片来自 Wikimedia Commons。点击作者姓名可查看图片详情和许可信息。"],"Các bước chuẩn hóa từ tính tải nhiệt đến chọn quạt và cân bằng áp suất tĩnh.":["A standard workflow from cooling-load calculation through fan selection and static-pressure balancing.","从冷负荷计算到风机选型及静压平衡的标准流程。"],"Tính Lưu Lượng Q":["Calculate Airflow Q","计算风量 Q"],"Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).":["Determine supply and return airflow from the cooling load and air changes per hour (ACH).","根据冷负荷和换气次数（ACH）确定送风和回风总量。"],"Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.":["Select an air velocity that suits the room use and NC noise limit.","根据房间用途和 NC 噪声限值选择合适的风速。"],"Áp dụng công thức Equal Friction để tìm D":["Use the Equal Friction method to determine D","使用等摩擦法确定 D"],"và quy đổi tiết diện W x H dẹt.":["and size a rectangular W × H duct.","并计算矩形风管尺寸 W × H。"],"Tính diện tích thoát gió hiệu dụng A":["Calculate the effective free area A","计算有效通风面积 A"],"Tính Áp Suất Tĩnh ESP":["Calculate External Static Pressure (ESP)","计算机外静压（ESP）"],"Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.":["Add duct friction and fitting, damper and filter losses to select the fan.","汇总风管摩擦损失及弯头、风阀、过滤器阻力，以选择风机。"],"Tuân thủ nghiêm ngặt Quy chuẩn TCVN 5687:2024, ASHRAE Fundamentals & SMACNA Duct Construction Standards":["Designed with reference to TCVN 5687:2024, ASHRAE Fundamentals and SMACNA Duct Construction Standards","设计参考 TCVN 5687:2024、ASHRAE Fundamentals 及 SMACNA 风管施工标准"],
+        "Công suất / tải lạnh":["Power / cooling capacity","功率 / 制冷量"],"Mật độ tải theo diện tích":["Load density per area","单位面积负荷"],"Lưu lượng gió":["Airflow","风量"],"Vận tốc gió":["Air velocity","风速"],"Áp suất":["Pressure","压力"],"Chiều dài / kích thước":["Length / dimensions","长度 / 尺寸"],"Diện tích":["Area","面积"],"Nhiệt độ":["Temperature","温度"],"Công suất / tải lạnh · Kết quả tương đương":["Power / cooling capacity · Equivalent values","功率 / 制冷量 · 换算结果"],"HP cơ là mã lực cơ học (1 HP = 745,7 W). HP lạnh tham khảo bên dưới dùng quy ước gần đúng 9.000 BTU/h cho mỗi HP; cấp HP thực tế tùy hãng nên hãy đối chiếu BTU/h hoặc thông số nhà sản xuất.":["Mechanical HP is horsepower (1 HP = 745.7 W). The cooling HP reference uses about 9,000 BTU/h per HP; actual ratings vary by manufacturer, so check the BTU/h rating or product data.","机械 HP 指机械马力（1 HP = 745.7 W）。冷量 HP 参考值按每 HP 约 9,000 BTU/h 估算；实际匹数因品牌而异，请以 BTU/h 或产品参数为准。"],"CFM là cubic feet per minute (ft³/phút); kết quả dựa trên quy đổi thể tích chuẩn.":["CFM means cubic feet per minute; results use the standard volumetric conversion.","CFM 表示立方英尺每分钟；结果按标准体积换算。"],"Quy đổi áp suất theo cột nước chuẩn; 1 mmH₂O = 9,80665 Pa.":["Pressure conversion uses the standard water column; 1 mmH₂O = 9.80665 Pa.","压力按标准水柱换算；1 mmH₂O = 9.80665 Pa。"],"Nhiệt độ dùng công thức chuyển đổi có độ lệch: °F = °C × 9/5 + 32.":["Temperature conversion includes an offset: °F = °C × 9/5 + 32.","温度换算包含偏移量：°F = °C × 9/5 + 32。"]
+        ,"Các hệ số theo loại phòng là giá trị khởi tạo để ước tính; hãy thay bằng số liệu thực tế nếu có.":["Space-type factors are starting estimates. Replace them with project-specific values when available.","各房间类型的系数仅为初始估算值；如有实际数据，请替换为项目数据。"]
+        ,"Các đơn vị mật độ tải được quy đổi theo diện tích; phần tải tổng W/kW bên dưới kết quả được tính bằng mật độ tải × diện tích đã nhập.":["Load-density units are converted by area. Total W/kW is calculated as load density × entered area.","单位面积负荷按面积换算；总 W/kW 按单位面积负荷 × 输入面积计算。"]
+        ,"1 ft/min = 0,00508 m/s.":["1 ft/min = 0.00508 m/s.","1 ft/min = 0.00508 m/s。"],"1 ft² = 0,09290304 m².":["1 ft² = 0.09290304 m².","1 ft² = 0.09290304 m²。"],"Hữu ích khi đổi kích thước ống gió, miệng gió và khoảng cách thi công.":["Useful for converting duct and grille dimensions and installation clearances.","适用于换算风管、风口尺寸及安装间距。"]
+        ,"Chưa có giá trị":["No value yet","尚无数值"],"Đang phát":["Playing","正在播放"],"Đang tạm dừng":["Paused","已暂停"],"Cách dùng:":["How to use:","使用方法："],"Kết quả quy đổi":["Conversion results","换算结果"],"Giá trị tương đương":["Equivalent value","等效值"],"Nhập một giá trị hợp lệ để xem kết quả.":["Enter a valid value to see the results.","请输入有效数值以查看结果。"]
+        ,"Bước":["Steps","步骤"],"Tính V":["Calculate V","计算 V"],"Tính V Miệng Gió":["Calculate Grille Velocity","计算风口风速"],"Tính W x H & D":["Calculate W × H & D","计算 W × H 与 D"]
+        ,"Mối Quan Hệ Vận Tốc Mặt V":["Relationship Between Face Velocity V","面风速 V 与"],"& Độ Ồn NC":["& Noise Rating NC","噪声等级 NC"],"V ≤ 2.0 m/s:":["V ≤ 2.0 m/s:","V ≤ 2.0 m/s："],"= 2.0 - 2.5 m/s:":["= 2.0–2.5 m/s:","= 2.0–2.5 m/s："],"> 3.0 m/s:":["> 3.0 m/s:","> 3.0 m/s："]
+        ,"Cẩm Nang HVAC & Thông Gió":["HVAC & Ventilation Handbook","暖通空调与通风手册"]
+        ,"Lưu Lượng Quy Đổi":["Converted Airflow","换算风量"],"Đường Kính D":["Diameter D","直径 D"],"Tiết Diện Yêu Cầu (A":["Required Cross-sectional Area (A","所需截面积（A"]
+        ,"Mối quan hệ giữa đường kính ống gió (D":["Relationship between duct diameter (D","风管直径（D"],"), vận tốc dòng chảy và tổn thất áp suất ma sát đơn vị (ΔP/L).":[", air velocity and friction pressure loss per unit length (ΔP/L).","）、气流速度与单位长度摩擦压损（ΔP/L）。"]
+        ,"Mối Quan Hệ Vận Tốc Mặt V":["Relationship Between Face Velocity V","面风速 V 与"],"& Độ Ồn NC":["& Noise Rating NC","噪声等级 NC"],"Tham khảo trực quan":["Visual Reference","图片参考"]
+        ,"V ≤ 2.0 m/s:":["V ≤ 2.0 m/s:","V ≤ 2.0 m/s："],"= 2.0 - 2.5 m/s:":["= 2.0–2.5 m/s:","= 2.0–2.5 m/s："],"> 3.0 m/s:":["> 3.0 m/s:","> 3.0 m/s："]
+        ,"Bước":["Steps","步骤"],"Tính V":["Calculate V","计算 V"],"Tính V Miệng Gió":["Calculate Grille Velocity","计算风口风速"],"Tính W x H & D":["Calculate W × H & D","计算 W × H 与 D"],"Tính Áp Suất Tĩnh ESP":["Calculate External Static Pressure (ESP)","计算机外静压（ESP）"]
+        ,"Tiết Diện Yêu Cầu (A)":["Required Cross-sectional Area (A)","所需截面积（A）"],"≤ 2.0 m/s:":["≤ 2.0 m/s:","≤ 2.0 m/s："],"và kiểm tra V":["and check V","并检查 V"],"© 2026 HVAC & MEP Engineering Design System. All rights reserved.":["© 2026 HVAC & MEP Engineering Design System. All rights reserved.","© 2026 暖通空调与机电工程设计系统。保留所有权利。"]
+        ,"Các đơn vị mật độ tải được quy đổi theo diện tích; phần tải tổng W/kW bên dưới kết quả được tính bằng mật độ tải × diện tích đã nhập.":["Load-density units are converted by area. Total W/kW equals load density × entered area.","单位面积负荷按面积换算；总 W/kW 等于单位面积负荷 × 输入面积。"]
+        ,"1 ft/min = 0,00508 m/s.":["1 ft/min = 0.00508 m/s.","1 ft/min = 0.00508 m/s。"],"1 ft² = 0,09290304 m².":["1 ft² = 0.09290304 m².","1 ft² = 0.09290304 m²。"]
+        ,"CFM là cubic feet per minute (ft³/phút); kết quả dựa trên quy đổi thể tích chuẩn.":["CFM means cubic feet per minute; results use the standard volumetric conversion.","CFM 表示立方英尺每分钟；结果按标准体积换算。"]
+        ,"Quy đổi áp suất theo cột nước chuẩn; 1 mmH₂O = 9,80665 Pa.":["Pressure conversion uses the standard water column; 1 mmH₂O = 9.80665 Pa.","压力按标准水柱换算；1 mmH₂O = 9.80665 Pa。"]
+        ,"Nhiệt độ dùng công thức chuyển đổi có độ lệch: °F = °C × 9/5 + 32.":["Temperature conversion includes an offset: °F = °C × 9/5 + 32.","温度换算包含偏移量：°F = °C × 9/5 + 32。"]
+        ,"Hữu ích khi đổi kích thước ống gió, miệng gió và khoảng cách thi công.":["Useful for converting duct and grille dimensions and installation clearances.","适用于换算风管、风口尺寸及安装间距。"]
+        ,"Cẩm Nang & Công Cụ Tính Kích Thước Ống Gió - Miệng Gió HVAC Realtime":["HVAC Duct & Grille Sizing Guide and Tools","暖通风管与风口尺寸计算指南及工具"]
+        ,"Mật độ tải theo diện tích · Kết quả tương đương":["Load density per area · Equivalent values","单位面积负荷 · 换算结果"],"Lưu lượng gió · Kết quả tương đương":["Airflow · Equivalent values","风量 · 换算结果"],"Vận tốc gió · Kết quả tương đương":["Air velocity · Equivalent values","风速 · 换算结果"],"Áp suất · Kết quả tương đương":["Pressure · Equivalent values","压力 · 换算结果"],"Chiều dài / kích thước · Kết quả tương đương":["Length / dimensions · Equivalent values","长度 / 尺寸 · 换算结果"],"Diện tích · Kết quả tương đương":["Area · Equivalent values","面积 · 换算结果"],"Nhiệt độ · Kết quả tương đương":["Temperature · Equivalent values","温度 · 换算结果"]
+        ,"Sử Dụng Bộ Tính Ống Gió & Miệng Gió Realtime":["Open the Duct & Grille Calculator","打开风管与风口计算工具"],"Ma Trận Vận Tốc Tiêu Chuẩn":["Standard Air Velocity Matrix","标准风速矩阵"]
+        ,"TẢI SENSIBLE":["SENSIBLE LOAD","显热负荷"],"TẢI LATENT":["LATENT LOAD","潜热负荷"],"TỔNG TẢI LẠNH":["TOTAL COOLING LOAD","总冷负荷"],"CÔNG SUẤT GỢI Ý (+10%)":["SUGGESTED CAPACITY (+10%)","建议制冷量（+10%）"]
+        ,"Các đơn vị mật độ tải được quy đổi theo diện tích; phần tải tổng W/kW bên dưới kết quả được tính bằng mật độ tải × diện tích đã nhập.":["Load-density units are converted by area. Total W/kW equals load density × entered area.","单位面积负荷按面积换算；总 W/kW 等于单位面积负荷 × 输入面积。"]
+        ,"1 ft/min = 0,00508 m/s.":["1 ft/min = 0.00508 m/s.","1 ft/min = 0.00508 m/s。"],"1 ft² = 0,09290304 m².":["1 ft² = 0.09290304 m².","1 ft² = 0.09290304 m²。"],"Hữu ích khi đổi kích thước ống gió, miệng gió và khoảng cách thi công.":["Useful for converting duct and grille dimensions and installation clearances.","适用于换算风管、风口尺寸及安装间距。"]
+        ,"CFM là cubic feet per minute (ft³/phút); kết quả dựa trên quy đổi thể tích chuẩn.":["CFM means cubic feet per minute; results use the standard volumetric conversion.","CFM 表示立方英尺每分钟；结果按标准体积换算。"],"Quy đổi áp suất theo cột nước chuẩn; 1 mmH₂O = 9,80665 Pa.":["Pressure conversion uses the standard water column; 1 mmH₂O = 9.80665 Pa.","压力按标准水柱换算；1 mmH₂O = 9.80665 Pa。"],"Nhiệt độ dùng công thức chuyển đổi có độ lệch: °F = °C × 9/5 + 32.":["Temperature conversion includes an offset: °F = °C × 9/5 + 32.","温度换算包含偏移量：°F = °C × 9/5 + 32。"]
+        ,"VẬN TỐC AN TOÀN (NC-30 ≤ NC-35)":["SAFE AIR VELOCITY (NC-30 ≤ NC-35)","风速安全（NC-30 ≤ NC-35）"]
+        ,"NGUY CƠ ỒN NHẸ (NC-38 > NC-35)":["SLIGHT NOISE RISK (NC-38 > NC-35)","轻微噪声风险（NC-38 > NC-35）"]
+        ,"KÍCH THƯỚC ĐẠT TIÊU CHUẨN DESIGN":["DUCT SIZE MEETS DESIGN CRITERIA","风管尺寸符合设计要求"]
+        ,"Chạm hoặc bấm bất kỳ đâu để bắt đầu phát":["Tap or click anywhere to start playback","点击任意位置开始播放"]
+        ,"Đang tải bài hát từ YouTube…":["Loading the YouTube track…","正在加载 YouTube 音乐…"],"Đang tải trình phát YouTube…":["Loading the YouTube player…","正在加载 YouTube 播放器…"],"Không thể phát âm thanh trên trình duyệt này":["This browser cannot play audio","此浏览器无法播放音频"]
+        ,"Link chưa đúng; hãy dán link video hoặc Shorts từ YouTube":["Invalid link. Paste a YouTube video or Shorts link.","链接无效。请粘贴 YouTube 视频或 Shorts 链接。"]
+        ,"Mở bài này trên YouTube":["Open this track on YouTube","在 YouTube 打开这首歌曲"],"Mở website HTTPS để phát":["Open the HTTPS site to play","打开 HTTPS 网站播放"],"Mở YouTube, sao chép link bài hát rồi dán vào ô bên trên":["Open YouTube, copy a music link, and paste it above","打开 YouTube，复制音乐链接并粘贴到上方"]
+        ,"SoundCloud đang tải; nếu chưa phát, bấm nút phát trong khung bên trên":["SoundCloud is loading. If playback does not start, press Play in the player above.","SoundCloud 正在加载。如果没有开始播放，请点击上方播放器的播放按钮。"]
+        ,"SoundCloud không phát được bài này; thử bấm nút phát trong khung bên trên":["SoundCloud could not start this track. Try pressing Play in the player above.","SoundCloud 无法播放这首歌曲。请尝试点击上方播放器的播放按钮。"]
+        ,"Video đã bị xóa hoặc đặt ở chế độ riêng tư":["This video was removed or made private","此视频已删除或设为私密"],"Video này không cho phép phát nhúng; thử một link YouTube khác":["This video does not allow embedded playback. Try another YouTube link.","此视频不允许嵌入播放。请尝试其他 YouTube 链接。"],"YouTube không nhận được địa chỉ nguồn; mở trang qua GitHub Pages để phát":["YouTube could not verify the source. Open the page through GitHub Pages to play it.","YouTube 无法验证来源。请通过 GitHub Pages 打开页面进行播放。"],"YouTube không phát được video này; thử một link khác":["YouTube could not play this video. Try another link.","YouTube 无法播放此视频。请尝试其他链接。"]
+        ,"YouTube chặn phát khi mở file HTML trực tiếp. Tải bản này lên GitHub Pages rồi mở trang bằng địa chỉ https.":["YouTube blocks playback when an HTML file is opened directly. Upload it to GitHub Pages and open the site over HTTPS.","直接打开 HTML 文件时，YouTube 会阻止播放。请将文件上传到 GitHub Pages，并通过 HTTPS 访问。"]
+        ,"Đã tắt":["Off","已关闭"],"Đang chờ quyền phát âm thanh":["Waiting for audio permission","正在等待音频播放权限"]
+        ,"Chọn âm thanh nền":["Choose background audio","选择背景音频"],"Cẩm Nang và Bộ Tính HVAC. Bấm khi lửa cháy để tưới nước dập lửa; bấm lại để nhóm lửa.":["HVAC Guide and Calculator. Click during the flame effect to douse it; click again to relight.","暖通指南与计算工具。火焰效果期间点击可浇水灭火；再次点击可重新点燃。"],"Chào Mừng Bạn Đã Đến Với Cẩm Nang Bộ Tính Kích Thước Miệng Gió, Ống Gió":["Welcome to the Duct and Air Grille Sizing Guide","欢迎使用风管与风口尺寸计算指南"]
+        ,"Cụm ống gió và phụ kiện trong hệ thống HVAC":["Ductwork and fittings in an HVAC system","暖通空调系统中的风管与管件"],"Đường ống gió có lớp cách nhiệt":["Insulated air duct","带保温层的风管"],"Lắp đặt miệng gió khe tuyến tính trong trần":["Ceiling installation of a linear slot diffuser","吊顶内安装的线性风口"],"Miệng gió điều hòa lắp trên trần":["Ceiling-mounted air-conditioning grille","吊顶式空调风口"],"Miệng gió khuếch tán tròn gắn trên trần":["Ceiling-mounted round diffuser","吊顶式圆形散流器"],"Ống gió tròn xoắn bằng tôn mạ kẽm":["Galvanized spiral round duct","镀锌螺旋圆风管"]
+        ,"Phát Ông Trời Làm Tội Anh Chưa trên SoundCloud":["Play Ong Troi Lam Toi Anh Chua on SoundCloud","在 SoundCloud 播放 Ong Troi Lam Toi Anh Chua"],"Trình phát nhạc YouTube":["YouTube music player","YouTube 音乐播放器"]
+        ,"Nhấn để dập lửa":["Click to douse the flames","点击浇水灭火"],"Đang tưới nước…":["Pouring water…","正在浇水…"],"Nhấn để nhóm lại lửa":["Click to relight","点击重新点燃"],"Đang nhóm lửa…":["Lighting the flame…","正在点燃…"]
+        ,"Xoay ảnh hệ thống ống gió công nghiệp một vòng":["Rotate the industrial duct system image","旋转工业风管系统图片"],"Xoay ảnh miệng gió âm trần một vòng":["Rotate the ceiling diffuser image","旋转吊顶散流器图片"],"Xoay ảnh miệng gió khe tuyến tính một vòng":["Rotate the linear slot diffuser image","旋转线性风口图片"],"Xoay ảnh miệng gió khuếch tán tròn một vòng":["Rotate the round diffuser image","旋转圆形散流器图片"],"Xoay ảnh ống gió bọc cách nhiệt một vòng":["Rotate the insulated duct image","旋转保温风管图片"],"Xoay ảnh ống gió tròn xoắn một vòng":["Rotate the spiral round duct image","旋转螺旋圆风管图片"]
+        ,"Chọn ngôn ngữ":["Change language","切换语言"],"Ảnh:":["Image:","图片："],"Chọn V":["Select V","选择 V"],") làm tròn theo bội số 50mm.":[ "), rounded to the nearest 50 mm.","），按 50 毫米的倍数取整。"]
+        ,"Tính Kích Thước Ống Gió (Duct Sizer)":["Duct Sizing Calculator","风管尺寸计算"],"Tính Kích Thước Miệng Gió (Grille Sizer)":["Air Grille Sizing Calculator","风口尺寸计算"],"Bảng Tra Kích Thước & Vận Tốc Tổng Hợp":["Combined Duct Size & Velocity Tables","风管尺寸与风速综合表"]
+        ,"Thông Số Đầu Vào Ống Gió":["DUCT INPUT PARAMETERS","风管输入参数"],"Thông Số Đầu Vào Miệng Gió":["GRILLE INPUT PARAMETERS","风口输入参数"],"Điều kiện và hệ số tham khảo":["Conditions & Reference Factors","条件与参考系数"],"Tính tải lạnh":["Calculate Cooling Load","计算冷负荷"]
+        ,"Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.":["Assess airflow noise through supply and return grilles using NC curves.","依据 NC 曲线评估送风口和回风口的气流噪声。"]
+        ,"Ống chính: 5.0 - 6.5 m/s | Ống nhánh: 3.5 - 4.5 m/s | Miệng cấp/hồi: 1.5 - 2.5 m/s. Đảm bảo môi trường làm việc và nghỉ ngơi yên tĩnh.":["Main duct: 5.0–6.5 m/s | Branch duct: 3.5–4.5 m/s | Supply/return grille: 1.5–2.5 m/s. Supports a quiet work and rest environment.","主风管：5.0–6.5 m/s | 支管：3.5–4.5 m/s | 送/回风口：1.5–2.5 m/s。适用于安静的工作和休息环境。"]
+        ,"Ống chính: 6.0 - 7.5 m/s | Ống nhánh: 4.0 - 5.0 m/s | Miệng cấp: 2.0 - 2.8 m/s. Khống chế tiếng rít không ảnh hưởng đến trải nghiệm âm thanh.":["Main duct: 6.0–7.5 m/s | Branch duct: 4.0–5.0 m/s | Supply grille: 2.0–2.8 m/s. Control hiss to preserve the listening experience.","主风管：6.0–7.5 m/s | 支管：4.0–5.0 m/s | 送风口：2.0–2.8 m/s。控制啸叫，避免影响听觉体验。"]
+        ,"Ống chính: 8.0 - 12.0 m/s | Ống nhánh: 6.0 - 8.0 m/s | Miệng cấp: 3.5 - 5.0 m/s. Ưu tiên tối ưu tiết diện và chi phí vật tư tôn.":["Main duct: 8.0–12.0 m/s | Branch duct: 6.0–8.0 m/s | Supply grille: 3.5–5.0 m/s. Prioritize efficient duct sizing and sheet-metal cost.","主风管：8.0–12.0 m/s | 支管：6.0–8.0 m/s | 送风口：3.5–5.0 m/s。优先优化截面尺寸与钣金材料成本。"]
+        ,"Chọn đơn vị gió":["Choose airflow units","选择风量单位"],"Bấm vào ảnh để xoay một vòng":["Click an image to rotate it once","点击图片可旋转一周"],"BẤM VÀO ẢNH ĐỂ XOAY MỘT VÒNG":["CLICK AN IMAGE TO ROTATE IT ONCE","点击图片可旋转一周"]
+        ,"THAM KHẢO TRỰC QUAN":["VISUAL REFERENCE","图片参考"],"Thư Viện Ống Gió & Miệng Gió":["Duct & Grille Library","风管与风口图库"]
+        ,"Các bước chuẩn hóa từ tính tải nhiệt đến chọn quạt và cân bằng áp suất tĩnh.":["A standard workflow from cooling-load calculation through fan selection and static-pressure balancing.","从冷负荷计算到风机选型及静压平衡的标准流程。"]
+        ,"Tính Lưu Lượng Q":["Calculate Airflow Q","计算风量 Q"],"Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).":["Determine supply and return airflow from the cooling load and air changes per hour (ACH).","根据冷负荷和换气次数（ACH）确定送风与回风总量。"]
+        ,"Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.":["Use the tables to select an air velocity that suits the room use and NC noise limit.","查表选择适合房间用途且符合 NC 噪声限值的风速。"]
+        ,"Áp dụng công thức Equal Friction để tìm D":["Use the Equal Friction method to determine D","使用等摩擦法确定 D"],"và quy đổi tiết diện W x H dẹt.":["and size a rectangular W × H duct.","并计算矩形风管尺寸 W × H。"]
+        ,"Tính diện tích thoát gió hiệu dụng A":["Calculate the effective free area A","计算有效通风面积 A"],"Tính diện tích thoát gió hiệu dụng A<sub>eff</sub> và kiểm tra V<sub>face</sub> ≤ 2.5 m/s.":["Calculate the effective free area Aeff and check that grille face velocity is ≤ 2.5 m/s.","计算有效通风面积 Aeff，并检查风口面风速是否 ≤ 2.5 m/s。"]
+        ,"Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.":["Add duct friction and fitting, damper and filter losses to select the fan.","汇总风管摩擦损失以及弯头、风阀和过滤器阻力，以选择风机。"]
+        ,"HP lạnh tham khảo (~9.000 BTU/h/HP)":["Cooling HP reference (~9,000 BTU/h per HP)","冷量 HP 参考值（每 HP 约 9,000 BTU/h）"]
+        ,"Mật độ tải theo diện tích (W/m²)":["Load density (W/m²)","单位面积负荷（W/m²）"],"Mật độ tải theo diện tích (kW/m²)":["Load density (kW/m²)","单位面积负荷（kW/m²）"]
+        ,"Tổng tải theo diện tích đã nhập (W)":["Total load for entered area (W)","按输入面积计算的总负荷（W）"],"Tổng tải theo diện tích đã nhập (kW)":["Total load for entered area (kW)","按输入面积计算的总负荷（kW）"]
+        ,"Quy đổi theo diện tích":["Area-based conversion","面积换算"],"Nhập diện tích lớn hơn 0 m²":["Enter an area greater than 0 m²","请输入大于 0 m² 的面积"]
+        ,"TR (tấn lạnh)":["TR (refrigeration ton)","TR（冷吨）"],"HP cơ":["Mechanical HP","机械 HP"],"in.w.g. (inch cột nước)":["in.w.g. (inches of water gauge)","in.w.g.（英寸水柱）"],"Miệng Gió":["Air Grille","风口"]
+    };
+    Object.assign(words, {
+        "Bảng Tra Kích Thước Ống Gió Chuẩn Hóa Theo Lưu Lượng (ASHRAE Equal Friction)": ["Standard Airflow-Based Duct Sizing Table (ASHRAE Equal Friction)", "按风量标准化的风管尺寸表（ASHRAE 等摩擦法）"]
+    });
+    function norm(s) { return String(s).replace(/\s+/g, " ").trim(); }
+    function translate(value, lang) {
+        var n = norm(value), col = lang === "en" ? 0 : 1;
+        if (Object.prototype.hasOwnProperty.call(words, n)) return value.replace(n, lang === "vi" ? n : words[n][col]);
+        for (var k in words) if (words[k][0] === n || words[k][1] === n) return value.replace(n, lang === "vi" ? k : words[k][col]);
+        var resultSuffix=" · Kết quả tương đương";
+        if(lang!=="vi"&&n.endsWith(resultSuffix)){var category=n.slice(0,-resultSuffix.length);for(var title in words)if(title===category)return words[title][col]+(lang==="zh"?" · 换算结果":" · Equivalent values");}
+        var playing=n.match(/^(?:Đang phát: |Now playing: |正在播放：)(.+)$/);
+        if(playing){var prefix=lang==="en"?"Now playing: ":lang==="zh"?"正在播放：":"Đang phát: ";return value.replace(n,prefix+translate(playing[1],lang));}
+        if(lang==="vi")return value;
+        var patterns = [
+            [/^Tỷ lệ Aspect Ratio W\/H = (.+) nằm trong ngưỡng hoàn hảo \(≤ 3:1\)\. Tổn thất ma sát (.+) Pa\/m tối ưu cho cột áp quạt\.$/, ["Aspect ratio W/H = $1 is within the preferred range (≤ 3:1). Friction loss is $2 Pa/m.","长宽比 W/H = $1，处于推荐范围（≤ 3:1）。摩擦损失为 $2 Pa/m。"]],
+            [/^CẢNH BÁO: ASPECT RATIO QUÁ CAO \((.+)\)$/,["WARNING: ASPECT RATIO TOO HIGH ($1)","警告：长宽比过大（$1）"]],
+            [/^VẬN TỐC THỰC TẾ CAO \((.+)\)$/,["HIGH ACTUAL AIR VELOCITY ($1)","实际风速过高（$1）"]],
+            [/^Tỷ lệ Aspect Ratio W\/H = (.+) nằm trong ngưỡng an toàn \(≤ 4:1\)\. Tổn thất ma sát (.+) Pa\/m tối ưu cho cột áp quạt\.$/,["Aspect ratio W/H = $1 is within the safe limit (≤ 4:1). Friction loss is $2 Pa/m.","长宽比 W/H = $1，处于安全范围（≤ 4:1）。摩擦损失为 $2 Pa/m。"]],
+            [/^Tỷ lệ W\/H vượt quá giới hạn 4:1! Ống quá dẹt làm tăng ma sát phụ và nguy cơ võng tôn\. Nên tăng chiều cao H khống chế\.$/,["W/H exceeds the 4:1 limit. An overly flat duct adds friction and may sag; increase available height H.","W/H 超过 4:1 限值。风管过扁会增加摩擦并可能下垂；请增加可用高度 H。"]],
+            [/^Vận tốc vượt quá 8\.0 m\/s phù hợp cho đường ống chính công nghiệp\. Nếu dùng cho văn phòng sẽ gây tiếng ồn rung lắc ống\.$/,["Velocity above 8.0 m/s may suit industrial mains, but can cause office noise and duct vibration.","风速超过 8.0 m/s 可能适用于工业主风管，但用于办公室会产生噪声和管道振动。"]],
+            [/^Vận tốc gió bề mặt (.+) m\/s nằm trong ngưỡng tiêu chuẩn âm học\. Miệng gió vận hành êm ái, không tạo ra tiếng rít\.$/,["Grille face velocity of $1 m/s is within the acoustic limit; the grille should operate quietly without hiss.","风口面风速为 $1 m/s，处于声学限值内，运行较安静且不易啸叫。"]],
+            [/^Vận tốc gió bề mặt (.+) m\/s hơi cao cho văn phòng yên tĩnh\. Nên tăng nhẹ kích thước cổ W x H\.$/,["Grille face velocity of $1 m/s is slightly high for a quiet office. Consider increasing neck size W × H.","风口面风速为 $1 m/s，对安静办公室略高；建议适当增大颈部尺寸 W × H。"]],
+            [/^Vận tốc gió bề mặt (.+) m\/s vượt quá ngưỡng 2\.5 m\/s! Khí thổi qua nan chớp gây ra tiếng rít xói tai\. Cần mở rộng tiết diện cổ miệng gió\.$/,["Grille face velocity of $1 m/s exceeds 2.5 m/s. Air through the louvers may whistle; increase the grille neck area.","风口面风速为 $1 m/s，超过 2.5 m/s 限值。气流可能产生啸叫；请扩大风口颈部面积。"]],
+            [/^Vận tốc gió bề mặt (.+) m\/s vượt quá ngưỡng 2\.5 m\/s tiêu chuẩn cho khu vực văn phòng! Khí thổi qua nan chớp gây ra tiếng rít xói tai\. Cần mở rộng tiết diện cổ miệng gió\.$/, ["Grille face velocity of $1 m/s exceeds the 2.5 m/s office limit. Air passing through the grille may whistle; increase the neck area.","风口面风速为 $1 m/s，超过办公室 2.5 m/s 限值。气流可能产生啸叫；请扩大风口颈部面积。"]],
+        ];
+        for (var i=0;i<patterns.length;i++) { var m=n.match(patterns[i][0]); if(m) return value.replace(n,patterns[i][1][col].replace(/\$(\d+)/g,function(_,d){return m[Number(d)];})); }
+        return value;
+    }
+    function translateNode(node, lang) {
+        if (!node || !node.nodeValue || !node.parentElement || node.parentElement.closest("script,style,#languageSwitcher,[data-i18n-skip],.chart-container")) return;
+        var next=translate(node.nodeValue,lang); if(next!==node.nodeValue) node.nodeValue=next;
+    }
+    function translatePage(lang) {
+        var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;
+        while((n=w.nextNode())) translateNode(n,lang);
+        document.querySelectorAll("body *").forEach(function(el){if(el.closest("#languageSwitcher"))return;["aria-label","title","placeholder","alt"].forEach(function(a){if(el.hasAttribute(a)){var v=el.getAttribute(a),t=translate(v,lang);if(t!==v)el.setAttribute(a,t);}});});
+        document.title=translate(document.title,lang);
+    }
+    function specialTitles(lang) {
+        var brand=document.getElementById("hvacBrandTitle"),section=document.getElementById("ductSizerSectionTitle");
+        if(brand) {
+            var b={
+                vi:'<span class="jump-word hvac-title-word">Cẩm</span> <span class="jump-word hvac-title-word">Nang</span> <span class="jump-word text-sky-400 hvac-title-word">&amp;</span> <span class="jump-word text-emerald-400 hvac-title-word">Bộ</span> <span class="jump-word text-amber-400 hvac-title-word">Tính</span> <span class="jump-word hvac-title-word">HVAC</span>',
+                en:'<span class="jump-word hvac-title-word">HVAC</span> <span class="jump-word text-sky-400 hvac-title-word">Duct</span> <span class="jump-word text-sky-400 hvac-title-word">&amp;</span> <span class="jump-word text-emerald-400 hvac-title-word">Grille</span> <span class="jump-word text-amber-400 hvac-title-word">Sizing</span> <span class="jump-word hvac-title-word">Guide</span>',
+                zh:'<span class="jump-word hvac-title-word">HVAC</span> <span class="jump-word text-sky-400 hvac-title-word">风管</span> <span class="jump-word text-sky-400 hvac-title-word">&amp;</span> <span class="jump-word text-emerald-400 hvac-title-word">风口</span> <span class="jump-word text-amber-400 hvac-title-word">尺寸</span> <span class="jump-word hvac-title-word">指南</span>'
+            }; brand.innerHTML=b[lang];
+        }
+        if(section) {
+            var h={
+                vi:'<span class="text-sky-400">1.</span> <span class="jump-word">Bộ</span> <span class="jump-word text-sky-400">Tính</span> <span class="jump-word text-sky-400">Toán</span> <span class="jump-word text-emerald-400">Ống</span> <span class="jump-word text-emerald-400">Gió</span> <span class="jump-word">&amp;</span> <span class="jump-word text-amber-400">Miệng</span> <span class="jump-word text-amber-400">Gió</span> <span class="jump-word">Realtime</span>',
+                en:'<span class="text-sky-400">1.</span> <span class="jump-word text-sky-400">HVAC</span> <span class="jump-word text-emerald-400">Duct</span> <span class="jump-word text-amber-400">&amp; Grille Sizer</span>',
+                zh:'<span class="text-sky-400">1.</span> <span class="jump-word text-sky-400">暖通</span> <span class="jump-word text-emerald-400">风管</span> <span class="jump-word text-amber-400">与风口尺寸计算</span>'
+            }; section.innerHTML=h[lang];
+        }
+        var headings={
+            velocityMatrixSectionTitle:{
+                vi:'<span class="text-sky-400">2.</span> <span class="jump-word">Ma</span> <span class="jump-word">Trận</span> <span class="jump-word text-sky-400">Vận</span> <span class="jump-word text-sky-400">Tốc</span> <span class="jump-word">Thiết</span> <span class="jump-word">Kế</span> <span class="jump-word text-emerald-400">Khuyên</span> <span class="jump-word text-emerald-400">Dùng</span>',
+                en:'<span class="text-sky-400">2.</span> <span class="jump-word">Recommended</span> <span class="jump-word text-sky-400">Design Air</span> <span class="jump-word text-sky-400">Velocity</span> <span class="jump-word text-emerald-400">Matrix</span>',
+                zh:'<span class="text-sky-400">2.</span> <span class="jump-word">推荐</span> <span class="jump-word text-sky-400">设计风速</span> <span class="jump-word text-emerald-400">矩阵</span>'
+            },
+            frictionSectionTitle:{
+                vi:'<span class="text-emerald-400">3.</span> <span class="jump-word">Phân</span> <span class="jump-word">Tích</span> <span class="jump-word text-emerald-400">Thủy</span> <span class="jump-word text-emerald-400">Lực</span> <span class="jump-word">&amp;</span> <span class="jump-word text-sky-400">Tổn</span> <span class="jump-word text-sky-400">Thất</span> <span class="jump-word text-sky-400">Ma</span> <span class="jump-word text-sky-400">Sát</span>',
+                en:'<span class="text-emerald-400">3.</span> <span class="jump-word">Duct</span> <span class="jump-word text-emerald-400">Hydraulics</span> <span class="jump-word">&amp;</span> <span class="jump-word text-sky-400">Friction Loss</span> <span class="jump-word text-sky-400">Analysis</span>',
+                zh:'<span class="text-emerald-400">3.</span> <span class="jump-word">风管</span> <span class="jump-word text-emerald-400">水力</span> <span class="jump-word">&amp;</span> <span class="jump-word text-sky-400">摩擦损失</span> <span class="jump-word text-sky-400">分析</span>'
+            },
+            acousticsSectionTitle:{
+                vi:'<span class="text-amber-400">4.</span> <span class="jump-word">Âm</span> <span class="jump-word">Học</span> <span class="jump-word text-amber-400">Miệng</span> <span class="jump-word text-amber-400">Gió</span> <span class="jump-word">&amp;</span> <span class="jump-word text-rose-400">Độ</span> <span class="jump-word text-rose-400">Ồn</span> <span class="jump-word text-rose-400">NC</span>',
+                en:'<span class="text-amber-400">4.</span> <span class="jump-word">Grille</span> <span class="jump-word text-amber-400">Acoustics</span> <span class="jump-word">&amp;</span> <span class="jump-word text-rose-400">NC Noise</span> <span class="jump-word text-rose-400">Rating</span>',
+                zh:'<span class="text-amber-400">4.</span> <span class="jump-word">风口</span> <span class="jump-word text-amber-400">声学</span> <span class="jump-word">&amp;</span> <span class="jump-word text-rose-400">NC 噪声</span> <span class="jump-word text-rose-400">等级</span>'
+            },
+            sopSectionTitle:{
+                vi:'<span class="text-rose-400">5.</span> <span class="jump-word">Quy</span> <span class="jump-word">Trình</span> <span class="jump-word text-rose-400">SOP</span> <span class="jump-word text-rose-400">5</span> <span class="jump-word text-rose-400">Bước</span> <span class="jump-word text-rose-400">Thiết</span> <span class="jump-word text-rose-400">Kế</span> <span class="jump-word">Ống</span> <span class="jump-word">Gió</span>',
+                en:'<span class="text-rose-400">5.</span> <span class="jump-word">5-Step</span> <span class="jump-word text-rose-400">Duct</span> <span class="jump-word text-rose-400">Design</span> <span class="jump-word">Workflow</span> <span class="jump-word text-rose-400">(SOP)</span>',
+                zh:'<span class="text-rose-400">5.</span> <span class="jump-word">风管设计</span> <span class="jump-word text-rose-400">五步</span> <span class="jump-word text-rose-400">流程</span> <span class="jump-word">(SOP)</span>'
+            }
+        };
+        Object.keys(headings).forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=headings[id][lang];});
+        var localizedHtml={
+            designIntro:{vi:'Chương trình hỗ trợ thiết kế theo phương pháp Ma Sát Đồng Đều (Equal Friction Method), tính đường kính tương đương (D<sub>eq</sub>), vận tốc thực tế (V<sub>act</sub>), tổn thất ma sát (ΔP/L) và kiểm tra độ ồn âm học (NC Rating) theo chuẩn ASHRAE Fundamentals.',en:'A duct design aid using the Equal Friction Method to calculate equivalent diameter (D<sub>eq</sub>), actual velocity (V<sub>act</sub>), friction loss (ΔP/L), and acoustic noise rating (NC) in accordance with ASHRAE Fundamentals.',zh:'本工具采用等摩擦法计算当量直径（D<sub>eq</sub>）、实际风速（V<sub>act</sub>）和摩擦损失（ΔP/L），并依据 ASHRAE Fundamentals 检查噪声等级（NC）。'},
+            frictionSectionDescription:{vi:'Mối quan hệ giữa đường kính ống gió (D<sub>eq</sub>), vận tốc dòng chảy và tổn thất áp suất ma sát đơn vị (ΔP/L).',en:'Relationship between duct diameter (D<sub>eq</sub>), airflow velocity, and friction pressure loss per unit length (ΔP/L).',zh:'风管直径（D<sub>eq</sub>）、气流速度与单位长度摩擦压降（ΔP/L）之间的关系。'},
+            acousticsSectionDescription:{vi:'Đánh giá độ ồn gió lọt qua nan chớp miệng cấp và miệng hồi theo tiêu chuẩn đường cong NC.',en:'Assess noise from airflow through supply and return grilles using NC curves.',zh:'依据 NC 曲线评估气流通过送风口和回风口时产生的噪声。'},
+            acousticsChartTitle:{vi:'Mối Quan Hệ Vận Tốc Mặt V<sub>face</sub> &amp; Độ Ồn NC',en:'Face Velocity V<sub>face</sub> &amp; NC Noise Rating',zh:'面风速 V<sub>face</sub> 与 NC 噪声等级的关系'},
+            acousticsRuleQuiet:{vi:'<strong class="text-white block">V<sub>face</sub> ≤ 2.0 m/s:</strong> Đạt tiêu chuẩn yên tĩnh cao (NC-25 đến NC-30), thích hợp cho phòng ngủ, phòng thu âm, bệnh viện.',en:'<strong class="text-white block">V<sub>face</sub> ≤ 2.0 m/s:</strong> Quiet performance target (NC 25–30), suitable for bedrooms, recording studios and hospitals.',zh:'<strong class="text-white block">V<sub>face</sub> ≤ 2.0 m/s：</strong>适用于卧室、录音室和医院等安静空间（NC 25–30）。'},
+            acousticsRuleOffice:{vi:'<strong class="text-white block">V<sub>face</sub> = 2.0 - 2.5 m/s:</strong> Đạt tiêu chuẩn văn phòng cao cấp (NC-35), cân bằng tốt giữa kích thước miệng gió và độ ồn background.',en:'<strong class="text-white block">V<sub>face</sub> = 2.0–2.5 m/s:</strong> Premium office target (NC 35), balancing grille size and background noise.',zh:'<strong class="text-white block">V<sub>face</sub> = 2.0–2.5 m/s：</strong>适用于高品质办公空间（NC 35），兼顾风口尺寸与背景噪声。'},
+            acousticsRuleHigh:{vi:'<strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s:</strong> Phát ra tiếng rít xói tai (NC &gt; 42). Bắt buộc phải tăng chiều rộng W hoặc chiều cao H của cổ miệng gió.',en:'<strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s:</strong> Risk of piercing hiss (NC &gt; 42). Increase grille neck width W or height H.',zh:'<strong class="text-white block">V<sub>face</sub> &gt; 3.0 m/s：</strong>可能产生刺耳啸叫（NC &gt; 42）；请增大风口颈部宽度 W 或高度 H。'},
+            sopStep1Title:{vi:'Tính Lưu Lượng Q',en:'Calculate Airflow Q',zh:'计算风量 Q'},
+            sopStep1Description:{vi:'Xác định tổng lưu lượng gió cấp/hồi dựa trên tải lạnh và bội số trao đổi khí (ACH).',en:'Determine total supply and return airflow from the cooling load and air changes per hour (ACH).',zh:'根据冷负荷和换气次数（ACH）确定送风与回风总量。'},
+            sopStep2Title:{vi:'Chọn V<sub>design</sub>',en:'Select Design Velocity V<sub>design</sub>',zh:'选择设计风速 V<sub>design</sub>'},
+            sopStep2Description:{vi:'Tra bảng chọn vận tốc gió phù hợp với công năng phòng và giới hạn độ ồn NC.',en:'Use the tables to select an air velocity suited to the room use and NC noise limit.',zh:'查表选择适合房间用途且符合 NC 噪声限值的风速。'},
+            sopStep3Title:{vi:'Tính W x H &amp; D<sub>eq</sub>',en:'Size W × H &amp; Calculate D<sub>eq</sub>',zh:'计算 W × H 与 D<sub>eq</sub>'},
+            sopStep3Description:{vi:'Áp dụng công thức Equal Friction để tìm D<sub>eq</sub> và quy đổi tiết diện W x H dẹt.',en:'Apply the Equal Friction method to find D<sub>eq</sub> and size the rectangular duct (W × H).',zh:'使用等摩擦法计算当量直径 D<sub>eq</sub>，并确定矩形风管尺寸 W × H。'},
+            sopStep4Title:{vi:'Tính V<sub>face</sub> Miệng Gió',en:'Check Grille Face Velocity V<sub>face</sub>',zh:'检查风口面风速 V<sub>face</sub>'},
+            sopStep4Description:{vi:'Tính diện tích thoát gió hiệu dụng A<sub>eff</sub> và kiểm tra V<sub>face</sub> ≤ 2.5 m/s.',en:'Calculate effective free area A<sub>eff</sub> and check that V<sub>face</sub> is ≤ 2.5 m/s.',zh:'计算有效通风面积 A<sub>eff</sub>，并确认 V<sub>face</sub> ≤ 2.5 m/s。'},
+            sopStep5Title:{vi:'Tính Áp Suất Tĩnh ESP',en:'Calculate External Static Pressure (ESP)',zh:'计算机外静压（ESP）'},
+            sopStep5Description:{vi:'Cộng dồn tổn thất ma sát đường ống + trở lực cút co, van gió, lọc bụi để chọn quạt.',en:'Add duct friction and fitting, damper and filter losses to select a fan.',zh:'汇总风管摩擦损失以及弯头、风阀和过滤器阻力，以选择风机。'}
+        };
+        Object.keys(localizedHtml).forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=localizedHtml[id][lang];});
+    }
+    function updateCharts(lang) {
+        if(!window.Chart||!Chart.getChart)return;
+        var names={
+            velocityMatrixChart:{en:["Office Main Duct","Office Branch Duct","Return Duct","Office Supply Grille","Industrial Max"],zh:["办公主风管","办公支管","回风管","办公送风口","工业厂房上限"]},
+            aspectRatioPenaltyChart:{en:["1:1 (Square)","2:1 (Standard)","3:1 (Acceptable)","4:1 (Limit)","5:1 (Warning)"],zh:["1:1（正方形）","2:1（标准）","3:1（可接受）","4:1（限值）","5:1（警告）"]},
+            noiseVelocityChart:{en:["1.0 m/s (NC20)","1.5 m/s (NC25)","2.0 m/s (NC30)","2.5 m/s (NC35)","3.0 m/s (NC42)","3.5 m/s (NC48)"],zh:["1.0 m/s（NC20）","1.5 m/s（NC25）","2.0 m/s（NC30）","2.5 m/s（NC35）","3.0 m/s（NC42）","3.5 m/s（NC48）"]}
+        };
+        Object.keys(names).forEach(function(id){var c=Chart.getChart(document.getElementById(id));if(!c)return;if(lang==="vi"){if(id==="velocityMatrixChart")c.data.labels=["Ống Chính VP","Ống Nhánh VP","Ống Hồi Về","Miệng Cấp VP","Nhà Xưởng Max"].map(function(x){return wrapLabel(x,14);});if(id==="aspectRatioPenaltyChart")c.data.labels=["1:1 (Vuông)","2:1 (Chuẩn)","3:1 (Chấp nhận)","4:1 (Giới hạn)","5:1 (Cảnh báo)"].map(function(x){return wrapLabel(x,14);});}else c.data.labels=names[id][lang].map(function(x){return wrapLabel(x,14);});c.update("none");});
+        var v=Chart.getChart(document.getElementById("velocityMatrixChart")),f=Chart.getChart(document.getElementById("frictionCurveChart")),n=Chart.getChart(document.getElementById("noiseVelocityChart"));
+        if(v){v.data.datasets[0].label=lang==="vi"?"Vận tốc max (m/s)":lang==="zh"?"最大风速（m/s）":"Maximum velocity (m/s)";v.update("none");}
+        if(f){f.data.datasets[0].label=lang==="vi"?"Tổn thất ma sát Ø300 (Pa/m)":lang==="zh"?"Ø300 风管摩擦损失（Pa/m）":"Ø300 duct friction loss (Pa/m)";f.update("none");}
+        if(n){n.data.datasets[0].label=lang==="vi"?"Chỉ số ồn NC":lang==="zh"?"NC 噪声等级":"NC noise rating";n.update("none");}
+    }
+    window.toggleLanguageMenu=function(e){if(e)e.stopPropagation();var m=document.getElementById("languageSwitcherMenu"),b=document.getElementById("languageSwitcherButton");if(!m||!b)return;var open=m.classList.contains("hidden");m.classList.toggle("hidden",!open);b.setAttribute("aria-expanded",String(open));};
+    window.setHVACLanguage=function(lang) {
+        if(!["vi","en","zh"].includes(lang))return;
+        activeLang=lang;document.documentElement.lang=lang==="zh"?"zh-CN":lang;translatePage(lang);specialTitles(lang);
+        var c=document.getElementById("languageCurrentCode"),m=document.getElementById("languageSwitcherMenu"),b=document.getElementById("languageSwitcherButton");
+        if(c)c.textContent=lang==="zh"?"中文":lang.toUpperCase();
+        if(b){var label=lang==="vi"?"Chọn ngôn ngữ":lang==="en"?"Change language":"切换语言";b.setAttribute("aria-label",label);b.title=label;b.setAttribute("aria-expanded","false");}
+        if(m)m.classList.add("hidden");
+        try{localStorage.setItem("hvacPreferredLanguage",lang);}catch(e){}
+        updateCharts(lang);
+        if(window.calculateDuctMetrics)calculateDuctMetrics();if(window.calculateGrilleMetrics)calculateGrilleMetrics();if(window.updateHvacUnitOptions)updateHvacUnitOptions();if(window.calculateHapMiniLoad)calculateHapMiniLoad();
+        requestAnimationFrame(function(){translatePage(lang);specialTitles(lang);});
+    };
+    document.addEventListener("click",function(e){var s=document.getElementById("languageSwitcher");if(s&&!s.contains(e.target)){var m=document.getElementById("languageSwitcherMenu"),b=document.getElementById("languageSwitcherButton");if(m)m.classList.add("hidden");if(b)b.setAttribute("aria-expanded","false");}});
+    document.addEventListener("DOMContentLoaded",function(){
+        var ob=new MutationObserver(function(records){records.forEach(function(r){if(r.type==="characterData")translateNode(r.target,activeLang);if(r.type==="childList")r.addedNodes.forEach(function(a){if(a.nodeType===Node.TEXT_NODE)translateNode(a,activeLang);else if(a.nodeType===Node.ELEMENT_NODE){var w=document.createTreeWalker(a,NodeFilter.SHOW_TEXT),t;while((t=w.nextNode()))translateNode(t,activeLang);}});});});
+        ob.observe(document.body,{subtree:true,childList:true,characterData:true});
+        var saved="vi";try{var s=localStorage.getItem("hvacPreferredLanguage");if(["vi","en","zh"].includes(s))saved=s;}catch(e){}window.setHVACLanguage(saved);
+    });
+})();
+</script>
 </body>
 </html>

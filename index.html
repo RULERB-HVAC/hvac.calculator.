@@ -221,7 +221,8 @@
         body.intro-active #aurora-field,
         body.intro-active .ambient-orb,
         body.intro-active .grid-overlay,
-        body.intro-active #bg-canvas { visibility: hidden !important; content-visibility: hidden; }
+        body.intro-active #bg-canvas,
+        body.intro-active #hvacBgSignatureRail { visibility: hidden !important; content-visibility: hidden; }
         body.intro-revealing > .relative { content-visibility: visible; }
         body.intro-active #aurora-field::before,
         body.intro-active #aurora-field::after,
@@ -229,10 +230,183 @@
         body.is-scrolling #aurora-field::before,
         body.is-scrolling #aurora-field::after,
         body.is-scrolling .ambient-orb,
-        body.is-scrolling .hvac-converter-glow { animation-play-state: paused !important; }
+        body.is-scrolling .hvac-converter-glow,
+        body.is-scrolling .hvac-sig-dot,
+        body.is-scrolling .hvac-sig-glint::after { animation-play-state: paused !important; }
         @keyframes auroraSweep { 0% { transform: translate3d(-2%, 1%, 0) rotate(-8deg) scale(1.03); } 50% { transform: translate3d(2%, -2%, 0) rotate(6deg) scale(1.08); } 100% { transform: translate3d(-1%, 2%, 0) rotate(14deg) scale(1.04); } }
         @media (prefers-reduced-motion: reduce) {
-            #aurora-field::before, #aurora-field::after, .ambient-orb { animation: none !important; }
+            #aurora-field::before, #aurora-field::after, .ambient-orb, .hvac-sig-dot, .hvac-sig-glint::after { animation: none !important; }
+        }
+        /* Chữ ký kỹ thuật khắc chìm trên lề bản vẽ nền (CAD Blueprint Margin Stamp) */
+        #hvacBgSignatureRail {
+            position: fixed;
+            left: 16px;
+            bottom: 96px;
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 4px;
+            opacity: 0.78;
+            cursor: pointer;
+            user-select: none;
+            transform-style: preserve-3d;
+            transition: opacity 320ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms ease;
+        }
+        @media (min-width: 1320px) {
+            #hvacBgSignatureRail { display: flex; }
+        }
+        #hvacBgSignatureRail:hover {
+            opacity: 1;
+            transform: translate3d(0, -4px, 0);
+        }
+        #hvacBgSignatureRail:focus-visible,
+        .hvac-footer-sig-pill:focus-visible {
+            outline: 1px solid rgba(56, 189, 248, 0.65);
+            outline-offset: 3px;
+            border-radius: 999px;
+        }
+        #hvacBgSignatureRail.is-spinning {
+            opacity: 1;
+            filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.45));
+            animation: hvacSigRailFullSpin 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        #hvacBgSignatureRail.is-footer-visible {
+            opacity: 0 !important;
+            pointer-events: none;
+            transform: translate3d(0, 10px, 0);
+        }
+        .hvac-sig-rail-wrap {
+            position: relative;
+            overflow: hidden;
+            padding: 4px 2px;
+        }
+        .hvac-sig-rail-text {
+            display: block;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(203, 213, 225, 0.90);
+            white-space: nowrap;
+        }
+        .hvac-sig-brand {
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8 0%, #ffffff 48%, #34d399 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hvac-sig-rail-text .hvac-sig-brand {
+            background-image: linear-gradient(0deg, #38bdf8 0%, #ffffff 48%, #34d399 100%);
+        }
+        #hvacBgSignatureRail:hover .hvac-sig-rail-text {
+            color: #f8fafc;
+            text-shadow: 0 0 14px rgba(56, 189, 248, 0.34);
+        }
+        .hvac-sig-dot {
+            width: 5.5px;
+            height: 5.5px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #38bdf8, #34d399);
+            box-shadow: 0 0 9px rgba(56, 189, 248, 0.75);
+            animation: hvacSigPulse 3.8s ease-in-out infinite;
+        }
+        .hvac-sig-line {
+            width: 1.5px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(56, 189, 248, 0.68), rgba(52, 211, 153, 0.24) 65%, transparent);
+        }
+        /* Hiệu ứng tia sáng kim loại lướt nhẹ định kỳ (không gây rối mắt) */
+        .hvac-sig-glint { position: relative; overflow: hidden; }
+        .hvac-sig-glint::after {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .hvac-sig-rail-wrap.hvac-sig-glint::after {
+            left: -4px; right: -4px; top: 0; height: 54px;
+            background: linear-gradient(180deg, transparent 0%, rgba(186, 230, 253, 0.38) 50%, transparent 100%);
+            animation: hvacSigRailGlint 7.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        }
+        .hvac-footer-sig-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5.5px 15px;
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.24);
+            background: rgba(15, 23, 42, 0.72);
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: rgba(203, 213, 225, 0.90);
+            cursor: pointer;
+            user-select: none;
+            transition: border-color 260ms ease, box-shadow 260ms ease, color 260ms ease, transform 260ms ease;
+        }
+        .hvac-footer-sig-pill:hover {
+            border-color: rgba(56, 189, 248, 0.52);
+            color: #f8fafc;
+            box-shadow: 0 0 22px rgba(14, 165, 233, 0.22);
+            transform: translate3d(0, -1px, 0);
+        }
+        .hvac-footer-sig-pill.is-spinning {
+            border-color: rgba(125, 211, 252, 0.85);
+            box-shadow: 0 0 28px rgba(56, 189, 248, 0.38);
+            animation: hvacSigPillFullSpin 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .hvac-footer-sig-pill.hvac-sig-glint::after {
+            top: -20%; bottom: -20%; left: 0; width: 64px;
+            background: linear-gradient(90deg, transparent 0%, rgba(186, 230, 253, 0.28) 50%, transparent 100%);
+            transform: translate3d(-90px, 0, 0) skewX(-20deg);
+            animation: hvacSigPillGlint 7.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        }
+        .hvac-footer-watermark {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate3d(-50%, -50%, 0);
+            font-size: clamp(1.65rem, 4.8vw, 3.8rem);
+            font-weight: 800;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            color: rgba(148, 163, 184, 0.032);
+            pointer-events: none;
+            user-select: none;
+        }
+        @keyframes hvacSigRailFullSpin {
+            0%   { transform: perspective(620px) rotateX(0deg) rotateY(0deg) scale(1); }
+            45%  { transform: perspective(620px) rotateX(195deg) rotateY(-16deg) scale(1.06); }
+            82%  { transform: perspective(620px) rotateX(366deg) rotateY(4deg) scale(1.01); }
+            100% { transform: perspective(620px) rotateX(360deg) rotateY(0deg) scale(1); }
+        }
+        @keyframes hvacSigPillFullSpin {
+            0%   { transform: perspective(680px) rotateY(0deg) rotateX(0deg) scale(1); }
+            45%  { transform: perspective(680px) rotateY(195deg) rotateX(10deg) scale(1.05); }
+            82%  { transform: perspective(680px) rotateY(366deg) rotateX(-3deg) scale(1.01); }
+            100% { transform: perspective(680px) rotateY(360deg) rotateX(0deg) scale(1); }
+        }
+        @keyframes hvacSigPulse {
+            0%, 100% { opacity: 0.45; transform: scale(0.88); }
+            50%      { opacity: 1; transform: scale(1.18); }
+        }
+        @keyframes hvacSigRailGlint {
+            0%, 66%  { opacity: 0; transform: translate3d(0, 260px, 0); }
+            74%      { opacity: 0.95; }
+            96%      { opacity: 0.85; }
+            100%     { opacity: 0; transform: translate3d(0, -70px, 0); }
+        }
+        @keyframes hvacSigPillGlint {
+            0%, 66%  { opacity: 0; transform: translate3d(-90px, 0, 0) skewX(-20deg); }
+            74%      { opacity: 0.95; }
+            96%      { opacity: 0.85; }
+            100%     { opacity: 0; transform: translate3d(340px, 0, 0) skewX(-20deg); }
         }
         .hvac-gallery-card {
             --rx: 0deg; --ry: 0deg; --ix: 0px; --iy: 0px; --mx: 50%; --my: 50%;
@@ -527,6 +701,13 @@
     <canvas id="bg-canvas"></canvas>
     <div id="aurora-field" aria-hidden="true"></div>
     <div class="grid-overlay"></div>
+    <div id="hvacBgSignatureRail" data-i18n-skip="true" role="button" tabindex="0" title="Designed &amp; Developed by RULERB + AI Agent">
+        <span class="hvac-sig-rail-wrap hvac-sig-glint">
+            <span class="hvac-sig-rail-text">Designed &amp; Developed by <span class="hvac-sig-brand">RULERB + AI Agent</span></span>
+        </span>
+        <span class="hvac-sig-dot" aria-hidden="true"></span>
+        <span class="hvac-sig-line" aria-hidden="true"></span>
+    </div>
 
     <div class="relative z-10">
         <header class="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 text-white shadow-2xl transition-all duration-300">
@@ -1869,16 +2050,78 @@
             </div>
         </section>
 
-        <footer class="bg-slate-950/95 border-t border-slate-800 text-slate-400 py-8 mt-16 text-xs text-center">
-            <div class="max-w-7xl mx-auto px-4 space-y-3">
+        <footer id="hvacSiteFooter" class="relative overflow-hidden bg-slate-950/90 border-t border-slate-800/90 text-slate-400 py-9 mt-16 text-xs text-center">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-400/35 to-transparent" aria-hidden="true"></div>
+            <div class="hvac-footer-watermark" data-i18n-skip="true" aria-hidden="true">RULERB × AI AGENT</div>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 space-y-3">
                 <p class="font-semibold text-slate-300">Cẩm Nang &amp; Công Cụ Tính Kích Thước Ống Gió - Miệng Gió HVAC Realtime</p>
                 <p class="text-slate-400">Tuân thủ nghiêm ngặt Quy chuẩn TCVN 5687:2024, ASHRAE Fundamentals &amp; SMACNA Duct Construction Standards</p>
-                <p class="text-slate-600">&copy; 2026 HVAC &amp; MEP Engineering Design System. All rights reserved.</p>
+                <p class="text-slate-500">&copy; 2026 HVAC &amp; MEP Engineering Design System. All rights reserved.</p>
+                <div class="pt-1.5" data-i18n-skip="true">
+                    <span id="hvacFooterSignaturePill" role="button" tabindex="0" title="Designed &amp; Developed by RULERB + AI Agent" class="hvac-footer-sig-pill hvac-sig-glint">
+                        <span class="hvac-sig-dot" aria-hidden="true"></span>
+                        <span>Designed &amp; Developed by <span class="hvac-sig-brand">RULERB + AI Agent</span></span>
+                    </span>
+                </div>
             </div>
         </footer>
     </div>
 
     <script>
+        (function initSignatureRailSync() {
+            var rail = document.getElementById('hvacBgSignatureRail');
+            var pill = document.getElementById('hvacFooterSignaturePill');
+            var footer = document.getElementById('hvacSiteFooter');
+
+            function playSigSpinChime() {
+                try {
+                    if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    if (audioCtx.state === 'suspended') audioCtx.resume().catch(function () {});
+                    var t0 = audioCtx.currentTime;
+                    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+                    o.type = 'triangle';
+                    o.frequency.setValueAtTime(520, t0);
+                    o.frequency.exponentialRampToValueAtTime(1040, t0 + 0.16);
+                    g.gain.setValueAtTime(0.0001, t0);
+                    g.gain.linearRampToValueAtTime(0.045, t0 + 0.03);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(t0); o.stop(t0 + 0.24);
+                } catch (e) {}
+            }
+
+            function bindSpinOnClick(el, animName) {
+                if (!el) return;
+                function trigger(e) {
+                    if (e) e.stopPropagation();
+                    el.classList.remove('is-spinning');
+                    void el.offsetWidth;
+                    el.classList.add('is-spinning');
+                    playSigSpinChime();
+                }
+                el.addEventListener('click', trigger);
+                el.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        trigger(e);
+                    }
+                });
+                el.addEventListener('animationend', function (e) {
+                    if (e.animationName === animName) el.classList.remove('is-spinning');
+                });
+            }
+
+            bindSpinOnClick(rail, 'hvacSigRailFullSpin');
+            bindSpinOnClick(pill, 'hvacSigPillFullSpin');
+
+            if (rail && footer && ('IntersectionObserver' in window)) {
+                var io = new IntersectionObserver(function (entries) {
+                    rail.classList.toggle('is-footer-visible', entries.some(function (e) { return e.isIntersecting; }));
+                }, { threshold: 0.15 });
+                io.observe(footer);
+            }
+        })();
+
         // Modal Handlers
         function openStandardsModal() {
             const modal = document.getElementById('standardsModal');

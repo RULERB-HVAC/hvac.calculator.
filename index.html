@@ -1901,6 +1901,166 @@ window.hvacSetIcon = function(id, name) {
                 </div>
             </section>
 
+
+            <!-- ═══════════════════════════════════════════════════════════════════════════
+                 TRẠM THỜI TIẾT HVAC — Open-Meteo
+                 Bổ sung giao diện cho module thời tiết đã có ở cuối file.
+                 Đặt ngay trước HAP để người dùng có thể nạp điều kiện hiện tại làm kịch bản tham khảo.
+                 ═══════════════════════════════════════════════════════════════════════════ -->
+            <section id="weather-station" class="scroll-mt-24 space-y-5" data-i18n-skip="true" aria-labelledby="weatherSectionTitle">
+                <div class="relative isolate overflow-hidden rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950/70 p-4 shadow-2xl sm:p-6 lg:p-7">
+                    <div class="pointer-events-none absolute -right-24 -top-28 -z-10 h-80 w-80 rounded-full" style="background:radial-gradient(circle,rgba(56,189,248,.16),rgba(56,189,248,.04) 45%,transparent 72%)"></div>
+                    <div class="pointer-events-none absolute -bottom-36 left-1/4 -z-10 h-80 w-80 rounded-full" style="background:radial-gradient(circle,rgba(52,211,153,.10),transparent 70%)"></div>
+
+                    <!-- Section heading -->
+                    <div class="mb-5 flex flex-col gap-4 border-l-4 border-cyan-400 pl-4 lg:flex-row lg:items-end lg:justify-between">
+                        <div class="min-w-0">
+                            <div class="mb-2 flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-cyan-200">
+                                    <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span></span>
+                                    <span data-weather-label="liveModel">Dữ liệu thời tiết trực tuyến</span>
+                                </span>
+                                <span id="weatherTimezone" class="font-mono-tech text-[10px] text-slate-400">Asia/Ho_Chi_Minh</span>
+                            </div>
+                            <h2 id="weatherSectionTitle" data-weather-label="sectionTitle" class="flex items-center gap-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+                                <svg class="hvac-icon h-7 w-7 text-cyan-300 sm:h-8 sm:w-8" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-cloud-sun"></use></svg>
+                                Trạm Thời Tiết HVAC
+                            </h2>
+                            <p data-weather-label="sectionSubtitle" class="mt-2 max-w-3xl text-xs leading-relaxed text-slate-300 sm:text-sm">Theo dõi điều kiện ngoài trời hiện tại, dự báo từng giờ và thông số không khí phục vụ tham khảo HVAC.</p>
+                        </div>
+                        <div class="flex shrink-0 items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-950/60 px-3 py-2">
+                            <svg class="hvac-icon h-4 w-4 text-emerald-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-refresh"></use></svg>
+                            <span id="weatherUpdatedAt" class="text-[10px] text-slate-400">Đang chuẩn bị tải dữ liệu…</span>
+                        </div>
+                    </div>
+
+                    <!-- Location search and controls -->
+                    <div class="mb-4 grid gap-3 rounded-2xl border border-slate-700/70 bg-slate-950/55 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                        <div class="min-w-0">
+                            <label for="weatherCitySearch" data-weather-label="searchLabel" class="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-300">Tìm thành phố</label>
+                            <div class="relative">
+                                <input id="weatherCitySearch" type="search" autocomplete="off" placeholder="Nhập tên thành phố…" class="w-full rounded-xl border border-slate-700 bg-slate-900/90 py-3 pl-10 pr-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/15">
+                                <svg class="hvac-icon pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-search"></use></svg>
+                                <div id="weatherSearchResults" class="absolute left-0 right-0 top-full z-50 mt-2 hidden max-h-64 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950 shadow-2xl"></div>
+                            </div>
+                            <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-slate-400">
+                                <span data-weather-label="chooseLocation">Chọn địa điểm</span>
+                                <span class="text-slate-600">·</span>
+                                <span id="weatherLocationName" class="font-semibold text-cyan-200">Hà Nội, Việt Nam</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" id="weatherSearchBtn" class="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/35 bg-cyan-500/15 px-3.5 py-3 text-xs font-bold text-cyan-100 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-50">
+                                <svg class="hvac-icon h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-search"></use></svg>
+                                <span data-weather-label="searchBtn">Tìm địa điểm</span>
+                            </button>
+                            <button type="button" id="weatherGeoBtn" class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3.5 py-3 text-xs font-bold text-emerald-100 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50">
+                                <svg class="hvac-icon h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-globe"></use></svg>
+                                <span data-weather-label="myLocation">Vị trí của tôi</span>
+                            </button>
+                            <button type="button" id="weatherRefreshBtn" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-800/80 px-3.5 py-3 text-xs font-bold text-slate-200 transition hover:border-sky-400/50 hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50">
+                                <svg class="hvac-icon h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-refresh"></use></svg>
+                                <span data-weather-label="refresh">Cập nhật ngay</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 min-h-4"><div id="weatherStatus" role="status" aria-live="polite" class="text-[11px] text-slate-400">Đang tải dữ liệu thời tiết…</div></div>
+
+                    <!-- Current conditions -->
+                    <div class="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1.95fr)]">
+                        <div class="relative overflow-hidden rounded-2xl border border-cyan-300/20 bg-gradient-to-br from-sky-500/15 via-slate-900/90 to-indigo-950/60 p-4 sm:p-5">
+                            <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-sky-400/10 blur-2xl"></div>
+                            <div class="relative flex items-center justify-between gap-2">
+                                <span data-weather-label="currentWeather" class="text-xs font-bold uppercase tracking-wider text-slate-300">Thời tiết hiện tại</span>
+                                <span id="weatherCurrentTime" class="font-mono-tech text-[10px] text-slate-400">--:--</span>
+                            </div>
+                            <div class="relative mt-4 flex items-center gap-4">
+                                <div id="weatherCurrentIcon" class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-slate-950/35 text-5xl shadow-inner" aria-label="Weather icon">⛅</div>
+                                <div class="min-w-0">
+                                    <div id="weatherCurrentTemp" class="text-5xl font-extrabold leading-none tracking-tight text-white tabular-nums">--°C</div>
+                                    <div id="weatherCurrentCondition" class="mt-2 text-sm font-semibold text-cyan-100">Đang tải…</div>
+                                    <div class="mt-1 text-[10px] text-slate-400"><span data-weather-label="todayHighLow">Cao nhất / thấp nhất hôm nay</span>: <span id="weatherTodayRange" class="font-semibold text-slate-200">—</span></div>
+                                </div>
+                            </div>
+                            <div class="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-3 text-[10px] text-slate-400">
+                                <span data-weather-label="liveModel">Dữ liệu thời tiết trực tuyến</span>
+                                <span id="weatherWindDirection" class="font-mono-tech text-slate-300">Hướng gió: —</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-amber-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-thermometer"></use></svg><span data-weather-label="feelsLike">Cảm giác như</span></div>
+                                <div id="weatherFeelsLike" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-cyan-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-droplets"></use></svg><span data-weather-label="humidity">Độ ẩm tương đối</span></div>
+                                <div id="weatherHumidity" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-sky-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-thermometer"></use></svg><span data-weather-label="wetBulb">Nhiệt độ bầu ướt</span></div>
+                                <div id="weatherWetBulb" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-indigo-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-thermometer"></use></svg><span data-weather-label="dewPoint">Điểm sương</span></div>
+                                <div id="weatherDewPoint" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-emerald-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-chart"></use></svg><span data-weather-label="pressure">Áp suất bề mặt</span></div>
+                                <div id="weatherPressure" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-teal-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-wind"></use></svg><span data-weather-label="wind">Tốc độ gió</span></div>
+                                <div id="weatherWind" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                            <div class="col-span-2 rounded-2xl border border-slate-700/75 bg-slate-950/65 p-3.5 sm:col-span-3">
+                                <div class="mb-2 flex items-center gap-2 text-[10px] font-semibold text-slate-400"><svg class="hvac-icon h-4 w-4 text-blue-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-droplets"></use></svg><span data-weather-label="rain">Mưa hiện tại</span></div>
+                                <div id="weatherRain" class="text-xl font-extrabold text-white tabular-nums">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hourly forecast -->
+                    <div class="mt-5 rounded-2xl border border-slate-700/75 bg-slate-950/55 p-4 sm:p-5">
+                        <div class="mb-1 flex flex-wrap items-center justify-between gap-2">
+                            <h3 data-weather-label="hourlyTitle" class="text-sm font-extrabold text-white sm:text-base">Dự báo theo giờ – 24 giờ tới</h3>
+                            <span data-weather-label="hourlyScroll" class="text-[10px] text-cyan-200/80">Vuốt ngang để xem đủ 24 giờ →</span>
+                        </div>
+                        <p data-weather-label="hourlySubtitle" class="mb-3 text-[11px] text-slate-400">Nhiệt độ, độ ẩm, bầu ướt, mưa và gió theo từng giờ địa phương.</p>
+                        <div id="weatherHourlyList" class="flex snap-x gap-2 overflow-x-auto pb-2" style="scrollbar-width:thin;scrollbar-color:rgba(56,189,248,.45) rgba(15,23,42,.6)">
+                            <div class="min-w-[6.5rem] rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-4 text-center text-xs text-slate-500">Đang tải dự báo…</div>
+                        </div>
+                    </div>
+
+                    <!-- 7-day forecast -->
+                    <div class="mt-4 rounded-2xl border border-slate-700/75 bg-slate-950/55 p-4 sm:p-5">
+                        <h3 data-weather-label="dailyTitle" class="text-sm font-extrabold text-white sm:text-base">Dự báo 7 ngày</h3>
+                        <p data-weather-label="dailySubtitle" class="mb-3 mt-1 text-[11px] text-slate-400">Nhiệt độ thấp nhất/cao nhất và lượng mưa dự kiến.</p>
+                        <div id="weatherDailyList" class="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                            <div class="rounded-xl border border-slate-800 bg-slate-900/90 p-3 text-xs text-slate-500">Đang tải dự báo…</div>
+                        </div>
+                    </div>
+
+                    <!-- HVAC design caution and HAP integration -->
+                    <div class="mt-4 flex flex-col gap-3 rounded-2xl border border-amber-400/25 bg-amber-500/[0.07] p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex min-w-0 items-start gap-3">
+                            <svg class="hvac-icon mt-0.5 h-5 w-5 shrink-0 text-amber-300" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-alert-triangle"></use></svg>
+                            <p data-weather-label="designWarning" class="text-[11px] leading-relaxed text-amber-100/90">Thời tiết hiện tại và dự báo chỉ dùng để tham khảo/kịch bản vận hành. Không thay thế nhiệt độ, độ ẩm ngoài trời thiết kế theo ASHRAE/TCVN khi tính tải lạnh và chọn thiết bị.</p>
+                        </div>
+                        <button type="button" id="weatherApplyHapBtn" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-emerald-300/35 bg-emerald-400/15 px-4 py-3 text-xs font-extrabold text-emerald-100 transition hover:bg-emerald-400/25">
+                            <svg class="hvac-icon h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><use href="#hvac-icon-building"></use></svg>
+                            <span data-weather-label="applyHap">Nạp điều kiện hiện tại vào HAP (tham khảo)</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500">
+                        <span><span data-weather-label="source">Nguồn dữ liệu:</span> <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" class="font-semibold text-sky-300 underline decoration-sky-400/30 underline-offset-2 hover:text-sky-200">Open-Meteo</a></span>
+                        <span id="weatherModelNote" data-weather-label="modelNote">Dữ liệu mô hình dự báo; chu kỳ cập nhật tùy mô hình.</span>
+                    </div>
+                </div>
+            </section>
+
             <section id="tinh-tai-lanh" class="scroll-mt-24 space-y-6">
                 <div class="relative overflow-hidden rounded-3xl border border-sky-500/25 bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-cyan-950/35 p-5 shadow-2xl sm:p-7">
                     <div class="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full" style="background:radial-gradient(circle, rgba(56,189,248,0.12) 0%, rgba(56,189,248,0.04) 45%, transparent 72%)"></div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -6722,6 +6722,7 @@ return c1+c2+c3+c4; })()
         "💧 Ống Nước Lạnh": ["💧 Chilled Water Pipe", "💧 冷冻水管"],
         "🔥 PCCC": ["🔥 Fire & Smoke", "🔥 防排烟"],
         "📂 Đang tải lịch sử…": ["📂 Loading history…", "📂 正在加载历史记录…"],
+        "L\u00EAn \u0111\u1EA7u trang": ["Back to top", "\u56DE\u5230\u9876\u90E8"],
         "Khu vực bình luận cộng đồng": ["Community comments area", "社区评论区"],
         "Mở bảng emoji": ["Open emoji picker", "打开表情选择器"],
         "Chọn emoji": ["Choose an emoji", "选择表情符号"],
@@ -7189,6 +7190,8 @@ return c1+c2+c3+c4; })()
         "Ông Trời Làm Tội Anh Chưa": "Ong Troi Lam Toi Anh Chua"
     };
     window.japaneseWords = japaneseWords;
+    japaneseWords["L\u00EAn \u0111\u1EA7u trang"] = "\u30DA\u30FC\u30B8\u30C8\u30C3\u30D7\u3078";
+    
 
     function norm(s) { return String(s).replace(/\s+/g, " ").trim(); }
     function translate(value, lang) {
@@ -7560,7 +7563,6 @@ return c1+c2+c3+c4; })()
 }
 @keyframes hvacHistSlideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 .hvac-hist-row { animation: hvacHistSlideIn .22s ease both; }
-
 </style>
 
 <script>
@@ -8020,7 +8022,6 @@ return c1+c2+c3+c4; })()
 .hvac-export-pdf:hover { background: rgba(239,68,68,.25); border-color: rgba(239,68,68,.65); }
 .hvac-export-xlsx { background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.35); color: #6ee7b7; }
 .hvac-export-xlsx:hover { background: rgba(52,211,153,.25); border-color: rgba(52,211,153,.65); }
-
 </style>
 
 <!-- ═══════════════ PHẦN 2 — ỐNG NƯỚC LẠNH (Chilled Water Pipe Sizer) ═══════════════ -->
@@ -8528,5 +8529,465 @@ return c1+c2+c3+c4; })()
 })();
 </script>
 
+
+    <!-- Back to Top (Scroll to Top - Jet Engine Launch) -->
+    <style id="hvacJetStyle">
+        #hvacScrollTopBtn{position:fixed;right:26px;bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:40;width:58px;height:58px;padding:0;margin:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:0;pointer-events:none;transform:translateY(20px) scale(.92);transition:opacity .38s cubic-bezier(.16,1,.3,1),transform .38s cubic-bezier(.16,1,.3,1)}
+        #hvacScrollTopBtn.is-visible{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+        #hvacScrollTopBtn.is-launching{z-index:60;pointer-events:none}
+        #hvacScrollTopBtn:focus{outline:none}
+        #hvacScrollTopBtn .jet-craft{position:absolute;inset:0;will-change:transform}
+
+        /* Ambient plasma aura behind thruster */
+        #hvacScrollTopBtn .jet-aura{position:absolute;inset:-8px;border-radius:9999px;background:radial-gradient(circle,rgba(56,189,248,.32) 0%,rgba(14,165,233,.14) 48%,rgba(2,132,199,0) 74%);filter:blur(4px);opacity:.85;animation:hvacJetPulse 2.8s ease-in-out infinite;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+
+        /* Swept mecha delta wings + intake cowlings (visible in idle, expand on hover/launch) */
+        #hvacScrollTopBtn .jet-fins{position:absolute;left:50%;top:50%;width:82px;height:68px;margin:-34px 0 0 -41px;z-index:1;pointer-events:none;opacity:.88;transform:scale(.86);transition:opacity .25s ease,transform .3s cubic-bezier(.2,.9,.3,1.25),filter .25s ease;filter:drop-shadow(0 4px 10px rgba(0,0,0,.7))}
+
+        /* Titanium exhaust nozzle at bottom */
+        #hvacScrollTopBtn .jet-nozzle{position:absolute;left:50%;bottom:-7px;z-index:1;width:26px;height:11px;margin-left:-13px;border-radius:3px 3px 7px 7px;background:linear-gradient(to bottom,#475569 0%,#1e293b 45%,#090d16 100%);border:1px solid rgba(125,211,252,.5);box-shadow:0 3px 10px rgba(0,0,0,.85),inset 0 -2px 4px rgba(251,146,60,.45);opacity:.95;transform:translateY(0) scaleX(.92);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+        #hvacScrollTopBtn .jet-nozzle::after{content:"";position:absolute;left:3px;right:3px;bottom:1px;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(251,146,60,0),rgba(251,146,60,.85),rgba(56,189,248,.9),rgba(251,146,60,.85),rgba(251,146,60,0));opacity:.75;transition:opacity .25s ease}
+
+        /* Main armored reactor housing */
+        #hvacScrollTopBtn .jet-body{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;border-radius:9999px;overflow:hidden;background:radial-gradient(circle at 50% 24%,#1e293b 0%,#0b1324 58%,#040812 100%);border:1.5px solid rgba(56,189,248,.58);color:#38bdf8;box-shadow:0 10px 32px rgba(0,0,0,.82),0 0 20px rgba(56,189,248,.32),inset 0 1px 2px rgba(255,255,255,.22),inset 0 -4px 10px rgba(14,165,233,.28);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:transform .28s cubic-bezier(.2,.9,.3,1.2),box-shadow .28s ease,border-color .28s ease}
+        #hvacScrollTopBtn:focus-visible .jet-body{box-shadow:0 0 0 2px #050914,0 0 0 4px #38bdf8,0 10px 32px rgba(0,0,0,.85)}
+
+        /* Rotating segmented HUD bezel ring */
+        #hvacScrollTopBtn .jet-hud{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);z-index:2;pointer-events:none;opacity:.82;animation:hvacJetSpinReverse 14s linear infinite;transition:opacity .25s ease}
+
+        /* Internal afterburner heat glow */
+        #hvacScrollTopBtn .jet-heat{position:absolute;inset:0;border-radius:9999px;background:radial-gradient(circle at 50% 88%,rgba(251,146,60,.78),rgba(56,189,248,.3) 48%,rgba(56,189,248,0) 72%);opacity:.28;transition:opacity .28s ease}
+
+        /* 12-blade titanium compressor turbine (always visible & spinning) */
+        #hvacScrollTopBtn .jet-turbine{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;color:rgba(125,211,252,.52);opacity:.62;animation:hvacJetSpin 9s linear infinite;transition:opacity .25s ease,color .25s ease}
+
+        /* Mach-2 double delta chevron spearhead */
+        #hvacScrollTopBtn .jet-arrow{position:relative;z-index:3;width:28px;height:28px;filter:drop-shadow(0 0 6px rgba(56,189,248,.75));transition:transform .28s cubic-bezier(.2,.9,.3,1.2),filter .28s ease}
+
+        /* Supersonic 4-layer afterburner plume + Mach shock diamonds */
+        #hvacScrollTopBtn .jet-flame{position:absolute;left:50%;top:calc(100% - 2px);z-index:1;width:32px;height:86px;margin-left:-16px;transform-origin:50% 0;transform:scaleY(0);opacity:0;transition:transform .2s cubic-bezier(.2,.8,.3,1),opacity .16s ease;pointer-events:none}
+        #hvacScrollTopBtn .jet-flame i{position:absolute;left:50%;top:0;display:block;border-radius:50% 50% 50% 50%/14% 14% 86% 86%;transform-origin:50% 0}
+        #hvacScrollTopBtn .jet-flame .f-outer{width:32px;height:100%;margin-left:-16px;background:linear-gradient(to bottom,rgba(254,240,138,.98) 0%,rgba(251,146,60,.96) 24%,rgba(239,68,68,.75) 58%,rgba(185,28,28,0) 100%);filter:blur(.6px)}
+        #hvacScrollTopBtn .jet-flame .f-mid{width:20px;height:82%;margin-left:-10px;background:linear-gradient(to bottom,#fff 0%,rgba(56,189,248,.96) 38%,rgba(37,99,235,.7) 72%,rgba(29,78,216,0) 100%)}
+        #hvacScrollTopBtn .jet-flame .f-core{width:10px;height:54%;margin-left:-5px;background:linear-gradient(to bottom,#fff 0%,#e0f2fe 70%,rgba(224,242,254,0) 100%);box-shadow:0 0 14px #fff,0 0 24px #38bdf8}
+        #hvacScrollTopBtn .jet-flame .f-diamonds{width:8px;height:72%;margin-left:-4px;border-radius:0;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.95) 0px,rgba(255,255,255,.95) 5px,rgba(56,189,248,.2) 5px,rgba(56,189,248,.2) 13px);clip-path:polygon(50% 0%,100% 12%,50% 25%,100% 38%,50% 50%,85% 65%,50% 100%,15% 65%,50% 50%,0% 38%,50% 25%,0% 12%);filter:drop-shadow(0 0 6px #fff)}
+
+        /* High-energy plasma contrail beam */
+        #hvacScrollTopBtn .jet-trail{position:absolute;left:50%;top:calc(100% + 26px);z-index:0;width:6px;height:66vh;margin-left:-3px;border-radius:9999px;transform-origin:50% 0;transform:scaleY(0);opacity:0;background:linear-gradient(to bottom,#fff 0%,rgba(56,189,248,.92) 16%,rgba(251,146,60,.62) 38%,rgba(203,213,225,.28) 68%,rgba(148,163,184,0) 100%);box-shadow:0 0 20px rgba(56,189,248,.9),0 0 38px rgba(251,146,60,.55);pointer-events:none}
+
+        /* Hover state: pre-ignition power-up */
+        @media (hover:hover){
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-aura{opacity:1;transform:scale(1.18)}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-fins{opacity:1;transform:scale(1) translateY(-3px);filter:drop-shadow(0 0 12px rgba(56,189,248,.55))}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-nozzle{transform:translateY(-2px) scaleX(1);border-color:#fb923c;box-shadow:0 4px 14px rgba(249,115,22,.65),inset 0 -2px 6px rgba(251,146,60,.9)}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-body{transform:translateY(-4px) scale(1.04);border-color:#7dd3fc;box-shadow:0 14px 38px rgba(0,0,0,.88),0 0 30px rgba(56,189,248,.65),0 6px 20px rgba(249,115,22,.38),inset 0 0 14px rgba(56,189,248,.35)}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-heat{opacity:.65}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-turbine{opacity:.9;color:#7dd3fc;animation-duration:1.1s}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-arrow{transform:translateY(-3px) scale(1.08);filter:drop-shadow(0 0 10px #38bdf8) drop-shadow(0 0 18px rgba(251,146,60,.6))}
+            #hvacScrollTopBtn:not(.is-launching):hover .jet-flame{opacity:.75;transform:scaleY(.28);filter:drop-shadow(0 0 8px rgba(251,146,60,.8))}
+        }
+
+        /* Phase 1 - Ignition: engine rumble + wings lock out + pilot flame */
+        #hvacScrollTopBtn.is-igniting .jet-aura{opacity:1;transform:scale(1.3);background:radial-gradient(circle,rgba(251,146,60,.52) 0%,rgba(56,189,248,.32) 48%,rgba(56,189,248,0) 74%)}
+        #hvacScrollTopBtn.is-igniting .jet-fins{opacity:1;transform:scale(1.06);filter:drop-shadow(0 0 12px rgba(251,146,60,.65))}
+        #hvacScrollTopBtn.is-igniting .jet-nozzle{opacity:1;transform:translateY(1px) scaleX(1.05);border-color:#fbbf24;box-shadow:0 0 16px rgba(251,146,60,.9)}
+        #hvacScrollTopBtn.is-igniting .jet-body{animation:hvacJetRumble .065s linear infinite;border-color:#fbbf24;box-shadow:0 0 0 1.5px rgba(251,191,36,.6),0 0 28px rgba(56,189,248,.75),0 12px 32px rgba(249,115,22,.7)}
+        #hvacScrollTopBtn.is-igniting .jet-heat{opacity:.88}
+        #hvacScrollTopBtn.is-igniting .jet-turbine{opacity:1;color:#e0f2fe;animation:hvacJetSpin .22s linear infinite}
+        #hvacScrollTopBtn.is-igniting .jet-hud{animation-duration:1.6s;opacity:1}
+        #hvacScrollTopBtn.is-igniting .jet-arrow{filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 18px #38bdf8);transform:translateY(-2px) scale(1.08)}
+        #hvacScrollTopBtn.is-igniting .jet-flame{opacity:.95;transform:scaleY(.48);filter:drop-shadow(0 0 10px rgba(251,146,60,.95))}
+        #hvacScrollTopBtn.is-launching .jet-flame .f-outer{animation:hvacJetFlicker .075s linear infinite alternate}
+        #hvacScrollTopBtn.is-launching .jet-flame .f-mid{animation:hvacJetFlicker .055s linear infinite alternate-reverse}
+
+        /* Phase 2 - Full Afterburner Thrust */
+        #hvacScrollTopBtn.is-thrust .jet-fins{transform:scale(1.12)}
+        #hvacScrollTopBtn.is-thrust .jet-body{animation-name:hvacJetRumbleHard;animation-duration:.042s;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.88),0 0 42px rgba(56,189,248,.98),0 18px 46px rgba(249,115,22,.95)}
+        #hvacScrollTopBtn.is-thrust .jet-heat{opacity:1}
+        #hvacScrollTopBtn.is-thrust .jet-turbine{animation-duration:.1s}
+        #hvacScrollTopBtn.is-thrust .jet-flame{opacity:1;transform:scaleY(1.18);filter:drop-shadow(0 0 18px rgba(251,146,60,1))}
+
+        /* Phase 3 - Supersonic Liftoff */
+        #hvacScrollTopBtn.is-flying .jet-craft{transform:translate3d(0,calc(var(--jet-dist,110vh) * -1),0) scale(.9);transition:transform .78s cubic-bezier(.52,0,.88,.32)}
+        #hvacScrollTopBtn.is-flying .jet-body{animation:none}
+        #hvacScrollTopBtn.is-flying .jet-flame{transform:scaleY(1.85)}
+        #hvacScrollTopBtn.is-flying .jet-trail{opacity:1;transform:scaleY(1);transition:transform .5s cubic-bezier(.2,.8,.3,1) .02s,opacity .14s ease}
+
+        /* Cooldown / return */
+        #hvacScrollTopBtn.is-landing .jet-craft{animation:hvacJetLand .55s cubic-bezier(.16,1,.3,1)}
+        #hvacScrollTopBtn.is-resetting,#hvacScrollTopBtn.is-resetting *{transition:none !important;animation:none !important}
+
+        /* Particles overlay */
+        #hvacJetFx{position:fixed;inset:0;pointer-events:none;z-index:59;overflow:hidden;contain:strict}
+        #hvacJetFx .jet-p{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;will-change:transform,opacity}
+        #hvacJetFx .jet-spark{background:#fef9c3;box-shadow:0 0 8px 2px rgba(251,146,60,.98),0 0 14px rgba(56,189,248,.75)}
+        #hvacJetFx .jet-smoke{background:radial-gradient(circle,rgba(241,245,249,.82) 0%,rgba(203,213,225,.56) 36%,rgba(148,163,184,.25) 62%,rgba(100,116,139,0) 76%)}
+        #hvacJetFx .jet-flash{background:radial-gradient(circle,rgba(255,251,235,.98) 0%,rgba(251,146,60,.68) 30%,rgba(56,189,248,.32) 56%,rgba(56,189,248,0) 74%)}
+        #hvacJetFx .jet-shock{border:2px solid rgba(125,211,252,.9);box-shadow:0 0 16px rgba(56,189,248,.8),inset 0 0 12px rgba(251,146,60,.6);background:transparent}
+
+        @keyframes hvacJetSpin{to{transform:rotate(360deg)}}
+        @keyframes hvacJetSpinReverse{to{transform:rotate(-360deg)}}
+        @keyframes hvacJetPulse{0%,100%{transform:scale(.96);opacity:.72}50%{transform:scale(1.08);opacity:1}}
+        @keyframes hvacJetRumble{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-1.5px,1px) rotate(-1.5deg)}50%{transform:translate(1.5px,-1px) rotate(1.3deg)}75%{transform:translate(-1px,-1.3px) rotate(.9deg)}100%{transform:translate(1px,1.3px) rotate(-.9deg)}}
+        @keyframes hvacJetRumbleHard{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2.4px,1.4px) rotate(-2.4deg)}50%{transform:translate(2.4px,-1.4px) rotate(2deg)}75%{transform:translate(-1.6px,-2.2px) rotate(1.4deg)}100%{transform:translate(1.6px,2.2px) rotate(-1.4deg)}}
+        @keyframes hvacJetFlicker{from{transform:scale(1,1)}to{transform:scale(.84,1.18)}}
+        @keyframes hvacJetLand{from{transform:translateY(-48px) scale(.88);opacity:0}to{transform:none;opacity:1}}
+        @media (max-width:640px){
+            #hvacScrollTopBtn{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:50px;height:50px}
+            #hvacScrollTopBtn .jet-fins{width:72px;height:60px;margin:-30px 0 0 -36px}
+            #hvacScrollTopBtn .jet-turbine{width:42px;height:42px;margin:-21px 0 0 -21px}
+            #hvacScrollTopBtn .jet-arrow{width:24px;height:24px}
+        }
+    </style>
+    <button id="hvacScrollTopBtn" type="button" aria-label="L&#234;n &#273;&#7847;u trang" title="L&#234;n &#273;&#7847;u trang">
+        <span class="jet-craft" aria-hidden="true">
+            <span class="jet-aura"></span>
+            <span class="jet-trail"></span>
+            <span class="jet-flame"><i class="f-outer"></i><i class="f-mid"></i><i class="f-core"></i><i class="f-diamonds"></i></span>
+            <!-- Armored Swept Delta Wings + Nose Cone -->
+            <svg class="jet-fins" viewBox="0 0 82 68" fill="none">
+                <defs>
+                    <linearGradient id="hvacWingGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#38bdf8"/>
+                        <stop offset="45%" stop-color="#0284c7"/>
+                        <stop offset="100%" stop-color="#0f172a"/>
+                    </linearGradient>
+                    <linearGradient id="hvacWingEdge" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#e0f2fe"/>
+                        <stop offset="50%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#fb923c"/>
+                    </linearGradient>
+                </defs>
+                <!-- Top Mach nose-cone crown -->
+                <path d="M41 1 L47 9 L41 7 L35 9 Z" fill="url(#hvacWingEdge)"/>
+                <!-- Left swept stealth wing + booster pod -->
+                <path d="M16 20 L1 44 L5 49 L17 43 L19 30 Z" fill="url(#hvacWingGrad)" stroke="url(#hvacWingEdge)" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M13 28 L5 42 L13 39 Z" fill="#38bdf8" opacity=".45"/>
+                <!-- Right swept stealth wing + booster pod -->
+                <path d="M66 20 L81 44 L77 49 L65 43 L63 30 Z" fill="url(#hvacWingGrad)" stroke="url(#hvacWingEdge)" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M69 28 L77 42 L69 39 Z" fill="#38bdf8" opacity=".45"/>
+            </svg>
+            <span class="jet-nozzle"></span>
+            <span class="jet-body">
+                <span class="jet-heat"></span>
+                <!-- 12-Blade Titanium Compressor Turbine -->
+                <svg class="jet-turbine" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <circle cx="24" cy="24" r="21" stroke-dasharray="6 3" opacity=".55"></circle>
+                    <circle cx="24" cy="24" r="6" opacity=".75"></circle>
+                    <path d="M24 18 C27 13 27.5 8 24 4"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(30 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(60 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(90 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(120 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(150 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(180 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(210 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(240 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(270 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(300 24 24)"></path>
+                    <path d="M24 18 C27 13 27.5 8 24 4" transform="rotate(330 24 24)"></path>
+                </svg>
+                <!-- Rotating Cyber HUD Bezel Ring -->
+                <svg class="jet-hud" viewBox="0 0 56 56" fill="none">
+                    <circle cx="28" cy="28" r="25.5" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="14 8 4 8" opacity=".85"/>
+                    <circle cx="28" cy="28" r="23" stroke="#fb923c" stroke-width="1" stroke-dasharray="3 15" opacity=".7"/>
+                </svg>
+                <!-- Bold Mach-2 Double Chevron Spearhead Icon -->
+                <svg class="jet-arrow" viewBox="0 0 28 28" fill="none">
+                    <defs>
+                        <linearGradient id="hvacSpearGrad" x1="14" y1="2" x2="14" y2="25" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#ffffff"/>
+                            <stop offset="55%" stop-color="#bae6fd"/>
+                            <stop offset="100%" stop-color="#38bdf8"/>
+                        </linearGradient>
+                        <linearGradient id="hvacCoreGrad" x1="14" y1="11" x2="14" y2="26" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#ffffff"/>
+                            <stop offset="45%" stop-color="#38bdf8"/>
+                            <stop offset="100%" stop-color="#fb923c"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Dark armor halo shield for high contrast over turbine -->
+                    <circle cx="14" cy="14" r="10.5" fill="rgba(4,8,18,.78)" stroke="rgba(56,189,248,.4)" stroke-width=".8"/>
+                    <!-- Outer Mach delta wing chevron -->
+                    <path d="M14 2.2 L24.2 14.2 L19.4 14.2 L14 7.8 L8.6 14.2 L3.8 14.2 Z" fill="url(#hvacSpearGrad)" stroke="#040812" stroke-width="1.8" stroke-linejoin="round" style="paint-order:stroke fill"/>
+                    <!-- Inner Mach booster spearhead -->
+                    <path d="M14 10.2 L21.5 19.2 L16.8 19.2 L16.8 24.8 L11.2 24.8 L11.2 19.2 L6.5 19.2 Z" fill="url(#hvacCoreGrad)" stroke="#040812" stroke-width="1.8" stroke-linejoin="round" style="paint-order:stroke fill"/>
+                    <!-- Glowing plasma core slot -->
+                    <rect x="13" y="14.2" width="2" height="8.2" rx="1" fill="#ffffff"/>
+                    <circle cx="14" cy="24.2" r="1.6" fill="#fde047"/>
+                </svg>
+            </span>
+        </span>
+    </button>
+    <script id="hvacScrollTopScript">
+    (function () {
+        var btn = document.getElementById('hvacScrollTopBtn');
+        if (!btn) return;
+        var craft = btn.querySelector('.jet-craft');
+        var ticking = false, launching = false, timers = [];
+        var scrollTimer = null, trailTimer = null;
+        var fx = null, audioCtx = null, noiseBuf = null;
+        var canFx = typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function';
+        var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
+        var lite = mq('(pointer: coarse)') || mq('(max-width: 640px)') || mq('(prefers-reduced-motion: reduce)');
+        var T_THRUST = 300, T_LIFT = 520, T_FLIGHT = 780;
+
+        /* ---------- Multilingual tooltip ---------- */
+        var titles = {
+            vi: 'L\u00EAn \u0111\u1EA7u trang',
+            en: 'Back to top',
+            zh: '\u56DE\u5230\u9876\u90E8',
+            ja: '\u30DA\u30FC\u30B8\u30C8\u30C3\u30D7\u3078'
+        };
+        function updateBtnLang() {
+            var l = (document.documentElement.lang || 'vi').toLowerCase();
+            if (l.indexOf('zh') === 0) l = 'zh';
+            else if (l.indexOf('ja') === 0) l = 'ja';
+            else if (l.indexOf('en') === 0) l = 'en';
+            else l = 'vi';
+            var t = titles[l] || titles.vi;
+            btn.setAttribute('aria-label', t);
+            btn.setAttribute('title', t);
+        }
+        if (window.MutationObserver) {
+            new MutationObserver(function (m) {
+                for (var i = 0; i < m.length; i++) { if (m[i].attributeName === 'lang') { updateBtnLang(); break; } }
+            }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+        }
+
+        /* ---------- Helpers ---------- */
+        function getTop() { return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0; }
+        function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+        function rand(a, b) { return a + Math.random() * (b - a); }
+        function cnt(k) { return Math.max(1, Math.round(k * (lite ? 0.55 : 1))); }
+        function ensureFx() {
+            if (fx && fx.parentNode) return fx;
+            fx = document.createElement('div');
+            fx.id = 'hvacJetFx';
+            fx.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(fx);
+            return fx;
+        }
+
+        /* ---------- Particles (Web Animations API, GPU transform/opacity only) ---------- */
+        function particle(cls, x, y, size, frames, duration, easing, delay) {
+            if (!fx || fx.childElementCount > 150) return;
+            var p = document.createElement('span');
+            p.className = 'jet-p ' + cls;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = (x - size / 2) + 'px';
+            p.style.top = (y - size / 2) + 'px';
+            fx.appendChild(p);
+            var a = p.animate(frames, { duration: duration, easing: easing || 'ease-out', delay: delay || 0, fill: 'both' });
+            a.onfinish = a.oncancel = function () { if (p.parentNode) p.parentNode.removeChild(p); };
+        }
+        function shockwave(x, y, maxScale) {
+            particle('jet-shock', x, y, 54, [
+                { transform: 'scale(.35)', opacity: 0.95 },
+                { transform: 'scale(' + (maxScale || 2.5) + ')', opacity: 0 }
+            ], 520, 'cubic-bezier(.16,1,.3,1)');
+        }
+        function sparks(n, x, y, spread) {
+            for (var i = 0; i < n; i++) {
+                var dx = rand(-spread, spread), dy = rand(22, 105);
+                particle('jet-spark', x + rand(-5, 5), y + rand(-2, 4), rand(2.4, 4.5), [
+                    { transform: 'translate(0,0) scale(1.15)', opacity: 1 },
+                    { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.15)', opacity: 0 }
+                ], rand(360, 700), 'cubic-bezier(.15,.75,.35,1)', rand(0, 110));
+            }
+        }
+        function smoke(n, x, y) {
+            for (var i = 0; i < n; i++) {
+                var s = rand(20, 38), dx = rand(-85, 85), dy = rand(18, 68);
+                particle('jet-smoke', x + rand(-10, 10), y + rand(8, 22), s, [
+                    { transform: 'translate(0,0) scale(.35)', opacity: 0 },
+                    { transform: 'translate(' + (dx * 0.35) + 'px,' + (dy * 0.4) + 'px) scale(1.05)', opacity: 0.88, offset: 0.22 },
+                    { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + rand(2.3, 3.4) + ')', opacity: 0 }
+                ], rand(900, 1550), 'cubic-bezier(.2,.6,.3,1)', rand(0, 130));
+            }
+        }
+        function flash(x, y) {
+            particle('jet-flash', x, y + 24, 110, [
+                { transform: 'scale(.2)', opacity: 0 },
+                { transform: 'scale(.82)', opacity: 0.95, offset: 0.22 },
+                { transform: 'scale(1.55)', opacity: 0 }
+            ], 600, 'ease-out');
+        }
+        function stopTrail() { if (trailTimer !== null) { clearInterval(trailTimer); trailTimer = null; } }
+        function startTrail() {
+            stopTrail();
+            var end = Date.now() + T_FLIGHT;
+            trailTimer = setInterval(function () {
+                var r = craft.getBoundingClientRect();
+                if (Date.now() > end || r.bottom < -30) { stopTrail(); return; }
+                var cx = r.left + r.width / 2, cy = r.bottom + 12;
+                particle('jet-smoke', cx + rand(-5, 5), cy, rand(13, 24), [
+                    { transform: 'translate(0,0) scale(.45)', opacity: 0.85 },
+                    { transform: 'translate(' + rand(-26, 26) + 'px,' + rand(20, 52) + 'px) scale(' + rand(2.2, 3.2) + ')', opacity: 0 }
+                ], rand(620, 960), 'ease-out');
+                if (Math.random() < 0.75) sparks(2, cx, cy, 36);
+            }, lite ? 85 : 52);
+        }
+
+        /* ---------- Jet engine sound (Web Audio API, synthesized, plays on click only) ---------- */
+        function playJetSound() {
+            try {
+                var AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return;
+                if (!audioCtx) audioCtx = new AC();
+                if (audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+                var ctx = audioCtx, t = ctx.currentTime + 0.01, dur = 1.55;
+                var master = ctx.createGain();
+                master.gain.value = 0.48;
+                var comp = ctx.createDynamicsCompressor();
+                master.connect(comp); comp.connect(ctx.destination);
+                if (!noiseBuf) {
+                    var len = Math.floor(ctx.sampleRate * dur);
+                    noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+                    var d = noiseBuf.getChannelData(0);
+                    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+                }
+                /* 1. Jet exhaust whoosh & afterburner roar */
+                var noise = ctx.createBufferSource(); noise.buffer = noiseBuf;
+                var bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.85;
+                bp.frequency.setValueAtTime(200, t);
+                bp.frequency.exponentialRampToValueAtTime(880, t + 0.4);
+                bp.frequency.exponentialRampToValueAtTime(3100, t + 1.05);
+                bp.frequency.exponentialRampToValueAtTime(1700, t + dur);
+                var ng = ctx.createGain();
+                ng.gain.setValueAtTime(0.0001, t);
+                ng.gain.exponentialRampToValueAtTime(0.36, t + 0.16);
+                ng.gain.linearRampToValueAtTime(0.52, t + 0.65);
+                ng.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                noise.connect(bp); bp.connect(ng); ng.connect(master);
+                /* 2. Low turbine rumble revving up */
+                var o1 = ctx.createOscillator(); o1.type = 'sawtooth';
+                o1.frequency.setValueAtTime(52, t);
+                o1.frequency.exponentialRampToValueAtTime(95, t + 0.36);
+                o1.frequency.exponentialRampToValueAtTime(340, t + 1.1);
+                var lp = ctx.createBiquadFilter(); lp.type = 'lowpass';
+                lp.frequency.setValueAtTime(380, t);
+                lp.frequency.exponentialRampToValueAtTime(2400, t + 1.05);
+                var g1 = ctx.createGain();
+                g1.gain.setValueAtTime(0.0001, t);
+                g1.gain.exponentialRampToValueAtTime(0.18, t + 0.1);
+                g1.gain.setValueAtTime(0.18, t + 0.85);
+                g1.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                o1.connect(lp); lp.connect(g1); g1.connect(master);
+                /* 3. High-frequency turbine spool whine */
+                var o2 = ctx.createOscillator(); o2.type = 'triangle';
+                o2.frequency.setValueAtTime(580, t);
+                o2.frequency.exponentialRampToValueAtTime(2800, t + 1.15);
+                var g2 = ctx.createGain();
+                g2.gain.setValueAtTime(0.0001, t);
+                g2.gain.exponentialRampToValueAtTime(0.055, t + 0.28);
+                g2.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                o2.connect(g2); g2.connect(master);
+                noise.start(t); o1.start(t); o2.start(t);
+                noise.stop(t + dur); o1.stop(t + dur); o2.stop(t + dur);
+                o1.onended = function () { try { master.disconnect(); comp.disconnect(); } catch (e) {} };
+            } catch (e) {}
+        }
+
+        /* ---------- Frame-by-frame 60 FPS smooth scroll (easeInOutCubic) ---------- */
+        function cancelSmoothScroll() {
+            if (scrollTimer !== null) { clearInterval(scrollTimer); scrollTimer = null; }
+        }
+        function easeInOutCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+        function smoothScrollToTop(duration) {
+            cancelSmoothScroll();
+            var startPosition = getTop();
+            if (startPosition <= 0) return;
+            var dur = duration || Math.min(1150, Math.max(720, Math.floor(Math.sqrt(startPosition) * 12)));
+            var startTime = performance.now();
+            scrollTimer = setInterval(function () {
+                var elapsed = performance.now() - startTime;
+                var progress = Math.min(elapsed / dur, 1);
+                var nextY = Math.round(startPosition * (1 - easeInOutCubic(progress)));
+                window.scrollTo(0, nextY);
+                if (progress >= 1) {
+                    cancelSmoothScroll();
+                    window.scrollTo(0, 0);
+                }
+            }, 16);
+        }
+        window.addEventListener('wheel', cancelSmoothScroll, { passive: true });
+        window.addEventListener('touchmove', cancelSmoothScroll, { passive: true });
+
+        /* ---------- Jet Engine Launch sequence ---------- */
+        function finishLaunch() {
+            for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
+            timers = [];
+            stopTrail();
+            btn.classList.add('is-resetting');
+            btn.classList.remove('is-visible', 'is-launching', 'is-igniting', 'is-thrust', 'is-flying', 'is-landing');
+            void btn.offsetWidth;
+            btn.classList.remove('is-resetting');
+            launching = false;
+            if (getTop() > 300) {
+                btn.classList.add('is-visible', 'is-landing');
+                later(function () { btn.classList.remove('is-landing'); }, 600);
+            }
+        }
+        function launch() {
+            if (launching) return;
+            launching = true;
+            for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
+            timers = [];
+            btn.classList.remove('is-landing');
+            cancelSmoothScroll();
+            var scrollDur = Math.min(1150, Math.max(750, Math.floor(Math.sqrt(getTop()) * 12)));
+            playJetSound();
+            btn.classList.add('is-launching');
+            if (!canFx) {
+                smoothScrollToTop(scrollDur);
+                later(finishLaunch, scrollDur + 150);
+                return;
+            }
+            ensureFx();
+            var r = btn.getBoundingClientRect();
+            var cx = r.left + r.width / 2, cy = r.top + r.height / 2, py = r.bottom + 4;
+            craft.style.setProperty('--jet-dist', Math.ceil(r.bottom + 180) + 'px');
+            btn.classList.add('is-igniting');
+            shockwave(cx, cy, 2.2);
+            sparks(cnt(7), cx, py, 38);
+            smoke(cnt(5), cx, py);
+            later(function () {
+                btn.classList.add('is-thrust');
+                flash(cx, py);
+                smoke(cnt(11), cx, py);
+                sparks(cnt(14), cx, py, 80);
+            }, T_THRUST);
+            later(function () {
+                btn.classList.add('is-flying');
+                smoothScrollToTop(scrollDur);
+                shockwave(cx, cy, 3.1);
+                flash(cx, py);
+                smoke(cnt(15), cx, py);
+                sparks(cnt(18), cx, py, 100);
+                startTrail();
+            }, T_LIFT);
+            later(finishLaunch, T_LIFT + Math.max(T_FLIGHT, scrollDur) + 160);
+        }
+
+        /* ---------- Show / hide on scroll ---------- */
+        function updateScrollBtn() {
+            ticking = false;
+            if (launching) return;
+            if (getTop() > 300) btn.classList.add('is-visible');
+            else btn.classList.remove('is-visible', 'is-landing');
+        }
+        function onScroll() {
+            updateScrollBtn();
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        btn.addEventListener('click', function (e) { e.preventDefault(); launch(); });
+
+        updateScrollBtn();
+        updateBtnLang();
+    })();
+    </script>
 </body>
 </html>

@@ -819,8 +819,307 @@ main section p:not(#ductAlertMsg):not(#grilleAlertMsg):not(#cwpAlertMsg):not(#st
     background-image: linear-gradient(0deg, #38bdf8 0%, #ffffff 55%, #bae6fd 100%) !important;
 }
 </style>
+<style id="hvac-uiverse-loader-style">
+/*
+ * From Uiverse.io by alexruix - https://uiverse.io/alexruix/neat-tiger-82
+ * MIT License, Copyright (c) alexruix (Alex Ruiz)
+ */
+#hvacPageLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #050914;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#hvacPageLoader.is-loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hvac-uiverse-loader {
+  position: relative;
+  width: 112px;
+  height: 112px;
+}
+
+.hvac-uiverse-box1,
+.hvac-uiverse-box2,
+.hvac-uiverse-box3 {
+  border: 16px solid #f5f5f5;
+  box-sizing: border-box;
+  position: absolute;
+  display: block;
+}
+
+.hvac-uiverse-box1 {
+  width: 112px;
+  height: 48px;
+  margin-top: 64px;
+  margin-left: 0px;
+  animation: hvac-uiverse-abox1 4s 1s forwards ease-in-out infinite;
+}
+
+.hvac-uiverse-box2 {
+  width: 48px;
+  height: 48px;
+  margin-top: 0px;
+  margin-left: 0px;
+  animation: hvac-uiverse-abox2 4s 1s forwards ease-in-out infinite;
+}
+
+.hvac-uiverse-box3 {
+  width: 48px;
+  height: 48px;
+  margin-top: 0px;
+  margin-left: 64px;
+  animation: hvac-uiverse-abox3 4s 1s forwards ease-in-out infinite;
+}
+
+@keyframes hvac-uiverse-abox1 {
+  0% {
+    width: 112px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  12.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  25% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  37.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  50% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  62.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+
+  75% {
+    width: 48px;
+    height: 112px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  87.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  100% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+}
+
+@keyframes hvac-uiverse-abox2 {
+  0% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  12.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  25% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  37.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  50% {
+    width: 112px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 0px;
+  }
+
+  62.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  75% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  87.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  100% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+}
+
+@keyframes hvac-uiverse-abox3 {
+  0% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  12.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  25% {
+    width: 48px;
+    height: 112px;
+    margin-top: 0px;
+    margin-left: 64px;
+  }
+
+  37.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 64px;
+  }
+
+  50% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 64px;
+  }
+
+  62.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 64px;
+  }
+
+  75% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 64px;
+  }
+
+  87.5% {
+    width: 48px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 64px;
+  }
+
+  100% {
+    width: 112px;
+    height: 48px;
+    margin-top: 64px;
+    margin-left: 0px;
+  }
+}
+</style>
 </head>
 <body class="antialiased selection:bg-sky-500 selection:text-white">
+<!--
+  From Uiverse.io by alexruix - https://uiverse.io/alexruix/neat-tiger-82
+  MIT License, Copyright (c) alexruix (Alex Ruiz)
+-->
+<div id="hvacPageLoader" role="status" aria-live="polite" aria-label="Đang tải trang" data-i18n-skip="true">
+  <div class="hvac-uiverse-loader">
+    <div class="hvac-uiverse-box1"></div>
+    <div class="hvac-uiverse-box2"></div>
+    <div class="hvac-uiverse-box3"></div>
+  </div>
+</div>
+<script>
+(function initHvacPageLoader() {
+  var loader = document.getElementById('hvacPageLoader');
+  if (!loader) return;
+  var startTime = (window.performance && performance.now) ? performance.now() : Date.now();
+  var minVisibleMs = 1850;
+  var dismissed = false;
+  function hideLoader() {
+    if (dismissed) return;
+    dismissed = true;
+    loader.classList.add('is-loaded');
+    setTimeout(function () {
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+    }, 500);
+  }
+  function scheduleHide() {
+    var now = (window.performance && performance.now) ? performance.now() : Date.now();
+    var remaining = Math.max(0, minVisibleMs - (now - startTime));
+    setTimeout(hideLoader, remaining);
+  }
+  if (document.readyState === 'complete') {
+    scheduleHide();
+  } else {
+    window.addEventListener('load', scheduleHide, { once: true });
+    setTimeout(hideLoader, 3200);
+  }
+  loader.addEventListener('click', hideLoader);
+})();
+</script>
 <svg id="hvacIconSprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
   <symbol id="hvac-icon-wind" viewBox="0 0 24 24"><path d="M3 8h12.5a2.5 2.5 0 1 0-2.4-3"/><path d="M2 12h17a3 3 0 1 1-2.9 3.7"/><path d="M4 16h5a2 2 0 1 1-1.9 2.6"/></symbol>
   <symbol id="hvac-icon-cloud-sun" viewBox="0 0 24 24"><circle cx="17" cy="7" r="3"/><path d="M17 1.5v1.2M22.5 7h-1.2M17 12.5v-1.2M12.5 7h1.2M20.9 3.1l-.9.9"/><path d="M5 18.5a4.5 4.5 0 0 1 .6-9 5.8 5.8 0 0 1 10.9 1.7 3.7 3.7 0 0 1 .2 7.3H5Z"/></symbol>
